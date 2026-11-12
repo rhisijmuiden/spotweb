@@ -119,6 +119,38 @@ class ServicesSettingsBaseTest extends TestCase
         $this->assertFalse($service->validateSettings($form)->isSuccess());
     }
 
+    public function testSiteThemeIsOptionalButMustBeKnown()
+    {
+        $service = new Services_Settings_Base(new Services_Settings_Container(), new ServicesSettingsBaseTestBlackWhiteListDao());
+        $form = $this->validSettingsWithoutPipelineDepth();
+        $this->assertTrue($service->validateSettings($form)->isSuccess());
+
+        $form['site_theme'] = 'ocean';
+        $this->assertTrue($service->validateSettings($form)->isSuccess());
+
+        $form['site_theme'] = '../../evil';
+        $this->assertFalse($service->validateSettings($form)->isSuccess());
+    }
+
+    public function testApiAndRssSwitchesAreStoredAsBooleans()
+    {
+        $service = new Services_Settings_Base(new Services_Settings_Container(), new ServicesSettingsBaseTestBlackWhiteListDao());
+        $form = $this->validSettingsWithoutPipelineDepth();
+        $form['api_enabled'] = 'on';
+        $validated = $service->validateSettings($form)->getData('settings');
+        $this->assertTrue($validated['api_enabled']);
+        $this->assertFalse($validated['rss_enabled']);
+    }
+
+    public function testSwitchesDefaultToEnabledWhenNeverSaved()
+    {
+        $settings = new Services_Settings_Container();
+        $settings->addSource(new ServicesSettingsBaseTestSource(['rss_enabled' => '', 'api_enabled' => '1']));
+        $this->assertFalse($settings->isEnabled('rss_enabled'));
+        $this->assertTrue($settings->isEnabled('api_enabled'));
+        $this->assertTrue($settings->isEnabled('never_saved_switch'));
+    }
+
     private function validSettingsWithoutPipelineDepth()
     {
         $server = ['host' => 'news.example', 'user' => '', 'pass' => '', 'enc' => false, 'port' => 119, 'buggy' => false, 'verifyname' => true];

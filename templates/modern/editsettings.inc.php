@@ -75,6 +75,7 @@ if ($result->isSubmitted()) {
 			<li><a href="#editsettingstab-2"><span><?php echo _('News servers'); ?></span></a></li>
 			<li><a href="#editsettingstab-3"><span><?php echo _('Retrieval &amp; cleanup'); ?></span></a></li>
 			<li class="sw-admin-heading"><?php echo _('System'); ?></li>
+			<li><a href="#editsettingstab-7"><span><?php echo _('API &amp; RSS'); ?></span></a></li>
 			<li><a href="#editsettingstab-4"><span><?php echo _('Performance &amp; cache'); ?></span></a></li>
 <?php } ?>
 		</ul>
@@ -422,6 +423,25 @@ if ($result->isSubmitted()) {
 <?php } ?>
 				</div>
 				<p class="sw-hint"><?php echo _('Group permissions are managed under User &amp; group management.'); ?></p>
+			</fieldset>
+		</div>
+
+<!-- API & RSS -->
+		<div id="editsettingstab-7" class="ui-tabs-hide">
+			<fieldset>
+				<h3 class="sw-admin-section"><?php echo _('Newznab API'); ?></h3>
+				<div class="sw-check-list sw-check-list--stack">
+					<label><input type="checkbox" name="editsettingsform[api_enabled]" <?php if ($this->_settings->isEnabled('api_enabled')) { echo 'checked="checked"'; } ?>> <?php echo _('Enable the API for Prowlarr, Sonarr, Radarr and other Newznab clients'); ?></label>
+				</div>
+				<p class="sw-hint"><?php echo _('Indexer URL for these apps:'); ?> <code class="sw-code"><?php echo htmlspecialchars($tplHelper->makeBaseUrl('full'), ENT_QUOTES); ?></code> &middot; <?php echo _('API path:'); ?> <code class="sw-code">/api</code></p>
+
+				<h3 class="sw-admin-section"><?php echo _('RSS feed'); ?></h3>
+				<div class="sw-check-list sw-check-list--stack">
+					<label><input type="checkbox" name="editsettingsform[rss_enabled]" <?php if ($this->_settings->isEnabled('rss_enabled')) { echo 'checked="checked"'; } ?>> <?php echo _('Enable the RSS feed, with a download link to the NZB in every item'); ?></label>
+				</div>
+				<p class="sw-hint"><?php echo _('Feed address (every user has their own API key, shown in their account):'); ?><br><code class="sw-code"><?php echo htmlspecialchars($tplHelper->makeBaseUrl('full'), ENT_QUOTES); ?>?page=rss&amp;apikey=<?php echo _('YOUR-API-KEY'); ?></code></p>
+				<p class="sw-hint"><?php echo _('Add search terms or filters the same way as in the address bar of the spot list, for example &amp;search[tree]=cat0_z0 for movies.'); ?></p>
+				<p class="sw-hint"><?php echo _('A user also needs the RSS and API permissions in their group (User &amp; group management).'); ?></p>
 			</fieldset>
 		</div>
 

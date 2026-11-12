@@ -650,3 +650,12 @@ body.modern-config .sw-theme-swatch {
 }
 body.modern-config .sw-theme-swatch i { position: absolute; left: 10px; right: 10px; bottom: 0; height: 30px; border-radius: 6px 6px 0 0; }
 body.modern-config .sw-theme-swatch b { position: absolute; left: 20px; bottom: 10px; width: 46px; height: 10px; border-radius: 99px; }
+body.modern-config .sw-check-list--stack { flex-direction: column; gap: 10px; margin-bottom: 10px; }
+body.modern-config .sw-hint + .sw-hint { margin-top: 8px; }
+body.modern-config .sw-hint + .sw-admin-section { margin-top: 28px; }
+body.modern-config code.sw-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px;
+  padding: 2px 6px; border-radius: 6px; background: var(--sw-surface-2); border: 1px solid var(--sw-border);
+  color: var(--sw-text); word-break: break-all;
+}
+body.modern-config .sw-check-list label { font-size: 14px !important; font-weight: 400 !important; }

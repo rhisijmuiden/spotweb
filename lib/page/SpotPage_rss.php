@@ -20,6 +20,15 @@ class SpotPage_rss extends SpotPage_Abs
         $this->_spotSec->fatalPermCheck(SpotSecurity::spotsec_view_spots_index, '');
         $this->_spotSec->fatalPermCheck(SpotSecurity::spotsec_view_rssfeed, '');
 
+        // The admin can switch the RSS feed off (Admin > API & RSS)
+        if (!$this->_settings->isEnabled('rss_enabled')) {
+            http_response_code(503);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo 'The RSS feed is disabled on this Spotweb installation.';
+
+            return;
+        } // if
+
         $nzbhandling = $this->_currentSession['user']['prefs']['nzbhandling'];
 
         // Don't allow the RSS feed to be cached
@@ -74,14 +83,23 @@ class SpotPage_rss extends SpotPage_Abs
         $channel->appendChild($doc->createElement('description', 'Spotweb RSS Feed'));
         $channel->appendChild($doc->createElement('link', $this->_tplHelper->makeBaseUrl('full')));
         $channel->appendChild($atomSelfLink);
-        $channel->appendChild($doc->createElement('webMaster', $this->_currentSession['user']['mail'].' ('.$this->_currentSession['user']['firstname'].' '.$this->_currentSession['user']['lastname'].')'));
         $channel->appendChild($doc->createElement('pubDate', date('r')));
         $rss->appendChild($channel);
 
         // Retrieve full spots so we can show images for spots etc.
         foreach ($spotsTmp['list'] as $spotHeaders) {
             try {
-                $spot = $this->_tplHelper->getFullSpot($spotHeaders['messageid'], false);
+                /*
+                 * Prefer the full spot for its description and image. When it
+                 * cannot be fetched (not stored locally and the news server is
+                 * slow or down), still list the spot from its header, so the
+                 * feed and its NZB links keep working.
+                 */
+                try {
+                    $spot = $this->_tplHelper->getFullSpot($spotHeaders['messageid']);
+                } catch (Exception $x) {
+                    $spot = $spotHeaders + ['description' => ''];
+                } // catch
 
                 /*
                  * We supress the error by using this ugly operator simply because the library

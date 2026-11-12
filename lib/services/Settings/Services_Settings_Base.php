@@ -111,7 +111,7 @@ class Services_Settings_Base
         }
 
         // the site colour theme
-        if (!isset($settings['site_theme']) || !Services_Admin_Themes::isValid($settings['site_theme'])) {
+        if (isset($settings['site_theme']) && !Services_Admin_Themes::isValid($settings['site_theme'])) {
             $result->addError(_('Invalid theme'));
         } // if
 
@@ -171,6 +171,8 @@ class Services_Settings_Base
         $settings['external_whitelist'] = (isset($settings['external_whitelist'])) ? true : false;
         $settings['imageover_subcats'] = (isset($settings['imageover_subcats'])) ? true : false;
         $settings['highlight'] = (isset($settings['highlight'])) ? true : false;
+        $settings['api_enabled'] = (isset($settings['api_enabled'])) ? true : false;
+        $settings['rss_enabled'] = (isset($settings['rss_enabled'])) ? true : false;
 
         // Default server settings if they won't be used
         if (!isset($settings['nntp_hdr']['use'])) {
