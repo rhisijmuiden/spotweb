@@ -481,7 +481,7 @@ class SpotPage_newznabapi extends SpotPage_Abs
 
             foreach ($spots['list'] as $spot) {
                 $spot = $this->_tplHelper->formatSpotHeader($spot);
-                $nzbUrl = $this->_tplHelper->makeBaseUrl('full').'api?t=g&amp;id='.$spot['messageid'].$this->_tplHelper->makeApiRequestString();
+                $nzbUrl = $this->_tplHelper->makeBaseUrl('full').'api/?t=g&amp;id='.$spot['messageid'].$this->_tplHelper->makeApiRequestString();
                 if ($this->_params['del'] == '1' && $this->_spotSec->allowed(SpotSecurity::spotsec_keep_own_watchlist, '')) {
                     $nzbUrl .= '&amp;del=1';
                 } // if
@@ -648,7 +648,7 @@ class SpotPage_newznabapi extends SpotPage_Abs
 
             echo json_encode($doc);
         } else {
-            $nzbUrl = $this->_tplHelper->makeBaseUrl('full').'api?t=g&amp;id='.$spot['messageid'].$this->_tplHelper->makeApiRequestString();
+            $nzbUrl = $this->_tplHelper->makeBaseUrl('full').'api/?t=g&amp;id='.$spot['messageid'].$this->_tplHelper->makeApiRequestString();
 
             // Opbouwen XML
             $doc = new DOMDocument('1.0', 'utf-8');

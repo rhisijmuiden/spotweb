@@ -5,6 +5,20 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
+/*
+ * Newznab clients call <spotweb>/api. Route that here ourselves instead of
+ * relying on webserver rewrite rules (.htaccess), so the API works the same
+ * on Apache, nginx and Caddy, and behind proxies such as Cloudflare. This
+ * covers servers that send every unknown path to index.php and requests
+ * like index.php/api.
+ */
+if (!isset($_GET['page']) && !isset($_POST['page'])) {
+    $requestPath = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if (preg_match('#/api/?$#', $requestPath)) {
+        $_GET['page'] = 'newznabapi';
+    } // if
+} // if
+
 //- main() -#
 try {
     SpotTranslation::initialize('en_US');
