@@ -1967,3 +1967,60 @@ msgstr "Systeem software"
 
 msgid "Navigation systems"
 msgstr "Navigatie systemen"
+
+msgid "Admin"
+msgstr "Beheer"
+
+msgid "Site"
+msgstr "Site"
+
+msgid "Usenet"
+msgstr "Usenet"
+
+msgid "System"
+msgstr "Systeem"
+
+msgid "Users &amp; registration"
+msgstr "Gebruikers &amp; registratie"
+
+msgid "Appearance"
+msgstr "Uiterlijk"
+
+msgid "News servers"
+msgstr "Nieuwsservers"
+
+msgid "Retrieval &amp; cleanup"
+msgstr "Ophalen &amp; opschonen"
+
+msgid "Performance &amp; cache"
+msgstr "Prestaties &amp; cache"
+
+msgid "Save changes"
+msgstr "Wijzigingen opslaan"
+
+msgid "Who can create an account?"
+msgstr "Wie mag een account aanmaken?"
+
+msgid "Admins only"
+msgstr "Alleen beheerders"
+
+msgid "Only admins and trusted users create accounts. Visitors cannot sign up."
+msgstr "Alleen beheerders en vertrouwde gebruikers maken accounts aan. Bezoekers kunnen zich niet aanmelden."
+
+msgid "Open registration"
+msgstr "Open registratie"
+
+msgid "Visitors can create an account themselves. Their password is sent by e-mail, so make sure mail works."
+msgstr "Bezoekers kunnen zelf een account aanmaken. Het wachtwoord wordt per e-mail verstuurd, dus zorg dat e-mail werkt."
+
+msgid "New users are added to these groups"
+msgstr "Nieuwe gebruikers komen in deze groepen"
+
+msgid "Group permissions are managed under User &amp; group management."
+msgstr "Groepsrechten beheer je onder Gebruikers- &amp; groepsbeheer."
+
+msgid "Invalid registration setting"
+msgstr "Ongeldige registratie-instelling"
+
+msgid "Choose at least one group for new users"
+msgstr "Kies minstens één groep voor nieuwe gebruikers"

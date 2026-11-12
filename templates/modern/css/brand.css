@@ -488,3 +488,113 @@ html[data-theme] div#filter a.viewState h4 span {
 html[data-theme] div#filter a.filter span.inclusive { margin-left: auto !important; opacity: .55; }
 html[data-theme] div#filter a.filter:hover span.inclusive { opacity: 1; }
 html[data-theme] div#toolbar { margin-top: 0 !important; top: 0 !important; }
+
+/* ---------- admin centre: menu on the left, settings on the right ---------- */
+
+body.modern-config #editsettingstab.sw-admin {
+  display: grid !important;
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  column-gap: 0;
+  padding: 0 !important;
+  overflow: hidden;
+  min-height: calc(100vh - 140px);
+}
+body.modern-config .sw-admin > ul.sw-admin-nav {
+  grid-column: 1; grid-row: 1;
+  display: flex !important; flex-direction: column; gap: 2px;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 20px 14px 8px !important;
+  border-radius: 0 !important;
+  background: var(--sw-surface-2) !important;
+}
+body.modern-config .sw-admin > ul.sw-admin-nav li {
+  float: none !important; display: block !important; margin: 0 !important;
+  white-space: normal !important; top: 0 !important;
+}
+body.modern-config .sw-admin > ul.sw-admin-nav li a {
+  float: none !important; display: block !important;
+  padding: 9px 12px !important;
+}
+body.modern-config .sw-admin > ul.sw-admin-nav li a:hover { color: var(--sw-text) !important; background: var(--sw-surface) !important; }
+body.modern-config .sw-admin > ul.sw-admin-nav li.ui-tabs-selected a,
+body.modern-config .sw-admin > ul.sw-admin-nav li.ui-state-active a {
+  box-shadow: inset 3px 0 0 var(--sw-accent) !important;
+}
+body.modern-config .sw-admin > ul.sw-admin-nav li.ui-tabs-selected,
+body.modern-config .sw-admin > ul.sw-admin-nav li.ui-state-active { box-shadow: none !important; background: transparent !important; }
+body.modern-config .sw-admin li.sw-admin-title {
+  padding: 0 12px 10px !important;
+  font-family: var(--sw-font-display, 'Space Grotesk', sans-serif);
+  font-size: 20px; font-weight: 700; color: var(--sw-text);
+}
+body.modern-config .sw-admin li.sw-admin-heading {
+  padding: 14px 12px 6px !important;
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--sw-text-3, var(--sw-text-2));
+}
+body.modern-config .sw-admin > .sw-admin-links {
+  grid-column: 1; grid-row: 2 / span 2;
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 14px 20px;
+  background: var(--sw-surface-2);
+  border-top: 1px solid var(--sw-border);
+}
+body.modern-config .sw-admin > .sw-admin-links a {
+  padding: 9px 12px; border-radius: 8px; color: var(--sw-text-2) !important; text-decoration: none;
+}
+body.modern-config .sw-admin > .sw-admin-links a::after { content: " \2197"; opacity: .5; }
+body.modern-config .sw-admin > .sw-admin-links a:hover { background: var(--sw-surface); color: var(--sw-text) !important; }
+body.modern-config .sw-admin > .ui-tabs-panel {
+  grid-column: 2; grid-row: 1 / span 2;
+  padding: 28px 36px !important;
+  min-width: 0;
+}
+body.modern-config .sw-admin > .editSettingsButtons {
+  grid-column: 2; grid-row: 3;
+  padding: 16px 36px 28px;
+  display: flex; gap: 10px;
+}
+body.modern-config .sw-admin > .editSettingsButtons .clear { display: none; }
+body.modern-config .sw-admin .sw-admin-section {
+  margin: 0 0 12px; font-size: 16px; font-weight: 600; color: var(--sw-text);
+}
+body.modern-config .sw-admin .sw-admin-section + * { margin-bottom: 24px; }
+body.modern-config .sw-choice-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
+}
+body.modern-config label.sw-choice {
+  display: flex; gap: 12px; padding: 16px; cursor: pointer;
+  border: 1px solid var(--sw-border-strong); border-radius: 12px;
+  background: var(--sw-surface-2);
+}
+body.modern-config label.sw-choice:has(input:checked) {
+  border-color: var(--sw-accent); background: var(--sw-accent-soft);
+}
+body.modern-config label.sw-choice input { margin-top: 3px; flex: none; }
+body.modern-config label.sw-choice > span { display: flex; flex-direction: column; gap: 4px; }
+body.modern-config label.sw-choice strong { color: var(--sw-text); font-weight: 600; }
+body.modern-config label.sw-choice > span > span { font-size: 13px; }
+body.modern-config .sw-check-list { display: flex; flex-wrap: wrap; gap: 10px 24px; }
+body.modern-config .sw-check-list label { display: flex; align-items: center; gap: 8px; }
+body.modern-config .sw-hint { color: var(--sw-text-2); font-size: 13px; margin: 0; }
+
+@media (max-width: 760px) {
+  body.modern-config #editsettingstab.sw-admin { grid-template-columns: 1fr; }
+  body.modern-config .sw-admin > ul.sw-admin-nav,
+  body.modern-config .sw-admin > .sw-admin-links,
+  body.modern-config .sw-admin > .ui-tabs-panel,
+  body.modern-config .sw-admin > .editSettingsButtons { grid-column: 1; grid-row: auto; }
+  body.modern-config .sw-admin > .ui-tabs-panel { padding: 20px 16px !important; }
+}
+body.modern-config form.editsettingsform {
+  border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important;
+}
+body.modern-config label.sw-choice strong { font-size: 14px !important; }
+body.modern-config label.sw-choice > span > span { font-size: 13px !important; line-height: 1.45; }
+body.modern-config .closeeditsettings a.toggle {
+  color: var(--sw-text-2) !important; border: 1px solid var(--sw-border-strong) !important;
+  background: var(--sw-surface) !important; border-radius: 8px !important;
+}
+body.modern-config .closeeditsettings a.toggle:hover { color: var(--sw-text) !important; }

@@ -16,7 +16,11 @@ if (!isset($_GET['page']) && !isset($_POST['page'])) {
     $requestPath = (string) parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     if (preg_match('#/api/?$#', $requestPath)) {
         $_GET['page'] = 'newznabapi';
-    } // if
+    } elseif (preg_match('#^(.*/)(admin|account)/?$#', $requestPath, $matches)) {
+        // short addresses for the admin centre and the account pages
+        header('Location: '.$matches[1].'?page='.($matches[2] === 'admin' ? 'editsettings' : 'edituserprefs'), true, 302);
+        exit;
+    } // elseif
 } // if
 
 //- main() -#
