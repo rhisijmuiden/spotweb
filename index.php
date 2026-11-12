@@ -106,6 +106,10 @@ try {
         $currentSession['security']->fatalPermCheck(SpotSecurity::spotsec_consume_api, $page);
     } // if
 
+    // count the request per day, user and channel (web, API, RSS) for the admin statistics
+    $svcRequestStats = new Services_Stats_Requests($daoFactory->getConnection());
+    $svcRequestStats->record($currentSession['user']['userid'], Services_Stats_Requests::channelFor($page, $req->doesExist('apikey')));
+
     SpotTiming::start('renderpage');
     switch ($page) {
         case 'render':

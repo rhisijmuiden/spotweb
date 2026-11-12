@@ -57,6 +57,19 @@ class SpotPage_getnzb extends SpotPage_Abs
                 $svcProvNzb
             );
 
+            // remember who fetched what and how, for the download history and statistics
+            $hasApiKey = isset($_GET['apikey']) || isset($_POST['apikey']);
+            $svcStats = new Services_Stats_Requests($this->_daoFactory->getConnection());
+            $client = $hasApiKey ? Services_Stats_Requests::clientName($_SERVER['HTTP_USER_AGENT'] ?? '') : '';
+            foreach ((array) Services_Actions_DownloadNzb::resolveMessageIds($this->_messageid, $this->_messageids) as $messageId) {
+                $svcStats->recordDownload(
+                    $this->_currentSession['user']['userid'],
+                    $messageId,
+                    $hasApiKey ? Services_Stats_Requests::CHANNEL_API : Services_Stats_Requests::CHANNEL_WEB,
+                    ($this->_action === 'display') ? $client : $this->_action
+                );
+            } // foreach
+
             if ($this->_action != 'display') {
                 $this->sendContentTypeHeader('json');
 

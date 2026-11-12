@@ -772,6 +772,7 @@ return array(
     'Services_Settings_DbContainer' => $baseDir . '/lib/services/Settings/Services_Settings_DbContainer.php',
     'Services_Settings_FileContainer' => $baseDir . '/lib/services/Settings/Services_Settings_FileContainer.php',
     'Services_Settings_IContainer' => $baseDir . '/lib/services/Settings/Services_Settings_IContainer.php',
+    'Services_Stats_Requests' => $baseDir . '/lib/services/Stats/Services_Stats_Requests.php',
     'Services_Signing_Base' => $baseDir . '/lib/services/Signing/Services_Signing_Base.php',
     'Services_Signing_Openssl' => $baseDir . '/lib/services/Signing/Services_Signing_Openssl.php',
     'Services_Signing_Php' => $baseDir . '/lib/services/Signing/Services_Signing_Php.php',

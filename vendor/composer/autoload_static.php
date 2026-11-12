@@ -982,6 +982,7 @@ class ComposerStaticInit504c4440a019baf1c7be3e9f33abe7d1
         'Services_Settings_DbContainer' => __DIR__ . '/../..' . '/lib/services/Settings/Services_Settings_DbContainer.php',
         'Services_Settings_FileContainer' => __DIR__ . '/../..' . '/lib/services/Settings/Services_Settings_FileContainer.php',
         'Services_Settings_IContainer' => __DIR__ . '/../..' . '/lib/services/Settings/Services_Settings_IContainer.php',
+        'Services_Stats_Requests' => __DIR__ . '/../..' . '/lib/services/Stats/Services_Stats_Requests.php',
         'Services_Signing_Base' => __DIR__ . '/../..' . '/lib/services/Signing/Services_Signing_Base.php',
         'Services_Signing_Openssl' => __DIR__ . '/../..' . '/lib/services/Signing/Services_Signing_Openssl.php',
         'Services_Signing_Php' => __DIR__ . '/../..' . '/lib/services/Signing/Services_Signing_Php.php',

@@ -435,6 +435,23 @@ abstract class SpotStruct_abs
         $this->validateColumn('stamp', 'commentsxover', 'INTEGER UNSIGNED', null, false, '');
         $this->alterStorageEngine('commentsxover', 'InnoDB');
 
+        // ---- requeststats table: requests per day, user and channel (web, api, rss) ---- #
+        $this->createTable('requeststats', 'utf8');
+        $this->validateColumn('day', 'requeststats', 'INTEGER', '0', true, '');
+        $this->validateColumn('userid', 'requeststats', 'INTEGER', '0', true, '');
+        $this->validateColumn('channel', 'requeststats', 'VARCHAR(16)', "''", true, 'ascii');
+        $this->validateColumn('requests', 'requeststats', 'INTEGER', '0', true, '');
+        $this->alterStorageEngine('requeststats', 'InnoDB');
+
+        // ---- downloadhistory table: every NZB fetched, by whom and how ---- #
+        $this->createTable('downloadhistory', 'utf8');
+        $this->validateColumn('userid', 'downloadhistory', 'INTEGER', '0', true, '');
+        $this->validateColumn('messageid', 'downloadhistory', 'VARCHAR(128)', "''", true, 'ascii');
+        $this->validateColumn('stamp', 'downloadhistory', 'INTEGER', '0', true, '');
+        $this->validateColumn('channel', 'downloadhistory', 'VARCHAR(16)', "''", true, 'ascii');
+        $this->validateColumn('client', 'downloadhistory', 'VARCHAR(64)', "''", true, 'utf8');
+        $this->alterStorageEngine('downloadhistory', 'InnoDB');
+
         // ---- reportsxover table ---- #
         $this->createTable('reportsxover', 'utf8');
         $this->validateColumn('messageid', 'reportsxover', 'VARCHAR(128)', "''", true, 'ascii');
@@ -755,6 +772,11 @@ abstract class SpotStruct_abs
         // ---- Indexes on commentsxover ----
         $this->validateIndex('idx_commentsxover_1', 'UNIQUE', 'commentsxover', ['messageid']);
         $this->validateIndex('idx_commentsxover_2', '', 'commentsxover', ['nntpref']);
+
+        // ---- Indexes on requeststats / downloadhistory ----
+        $this->validateIndex('idx_requeststats_1', 'UNIQUE', 'requeststats', ['day', 'userid', 'channel']);
+        $this->validateIndex('idx_downloadhistory_1', '', 'downloadhistory', ['userid', 'stamp']);
+        $this->validateIndex('idx_downloadhistory_2', '', 'downloadhistory', ['stamp']);
 
         // ---- Indexes on reportsxover ----
         $this->validateIndex('idx_reportsxover_1', 'UNIQUE', 'reportsxover', ['messageid']);

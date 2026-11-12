@@ -75,6 +75,7 @@ if ($result->isSubmitted()) {
 			<li><a href="#editsettingstab-2"><span><?php echo _('News servers'); ?></span></a></li>
 			<li><a href="#editsettingstab-3"><span><?php echo _('Retrieval &amp; cleanup'); ?></span></a></li>
 			<li class="sw-admin-heading"><?php echo _('System'); ?></li>
+			<li><a href="#editsettingstab-8"><span><?php echo _('Activity'); ?></span></a></li>
 			<li><a href="#editsettingstab-7"><span><?php echo _('API &amp; RSS'); ?></span></a></li>
 			<li><a href="#editsettingstab-4"><span><?php echo _('Performance &amp; cache'); ?></span></a></li>
 <?php } ?>
@@ -424,6 +425,91 @@ if ($result->isSubmitted()) {
 				</div>
 				<p class="sw-hint"><?php echo _('Group permissions are managed under User &amp; group management.'); ?></p>
 			</fieldset>
+		</div>
+
+<!-- Activity -->
+		<div id="editsettingstab-8" class="ui-tabs-hide sw-activity" data-sw-nosave="1">
+<?php if ($activity === null) { ?>
+			<p class="sw-hint"><?php echo _('Run bin/upgrade-db.php to start collecting activity figures.'); ?></p>
+<?php } else {
+    $today = end($activity['daily']);
+    $maxDay = 1;
+    foreach ($activity['daily'] as $d) { $maxDay = max($maxDay, $d['total']); }
+    $thousandsSep = (strpos((string) ($currentSession['user']['prefs']['user_language'] ?? 'en_US'), 'en') === 0) ? ',' : '.';
+    $fmt = function ($n) use ($thousandsSep) { return number_format((int) $n, 0, '', $thousandsSep); };
+    $spots = $activity['spots'];
+?>
+			<h3 class="sw-admin-section"><?php echo _('Today'); ?></h3>
+			<div class="sw-kpis">
+				<div class="sw-kpi"><span><?php echo _('Requests'); ?></span><strong><?php echo $fmt($today['total']); ?></strong></div>
+				<div class="sw-kpi"><span><?php echo _('Via the API'); ?></span><strong><?php echo $fmt($today['api']); ?></strong></div>
+				<div class="sw-kpi"><span><?php echo _('Via the web interface'); ?></span><strong><?php echo $fmt($today['web']); ?></strong></div>
+				<div class="sw-kpi"><span><?php echo _('Via RSS'); ?></span><strong><?php echo $fmt($today['rss']); ?></strong></div>
+			</div>
+
+			<div class="sw-panel">
+				<div class="sw-panel-head">
+					<h3 class="sw-admin-section"><?php echo _('Requests per day'); ?></h3>
+					<div class="sw-legend"><span><i class="sw-c-api"></i><?php echo _('API'); ?></span><span><i class="sw-c-web"></i><?php echo _('Web'); ?></span><span><i class="sw-c-rss"></i><?php echo _('RSS'); ?></span></div>
+				</div>
+				<div class="sw-bars" role="img" aria-label="<?php echo _('Stacked bar chart of requests per day for the last 14 days'); ?>">
+<?php foreach ($activity['daily'] as $d) { ?>
+					<div class="sw-bar" title="<?php echo date('D j M', $d['stamp']).': '.$fmt($d['api']).' API, '.$fmt($d['web']).' web, '.$fmt($d['rss']).' RSS'; ?>">
+						<span class="sw-bar-total"><?php echo $fmt($d['total']); ?></span>
+						<div class="sw-bar-stack">
+							<i class="sw-c-rss" style="height: <?php echo round(100 * $d['rss'] / $maxDay, 2); ?>%"></i>
+							<i class="sw-c-web" style="height: <?php echo round(100 * $d['web'] / $maxDay, 2); ?>%"></i>
+							<i class="sw-c-api" style="height: <?php echo round(100 * $d['api'] / $maxDay, 2); ?>%"></i>
+						</div>
+						<span class="sw-bar-label"><?php echo date('j/n', $d['stamp']); ?></span>
+					</div>
+<?php } ?>
+				</div>
+			</div>
+
+			<div class="sw-panel">
+				<h3 class="sw-admin-section"><?php echo _('Most active users (30 days)'); ?></h3>
+				<div class="sw-table-wrap">
+				<table class="sw-table">
+					<thead><tr><th><?php echo _('User'); ?></th><th class="num"><?php echo _('API'); ?></th><th class="num"><?php echo _('Web'); ?></th><th class="num"><?php echo _('RSS'); ?></th><th class="num"><?php echo _('Total'); ?></th><th><?php echo _('Mostly via'); ?></th></tr></thead>
+					<tbody>
+<?php foreach ($activity['topusers'] as $u) {
+        $main = 'api'; foreach (['web', 'rss'] as $c) { if ($u[$c] > $u[$main]) { $main = $c; } }
+        $mainLabel = ['api' => _('API'), 'web' => _('Web'), 'rss' => _('RSS')][$main]; ?>
+						<tr>
+							<td><?php echo htmlspecialchars($u['username'] !== '' ? $u['username'] : '#'.$u['userid'], ENT_QUOTES); ?></td>
+							<td class="num"><?php echo $fmt($u['api']); ?></td>
+							<td class="num"><?php echo $fmt($u['web']); ?></td>
+							<td class="num"><?php echo $fmt($u['rss']); ?></td>
+							<td class="num"><strong><?php echo $fmt($u['total']); ?></strong></td>
+							<td><span class="sw-pill sw-pill-<?php echo $main; ?>"><?php echo $mainLabel; ?></span></td>
+						</tr>
+<?php } ?>
+<?php if (empty($activity['topusers'])) { ?>
+						<tr><td colspan="6" class="sw-hint"><?php echo _('No requests counted yet.'); ?></td></tr>
+<?php } ?>
+					</tbody>
+				</table>
+				</div>
+			</div>
+
+			<div class="sw-panel-grid">
+				<div class="sw-panel">
+					<h3 class="sw-admin-section"><?php echo _('NZB downloads (7 days)'); ?></h3>
+					<p class="sw-big"><?php echo $fmt($activity['downloads']['total']); ?></p>
+<?php foreach (array_slice($activity['downloads']['clients'], 0, 6, true) as $client => $n) { ?>
+					<div class="sw-row"><span><?php echo htmlspecialchars($client === '' || $client === '?' ? _('Web interface') : $client, ENT_QUOTES); ?></span><span class="num"><?php echo $fmt($n); ?></span></div>
+<?php } ?>
+				</div>
+				<div class="sw-panel">
+					<h3 class="sw-admin-section"><?php echo _('Spots in the database'); ?></h3>
+					<p class="sw-big"><?php echo $fmt($spots['count']); ?></p>
+					<div class="sw-row"><span><?php echo _('Oldest spot'); ?></span><span><?php echo $spots['oldest'] ? date('j M Y', $spots['oldest']) : '–'; ?></span></div>
+					<div class="sw-row"><span><?php echo _('Newest spot'); ?></span><span><?php echo $spots['newest'] ? date('j M Y, H:i', $spots['newest']) : '–'; ?></span></div>
+					<div class="sw-row"><span><?php echo _('Retrieve spots newer than'); ?></span><span><?php echo date('j M Y', max(1230789600, (int) $this->_settings->get('retrieve_newer_than'))); ?></span></div>
+				</div>
+			</div>
+<?php } ?>
 		</div>
 
 <!-- API & RSS -->

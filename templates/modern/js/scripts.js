@@ -479,7 +479,12 @@ function initializeUserManagementPage() {
  */
 function initializeSettingsPage() {
     initDatePicker();
-    $("#editsettingstab").tabs();
+    // read-only sections (Activity) have nothing to save, so hide the buttons there
+    $("#editsettingstab").tabs({
+        show: function (event, ui) {
+            $("#editsettingstab").toggleClass("sw-nosave", $(ui.panel).is("[data-sw-nosave]"));
+        }
+    });
 }
 
 
