@@ -43,8 +43,21 @@ if (!$dialogembedded) { ?>
     showResults($result, ['renderhtml' => 1]);
 ?>
 
-	<div id="edituserpreferencetabs" class="ui-tabs">
-		<ul>
+	<div id="edituserpreferencetabs" class="ui-tabs<?php echo $dialogembedded ? '' : ' sw-admin sw-account'; ?>">
+		<ul<?php echo $dialogembedded ? '' : ' class="sw-admin-nav"'; ?>>
+<?php if (!$dialogembedded) { ?>
+			<li class="sw-admin-title sw-account-who">
+				<span class="sw-avatar" aria-hidden="true"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($spotuser['username'], 0, 1)), ENT_QUOTES); ?></span>
+				<span><strong><?php echo htmlspecialchars($spotuser['username'], ENT_QUOTES); ?></strong><small><?php echo _('My account'); ?></small></span>
+			</li>
+<?php if ($history !== null) { ?>
+			<li><a href="#edituserpreftab-7"><span><?php echo _('History'); ?></span></a></li>
+<?php } ?>
+<?php if ($tplHelper->allowed(SpotSecurity::spotsec_consume_api, '')) { ?>
+			<li><a href="#edituserpreftab-8"><span><?php echo _('API key &amp; apps'); ?></span></a></li>
+<?php } ?>
+			<li class="sw-admin-heading"><?php echo _('Preferences'); ?></li>
+<?php } ?>
 			<li><a href="#edituserpreftab-1"><span><?php echo _('General'); ?></span></a></li>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_download_integration, '')) { ?>
 			<li><a href="#edituserpreftab-2"><span><?php echo _('NZB handling'); ?></span></a></li>
@@ -71,6 +84,80 @@ if (!$dialogembedded) { ?>
 	
 		</ul>
 			
+<?php if (!$dialogembedded && $history !== null) {
+    $thousandsSep = (strpos((string) ($currentSession['user']['prefs']['user_language'] ?? 'en_US'), 'en') === 0) ? ',' : '.';
+    $apps = [];
+    foreach ($history['rows'] as $h) {
+        if ($h['channel'] === 'api' && $h['client'] !== '') { $apps[$h['client']] = true; }
+    }
+    ksort($apps);
+?>
+		<div id="edituserpreftab-7" class="ui-tabs-hide sw-history" data-sw-nosave="1">
+			<h3 class="sw-admin-section"><?php echo _('History'); ?></h3>
+			<p class="sw-hint"><?php echo _('Everything you downloaded, and everything your apps picked up with your API key.'); ?></p>
+			<div class="sw-kpis">
+				<div class="sw-kpi"><span><?php echo _('Last 7 days'); ?></span><strong><?php echo number_format($history['counts']['week'], 0, '', $thousandsSep); ?></strong></div>
+				<div class="sw-kpi"><span><?php echo _('By you'); ?></span><strong><?php echo number_format($history['counts']['me'], 0, '', $thousandsSep); ?></strong></div>
+				<div class="sw-kpi"><span><?php echo _('By apps (API)'); ?></span><strong><?php echo number_format($history['counts']['apps'], 0, '', $thousandsSep); ?></strong></div>
+			</div>
+			<div class="sw-chips" role="group" aria-label="<?php echo _('Show'); ?>">
+				<button type="button" class="sw-chip is-active" data-sw-filter=""><?php echo _('All'); ?></button>
+				<button type="button" class="sw-chip" data-sw-filter="me"><?php echo _('By me'); ?></button>
+<?php foreach (array_keys($apps) as $app) { ?>
+				<button type="button" class="sw-chip" data-sw-filter="<?php echo htmlspecialchars($app, ENT_QUOTES); ?>"><?php echo htmlspecialchars($app, ENT_QUOTES); ?></button>
+<?php } ?>
+				<span class="sw-grow"></span>
+				<button type="button" class="sw-chip sw-chip-plain" data-sw-export="csv"><?php echo _('Export CSV'); ?></button>
+			</div>
+			<div class="sw-panel sw-table-wrap">
+				<table class="sw-table sw-history-table">
+					<thead><tr><th><?php echo _('When'); ?></th><th><?php echo _('Spot'); ?></th><th><?php echo _('Grabbed by'); ?></th><th><?php echo _('Sent to'); ?></th><th class="num"><?php echo _('Size'); ?></th></tr></thead>
+					<tbody>
+<?php foreach ($history['rows'] as $h) {
+        $byApp = ($h['channel'] === 'api');
+        $who = $byApp ? (($h['client'] !== '' ? $h['client'] : _('App')).' · API') : _('You');
+        if ($byApp) {
+            $sentTo = _('NZB file');
+        } elseif (strpos((string) $h['client'], 'client-sabnzbd') !== false || strpos((string) $h['client'], 'sabnzbd') !== false) {
+            $sentTo = 'SABnzbd';
+        } elseif (strpos((string) $h['client'], 'nzbget') !== false) {
+            $sentTo = 'NZBGet';
+        } else {
+            $sentTo = _('NZB file');
+        } // else
+        $title = ($h['title'] !== null) ? $h['title'] : _('(spot no longer available)'); ?>
+						<tr data-sw-by="<?php echo $byApp ? htmlspecialchars($h['client'], ENT_QUOTES) : 'me'; ?>">
+							<td class="sw-nowrap"><?php echo $tplHelper->formatDate($h['stamp'], 'spotlist'); ?></td>
+							<td><?php if ($h['title'] !== null) { ?><a href="<?php echo $tplHelper->makeBaseUrl('path').'?page=getspot&amp;messageid='.urlencode($h['messageid']); ?>"><?php echo htmlspecialchars($title, ENT_QUOTES); ?></a><?php } else { echo htmlspecialchars($title, ENT_QUOTES); } ?></td>
+							<td><span class="sw-pill <?php echo $byApp ? 'sw-pill-rss' : 'sw-pill-api'; ?>"><?php echo htmlspecialchars($who, ENT_QUOTES); ?></span></td>
+							<td><?php echo htmlspecialchars($sentTo, ENT_QUOTES); ?></td>
+							<td class="num sw-nowrap"><?php echo ($h['filesize'] !== null) ? $tplHelper->format_size($h['filesize']) : ''; ?></td>
+						</tr>
+<?php } ?>
+<?php if (empty($history['rows'])) { ?>
+						<tr><td colspan="5" class="sw-hint"><?php echo _('Nothing downloaded yet. New downloads show up here.'); ?></td></tr>
+<?php } ?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+<?php } ?>
+
+<?php if (!$dialogembedded && $tplHelper->allowed(SpotSecurity::spotsec_consume_api, '')) {
+    $baseUrl = $tplHelper->makeBaseUrl('full'); ?>
+		<div id="edituserpreftab-8" class="ui-tabs-hide" data-sw-nosave="1">
+			<h3 class="sw-admin-section"><?php echo _('Connect your apps'); ?></h3>
+			<p class="sw-hint"><?php echo _('Add Spotweb as a Newznab indexer in Prowlarr, Sonarr or Radarr with these details. Keep your API key private: it gives access to your account.'); ?></p>
+			<div class="sw-panel sw-keyvals">
+				<div class="sw-row"><span><?php echo _('URL'); ?></span><code class="sw-code"><?php echo htmlspecialchars($baseUrl, ENT_QUOTES); ?></code></div>
+				<div class="sw-row"><span><?php echo _('API path'); ?></span><code class="sw-code">/api</code></div>
+				<div class="sw-row"><span><?php echo _('API key'); ?></span><span class="sw-secret"><code class="sw-code" data-sw-secret="<?php echo htmlspecialchars($spotuser['apikey'], ENT_QUOTES); ?>">••••••••••••••••</code> <button type="button" class="sw-chip sw-chip-plain" data-sw-reveal><?php echo _('Show'); ?></button> <button type="button" class="sw-chip sw-chip-plain" data-sw-copy><?php echo _('Copy'); ?></button></span></div>
+				<div class="sw-row"><span><?php echo _('RSS feed'); ?></span><code class="sw-code"><?php echo htmlspecialchars($baseUrl, ENT_QUOTES); ?>?page=rss&amp;apikey=…</code></div>
+			</div>
+			<p class="sw-hint"><?php echo _('Need a new API key? Use "Change user" in the user menu; your apps then need the new key.'); ?></p>
+		</div>
+<?php } ?>
+
 		<div id="edituserpreftab-1" class="ui-tabs-hide">
 			<fieldset>
 				<dl>

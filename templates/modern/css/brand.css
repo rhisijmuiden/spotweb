@@ -533,7 +533,7 @@ html[data-theme] div#toolbar { margin-top: 0 !important; top: 0 !important; }
 
 /* ---------- admin centre: menu on the left, settings on the right ---------- */
 
-body.modern-config #editsettingstab.sw-admin {
+body.modern-config .ui-tabs.sw-admin {
   display: grid !important;
   grid-template-columns: 240px minmax(0, 1fr);
   grid-template-rows: auto 1fr auto;
@@ -593,12 +593,14 @@ body.modern-config .sw-admin > .ui-tabs-panel {
   padding: 28px 36px !important;
   min-width: 0;
 }
-body.modern-config .sw-admin > .editSettingsButtons {
+body.modern-config .sw-admin > .editSettingsButtons,
+body.modern-config .sw-admin > .editprefsButtons {
   grid-column: 2; grid-row: 3;
   padding: 16px 36px 28px;
   display: flex; gap: 10px;
 }
-body.modern-config .sw-admin > .editSettingsButtons .clear { display: none; }
+body.modern-config .sw-admin > .editSettingsButtons .clear,
+body.modern-config .sw-admin > .editprefsButtons .clear { display: none; }
 body.modern-config .sw-admin .sw-admin-section {
   margin: 0 0 12px; font-size: 16px; font-weight: 600; color: var(--sw-text);
 }
@@ -623,11 +625,12 @@ body.modern-config .sw-check-list label { display: flex; align-items: center; ga
 body.modern-config .sw-hint { color: var(--sw-text-2); font-size: 13px; margin: 0; }
 
 @media (max-width: 760px) {
-  body.modern-config #editsettingstab.sw-admin { grid-template-columns: 1fr; }
+  body.modern-config .ui-tabs.sw-admin { grid-template-columns: 1fr; }
   body.modern-config .sw-admin > ul.sw-admin-nav,
   body.modern-config .sw-admin > .sw-admin-links,
   body.modern-config .sw-admin > .ui-tabs-panel,
-  body.modern-config .sw-admin > .editSettingsButtons { grid-column: 1; grid-row: auto; }
+  body.modern-config .sw-admin > .editSettingsButtons,
+body.modern-config .sw-admin > .editprefsButtons { grid-column: 1; grid-row: auto; }
   body.modern-config .sw-admin > .ui-tabs-panel { padding: 20px 16px !important; }
 }
 body.modern-config form.editsettingsform {
@@ -705,7 +708,46 @@ body.modern-config .sw-pill-web { background: var(--sw-warning-soft); color: var
 body.modern-config .sw-pill-rss { background: var(--sw-info-soft); color: var(--sw-info); }
 body.modern-config .sw-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--sw-border); color: var(--sw-text); font-size: 14px; }
 body.modern-config .sw-row span:first-child { color: var(--sw-text-2); }
-body.modern-config .sw-admin.sw-nosave > .editSettingsButtons { display: none !important; }
+body.modern-config .sw-admin.sw-nosave > .editSettingsButtons,
+body.modern-config .sw-admin.sw-nosave > .editprefsButtons { display: none !important; }
 body.modern-config .sw-limit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 12px 0 28px; }
 body.modern-config .sw-limit-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 13px !important; }
 body.modern-config .sw-limit-grid input { width: 100%; }
+
+/* ---------- account: who, history, API ---------- */
+body.modern-config .sw-account { grid-template-rows: auto 1fr !important; }
+body.modern-config .sw-account > ul.sw-admin-nav { grid-row: 1 / span 2 !important; }
+body.modern-config .sw-account > .ui-tabs-panel { grid-row: 1 !important; }
+body.modern-config .sw-account > .editprefsButtons { grid-row: 2 !important; align-self: start; }
+body.modern-config li.sw-account-who { display: flex !important; align-items: center; gap: 12px; padding-bottom: 14px !important; }
+body.modern-config .sw-avatar {
+  width: 40px; height: 40px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center;
+  background: var(--sw-accent); color: var(--sw-on-accent); font: 700 17px var(--sw-font);
+}
+body.modern-config li.sw-account-who strong { display: block; font: 600 15px var(--sw-font); color: var(--sw-text); }
+body.modern-config li.sw-account-who small { display: block; font: 400 12px var(--sw-font); color: var(--sw-muted); letter-spacing: 0; text-transform: none; }
+body.modern-config .sw-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
+body.modern-config .sw-grow { flex: 1; }
+body.modern-config button.sw-chip {
+  height: 34px; padding: 0 14px; border-radius: 999px; cursor: pointer; font: 500 13px var(--sw-font);
+  border: 1px solid var(--sw-border-strong); background: var(--sw-surface-2); color: var(--sw-text-2);
+}
+body.modern-config button.sw-chip:hover { color: var(--sw-text); }
+body.modern-config button.sw-chip.is-active { background: var(--sw-accent-soft); color: var(--sw-accent-text); border-color: transparent; }
+body.modern-config button.sw-chip-plain { border-radius: 8px; height: 30px; }
+body.modern-config .sw-nowrap { white-space: nowrap; }
+body.modern-config .sw-history-table a { color: var(--sw-text) !important; font-weight: 500; }
+body.modern-config .sw-history-table a:hover { color: var(--sw-accent-text) !important; }
+body.modern-config .sw-keyvals .sw-row { align-items: center; }
+body.modern-config .sw-secret { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; }
+body.modern-config .sw-panel.sw-table-wrap { padding: 4px 8px; }
+body.modern-config form.edituserprefsform {
+  border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important;
+}
+body.modern-config .closeuserpreferences a.toggle {
+  color: var(--sw-text-2) !important; border: 1px solid var(--sw-border-strong) !important;
+  background: var(--sw-surface) !important; border-radius: 8px !important;
+}
+body.modern-config .closeuserpreferences a.toggle:hover { color: var(--sw-text) !important; }
+body.modern-config .sw-admin > ul.sw-admin-nav li.sw-account-who { display: flex !important; flex-direction: row; }
+body.modern-config .sw-history-table a { text-decoration: none !important; }

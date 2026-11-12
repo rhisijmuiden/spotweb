@@ -2204,3 +2204,78 @@ msgstr "NZB-downloads via de API per dag"
 
 msgid "API limits must be whole numbers between 0 and 1,000,000"
 msgstr "API-limieten moeten hele getallen tussen 0 en 1.000.000 zijn"
+
+msgid "My account"
+msgstr "Mijn account"
+
+msgid "API key &amp; apps"
+msgstr "API-sleutel &amp; apps"
+
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+msgid "Everything you downloaded, and everything your apps picked up with your API key."
+msgstr "Alles wat je zelf hebt gedownload, en alles wat je apps met je API-sleutel hebben opgehaald."
+
+msgid "Last 7 days"
+msgstr "Laatste 7 dagen"
+
+msgid "By you"
+msgstr "Door jou"
+
+msgid "By apps (API)"
+msgstr "Door apps (API)"
+
+msgid "Show"
+msgstr "Toon"
+
+msgid "All"
+msgstr "Alles"
+
+msgid "By me"
+msgstr "Door mij"
+
+msgid "Export CSV"
+msgstr "Exporteer CSV"
+
+msgid "When"
+msgstr "Wanneer"
+
+msgid "Spot"
+msgstr "Spot"
+
+msgid "Grabbed by"
+msgstr "Opgehaald door"
+
+msgid "Sent to"
+msgstr "Verstuurd naar"
+
+msgid "App"
+msgstr "App"
+
+msgid "You"
+msgstr "Jij"
+
+msgid "(spot no longer available)"
+msgstr "(spot niet meer beschikbaar)"
+
+msgid "Nothing downloaded yet. New downloads show up here."
+msgstr "Nog niets gedownload. Nieuwe downloads verschijnen hier."
+
+msgid "Connect your apps"
+msgstr "Koppel je apps"
+
+msgid "Add Spotweb as a Newznab indexer in Prowlarr, Sonarr or Radarr with these details. Keep your API key private: it gives access to your account."
+msgstr "Voeg Spotweb met deze gegevens toe als Newznab-indexer in Prowlarr, Sonarr of Radarr. Houd je API-sleutel geheim: daarmee kom je in je account."
+
+msgid "URL"
+msgstr "URL"
+
+msgid "API path"
+msgstr "API-pad"
+
+msgid "Copy"
+msgstr "Kopieer"
+
+msgid "Need a new API key? Use \"Change user\" in the user menu; your apps then need the new key."
+msgstr "Nieuwe API-sleutel nodig? Gebruik \"Gebruiker wijzigen\" in het gebruikersmenu; je apps hebben daarna de nieuwe sleutel nodig."

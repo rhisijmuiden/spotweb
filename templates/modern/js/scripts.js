@@ -492,7 +492,12 @@ function initializeSettingsPage() {
  * Initializes the user preferences screen
  */
 function initializeUserPreferencesScreen() {
-	$("#edituserpreferencetabs").tabs();
+	$("#edituserpreferencetabs").tabs({
+		show: function (event, ui) {
+			$("#edituserpreferencetabs").toggleClass("sw-nosave", $(ui.panel).is("[data-sw-nosave]"));
+		}
+	});
+	initAccountPages();
 
 	/* If the user preferences tab is loaded, make the filters sortable */
 	$('#edituserpreferencetabs').bind('tabsload', function(event, ui) {
@@ -1525,3 +1530,50 @@ function initDatePicker() {
             maxDate: "today" });
     } // retrieveNewerThanDate
 } // initDatePicker()
+
+
+/*
+ * Account pages: history filter, CSV export and the API key helpers
+ */
+function initAccountPages() {
+	var $history = $('.sw-history');
+	$history.on('click', '[data-sw-filter]', function () {
+		var by = $(this).attr('data-sw-filter');
+		$history.find('[data-sw-filter]').removeClass('is-active');
+		$(this).addClass('is-active');
+		$history.find('tbody tr[data-sw-by]').each(function () {
+			$(this).toggle(by === '' || $(this).attr('data-sw-by') === by);
+		});
+	});
+	$history.on('click', '[data-sw-export]', function () {
+		var lines = [];
+		$history.find('table tr:visible').each(function () {
+			var cells = [];
+			$(this).children('th,td').each(function () {
+				cells.push('"' + $.trim($(this).text()).replace(/"/g, '""') + '"');
+			});
+			lines.push(cells.join(','));
+		});
+		var blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+		var a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = 'spotweb-history.csv';
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+	});
+
+	$('[data-sw-reveal]').on('click', function () {
+		var $code = $(this).siblings('[data-sw-secret]');
+		var shown = $code.data('shown');
+		$code.text(shown ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022' : $code.attr('data-sw-secret'));
+		$code.data('shown', !shown);
+	});
+	$('[data-sw-copy]').on('click', function () {
+		var key = $(this).siblings('[data-sw-secret]').attr('data-sw-secret');
+		var $btn = $(this);
+		if (navigator.clipboard) {
+			navigator.clipboard.writeText(key).then(function () { $btn.addClass('is-active'); setTimeout(function () { $btn.removeClass('is-active'); }, 1200); });
+		}
+	});
+}
