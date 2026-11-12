@@ -39,29 +39,19 @@ class Services_MediaInformation_Imdb extends Services_MediaInformation_Abs
         $mediaInfo = new Dto_MediaInformation();
         $mediaInfo->setValid(false);
         $endPoint = 'find/tt'.$this->getSearchid().'?external_source=imdb_id';
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL            => 'https://api.themoviedb.org/3/'.$endPoint,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING       => '',
-            CURLOPT_HTTPHEADER     => [
-                'Accept: application/json',
-                'Authorization: Bearer '.$token,
-                'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:117.0) Gecko/20100101 Firefox/117.0',
-                'Cache-Control: no-cache',
-                'Host: api.themoviedb.org',
-                'Accept-Encoding: gzip, deflate, br',
-                'Connection: keep-alive',
-            ],
-        ]);
 
-        $response = curl_exec($ch);
-        $err = curl_error($ch);
-
-        if (PHP_MAJOR_VERSION < 8) {
-            // deprecated code
-            curl_close($ch);
-        }
+        /*
+         * IMDB ids never change their title, so cache lookups for a week. Without
+         * the cache every movie search from Prowlarr/Radarr waited on TMDB.
+         */
+        $this->_httpProvider->setBearerAuth($token);
+        $this->_httpProvider->addHttpHeaders(['Accept: application/json']);
+        list($httpCode, $response) = $this->_httpProvider->performCachedGet(
+            'https://api.themoviedb.org/3/'.$endPoint,
+            false,
+            7 * 24 * 60 * 60
+        );
+        $err = ($response === false) ? 'tmdb lookup failed (http '.$httpCode.')' : '';
 
         if ($err) {
             throw new Exception($err);

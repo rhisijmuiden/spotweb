@@ -32,7 +32,7 @@ interface Dao_Spot
 
     public function matchSpotMessageIds($hdrList);
 
-    public function getSpotCount($sqlFilter, $additionalTableList);
+    public function getSpotCount($sqlFilter, $additionalTableList, $maxCount = 0);
 
     public function getSpotCountPerHour($limit);
 

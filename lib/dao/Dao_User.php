@@ -16,6 +16,8 @@ interface Dao_User
 
     public function setUser($user);
 
+    public function setUserLastApiUsage($userId, $stamp);
+
     public function setUserPassword($userarr);
 
     public function setUserRsaKeys($userId, $publicKey, $privateKey);

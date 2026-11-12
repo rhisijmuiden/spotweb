@@ -736,7 +736,12 @@ class Services_Search_QueryParser
                 $ftsEng = dbfts_abs::Factory($this->_dbEng);
                 $parsedTextQueryResult = $ftsEng->createTextQuery($searches, $additionalFields);
 
-                $filterValueSql['AND'][] = ' ('.implode(' '.$searches[0]['booloper'].' ', $parsedTextQueryResult['filterValueSql']).') ';
+                $textFilter = ' ('.implode(' '.$searches[0]['booloper'].' ', $parsedTextQueryResult['filterValueSql']).') ';
+                if (!empty($parsedTextQueryResult['filterPrefix'])) {
+                    /* an index-friendly condition every alternative has in common */
+                    $textFilter = ' ('.$parsedTextQueryResult['filterPrefix'].' AND '.$textFilter.') ';
+                } // if
+                $filterValueSql['AND'][] = $textFilter;
 
                 $additionalTables = array_merge($additionalTables, $parsedTextQueryResult['additionalTables']);
                 $additionalFields = array_merge($additionalFields, $parsedTextQueryResult['additionalFields']);

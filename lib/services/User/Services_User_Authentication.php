@@ -237,9 +237,15 @@ class Services_User_Authentication
              */
             $userRecord['user'] = $this->_userDao->getUser($userId);
 
-            // and use the userrecord to update the lastapiusage time
-            $userRecord['user']['lastapiusage'] = time();
-            $this->_userDao->setUser($userRecord['user']);
+            /*
+             * Update the lastapiusage time. API clients poll often, so we only
+             * write it once a minute and without rewriting the whole user record.
+             */
+            $now = time();
+            if (($now - (int) $userRecord['user']['lastapiusage']) >= 60) {
+                $userRecord['user']['lastapiusage'] = $now;
+                $this->_userDao->setUserLastApiUsage($userId, $now);
+            } // if
 
             // Initialize the security system
             $userRecord['security'] = new SpotSecurity(

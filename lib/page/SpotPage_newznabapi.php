@@ -2,6 +2,11 @@
 
 class SpotPage_newznabapi extends SpotPage_Abs
 {
+    /*
+     * Counting stops this many results past the requested offset, see search()
+     */
+    const MAX_COUNTED_RESULTS = 1000;
+
     private $_params;
 
     public function __construct(Dao_Factory $daoFactory, Services_Settings_Container $settings, array $currentSession, array $params)
@@ -357,19 +362,6 @@ class SpotPage_newznabapi extends SpotPage_Abs
             $svcUserFilter->getIndexFilter($this->_currentSession['user']['userid'])
         );
         /*
-         * Calculate actual total count for newznab response
-         */
-        $additionalTableList = '';
-        foreach ($parsedSearch['additionalTables'] as $additionalTable) {
-            $additionalTableList = ', '.$additionalTable.$additionalTableList;
-        }
-        $total = $this->_daoFactory->getSpotDao()->getSpotCount(
-            $parsedSearch['filter'],
-            $additionalTableList
-        );
-
-        //$this->showResults($spotsTmp, $offset, $outputtype, $total);
-        /*
         * Actually fetch the spots, we always perform
         * this action even when the watchlist is editted
         */
@@ -380,8 +372,29 @@ class SpotPage_newznabapi extends SpotPage_Abs
             $limit,
             $parsedSearch
         );
+        $offset = (int) ($pageNr * $limit);
 
-        $this->showResults($spotsTmp, $pageNr * $limit, $outputtype, $total);
+        /*
+         * Calculate the total for the newznab response. When this page is the
+         * last one we already know the total, so we skip the (expensive) count.
+         * Otherwise we count, but stop at a maximum: API clients such as
+         * Prowlarr page by date and only need to know there are more results.
+         */
+        if (!$spotsTmp['hasmore']) {
+            $total = $offset + count($spotsTmp['list']);
+        } else {
+            $additionalTableList = '';
+            foreach ($parsedSearch['additionalTables'] as $additionalTable) {
+                $additionalTableList = ', '.$additionalTable.$additionalTableList;
+            }
+            $total = $this->_daoFactory->getSpotDao()->getSpotCount(
+                $parsedSearch['filter'],
+                $additionalTableList,
+                $offset + max(self::MAX_COUNTED_RESULTS, $limit + 1)
+            );
+        } // else
+
+        $this->showResults($spotsTmp, $offset, $outputtype, $total);
     }
 
     // search

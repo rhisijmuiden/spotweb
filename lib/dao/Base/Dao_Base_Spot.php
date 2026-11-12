@@ -729,26 +729,50 @@ class Dao_Base_Spot implements Dao_Spot
      * Returns the amount of spots currently in the database.
      */
     // getSpotCount
-    public function getSpotCount($sqlFilter, $additionalTableList)
+    public function getSpotCount($sqlFilter, $additionalTableList, $maxCount = 0)
     {
         SpotTiming::start(__CLASS__.'::'.__FUNCTION__);
+        $maxCount = (int) $maxCount;
+
         if (empty($sqlFilter)) {
-            $query = 'SELECT COUNT(1) FROM spots AS s';
+            $innerQuery = 'FROM spots AS s';
         } else {
-            $query = 'SELECT COUNT(1) FROM spots AS s '.
-                          $additionalTableList.
-                        ' LEFT JOIN spotsfull AS f ON s.messageid = f.messageid
-						LEFT JOIN spotstatelist AS l ON s.messageid = l.messageid
-						LEFT JOIN spotteridblacklist as bl ON ((bl.spotterid = s.spotterid) AND (bl.ouruserid = -1) AND (bl.idtype = 1))
-						WHERE '.$sqlFilter.' AND (bl.spotterid IS NULL)';
+            /*
+             * Only join the tables the filter actually refers to. Joining spotsfull
+             * and spotstatelist on every count made counting on large databases
+             * needlessly expensive, and spotstatelist joined without a user
+             * condition could even count a spot more than once.
+             */
+            $joins = '';
+            if (preg_match('/\bf\./', $sqlFilter)) {
+                $joins .= ' LEFT JOIN spotsfull AS f ON s.messageid = f.messageid ';
+            } // if
+            if (preg_match('/\bl\./', $sqlFilter)) {
+                $joins .= ' LEFT JOIN spotstatelist AS l ON s.messageid = l.messageid ';
+            } // if
+
+            $innerQuery = 'FROM spots AS s '.
+                            $additionalTableList.
+                            $joins.
+                            ' LEFT JOIN spotteridblacklist as bl ON ((bl.spotterid = s.spotterid) AND (bl.ouruserid = -1) AND (bl.idtype = 1))
+                            WHERE '.$sqlFilter.' AND (bl.spotterid IS NULL)';
         } // else
+
+        /*
+         * With a maximum we stop counting once it is reached. Exact totals of
+         * hundreds of thousands of spots are expensive and API clients do not
+         * need them: they page by date.
+         */
+        if ($maxCount > 0) {
+            $query = 'SELECT COUNT(1) FROM (SELECT 1 '.$innerQuery.' LIMIT '.$maxCount.') AS cnt';
+        } else {
+            $query = 'SELECT COUNT(1) '.$innerQuery;
+        } // else
+
         $cnt = $this->_conn->singleQuery($query);
         SpotTiming::stop(__CLASS__.'::'.__FUNCTION__, [$sqlFilter]);
-        if ($cnt == null) {
-            return 0;
-        } else {
-            return $cnt;
-        } // if
+
+        return ($cnt == null) ? 0 : (int) $cnt;
     }
 
     // getSpotCount

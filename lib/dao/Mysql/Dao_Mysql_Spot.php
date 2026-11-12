@@ -193,6 +193,19 @@ class Dao_Mysql_Spot extends Dao_Base_Spot
     public function getQuerystr($extendedFieldList, $additionalTableList, $additionalJoinList, $ourUserId, $criteriaFilter, $sortList, $limit, $offset)
     {
         /*
+         * A text search which can only be done with LIKE (no fulltext MATCH) is
+         * often very selective. MySQL then tends to walk the complete date index
+         * to avoid sorting, doing a random row lookup for every spot in the
+         * database (seconds to minutes on large databases). Scanning the table
+         * and sorting the few matches is much faster in that case.
+         */
+        $indexHint = '';
+        if ((strpos($criteriaFilter, 'MATCH(') === false) &&
+            preg_match('/s\.(title|poster|tag)\s+LIKE/i', $criteriaFilter)) {
+            $indexHint = ' IGNORE INDEX FOR ORDER BY (idx_spots_3) ';
+        } // if
+
+        /*
          * Run the query with a limit always increased by one. this allows us to
          * check whether any more results are available
          */
@@ -222,7 +235,7 @@ class Dao_Mysql_Spot extends Dao_Base_Spot
 												f.verified AS verified,
 												COALESCE(bl.idtype, wl.idtype, gwl.idtype) AS idtype
 												'.$extendedFieldList.'
-									 FROM spots AS s '.
+									 FROM spots AS s '.$indexHint.
                                     $additionalTableList.
                                     $additionalJoinList.
                                   ' LEFT JOIN spotstatelist AS l FORCE INDEX FOR JOIN (idx_spotstatelist_1) ON ((s.messageid = l.messageid) AND (l.ouruserid = '.$this->_conn->safe((int) $ourUserId).')) 
