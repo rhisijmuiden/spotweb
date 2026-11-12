@@ -87,6 +87,9 @@ Installation can vary by platform. Consult the tutorials available on the [Spotw
 6. Open `install.php` in your browser and resolve any checks that are not marked `OK`.
 7. Follow the wizard and perform the instructions as given by the wizard.
 
+## Upgrading an existing installation
+Upgrading keeps your database, users and settings. In short: back up your database, update the files (`git pull` or unpack the new ZIP over the old folder), then run `php bin/upgrade-db.php`. See **[docs/upgrading.md](docs/upgrading.md)** for the full step-by-step guide, and [docs/webserver.md](docs/webserver.md) for nginx, Caddy and Cloudflare.
+
 ## Troubleshooting
 When a blank page appears instead of your Spotweb installation, this usually indicates a syntax error in `ownsettings.php` or `dbsettings.inc.php`, or a configuration error in the web server.
 

@@ -63,8 +63,13 @@ abstract class SpotPage_Abs
     public function sendExpireHeaders($preventCaching)
     {
         if ($preventCaching) {
-            header('Cache-Control: private, post-check=1, pre-check=2, max-age=1, must-revalidate');
+            /*
+             * Pages differ per user, so neither the browser nor any cache in
+             * between (Cloudflare, an nginx fastcgi_cache) may store or share them
+             */
+            header('Cache-Control: private, no-store, max-age=0, must-revalidate');
             header('Expires: Mon, 12 Jul 2000 01:00:00 GMT');
+            header('Vary: Cookie');
         } else {
             // send an expire header claiming this content is at least valid for 10 years
             header('Cache-Control: public');
