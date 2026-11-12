@@ -79,7 +79,20 @@ class SpotPage_editsettings extends SpotPage_Abs
         //- display stuff -#
         $svcRegistration = new Services_Admin_Registration($this->_settings, $this->_daoFactory->getUserDao());
 
+        // activity figures for Admin > Activity
+        $svcStats = new Services_Stats_Requests($this->_daoFactory->getConnection());
+        try {
+            $activity = ['daily' => $svcStats->getDaily(14),
+                'topusers'       => $svcStats->getTopUsers(30, 10),
+                'downloads'      => $svcStats->getDownloadSummary(7),
+                'spots'          => $svcStats->getSpotRange(), ];
+        } catch (Exception $x) {
+            // tables missing until bin/upgrade-db.php has run
+            $activity = null;
+        } // catch
+
         $this->template('editsettings', ['editsettingsform' => $this->_settings,
+            'activity'                                      => $activity,
             'registrationmode'                              => $svcRegistration->getMode(),
             'newusergroups'                                 => $svcRegistration->getNewUserGroups(),
             'result'                                        => $result,

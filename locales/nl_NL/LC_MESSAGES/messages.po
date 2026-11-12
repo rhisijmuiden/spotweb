@@ -2117,3 +2117,72 @@ msgstr "Voeg zoektermen of filters toe zoals in de adresbalk van de spotlijst, b
 
 msgid "A user also needs the RSS and API permissions in their group (User &amp; group management)."
 msgstr "Een gebruiker heeft ook de RSS- en API-rechten in zijn groep nodig (Gebruikers- &amp; groepsbeheer)."
+
+msgid "Activity"
+msgstr "Activiteit"
+
+msgid "Run bin/upgrade-db.php to start collecting activity figures."
+msgstr "Draai bin/upgrade-db.php om activiteitscijfers te gaan verzamelen."
+
+msgid "Today"
+msgstr "Vandaag"
+
+msgid "Requests"
+msgstr "Verzoeken"
+
+msgid "Via the API"
+msgstr "Via de API"
+
+msgid "Via the web interface"
+msgstr "Via de webinterface"
+
+msgid "Via RSS"
+msgstr "Via RSS"
+
+msgid "Requests per day"
+msgstr "Verzoeken per dag"
+
+msgid "API"
+msgstr "API"
+
+msgid "Web"
+msgstr "Web"
+
+msgid "RSS"
+msgstr "RSS"
+
+msgid "Stacked bar chart of requests per day for the last 14 days"
+msgstr "Gestapelde staafgrafiek van verzoeken per dag over de laatste 14 dagen"
+
+msgid "Most active users (30 days)"
+msgstr "Actiefste gebruikers (30 dagen)"
+
+msgid "User"
+msgstr "Gebruiker"
+
+msgid "Total"
+msgstr "Totaal"
+
+msgid "Mostly via"
+msgstr "Vooral via"
+
+msgid "No requests counted yet."
+msgstr "Nog geen verzoeken geteld."
+
+msgid "NZB downloads (7 days)"
+msgstr "NZB-downloads (7 dagen)"
+
+msgid "Web interface"
+msgstr "Webinterface"
+
+msgid "Spots in the database"
+msgstr "Spots in de database"
+
+msgid "Oldest spot"
+msgstr "Oudste spot"
+
+msgid "Newest spot"
+msgstr "Nieuwste spot"
+
+msgid "Retrieve spots newer than"
+msgstr "Spots ophalen nieuwer dan"

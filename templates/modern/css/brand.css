@@ -659,3 +659,50 @@ body.modern-config code.sw-code {
   color: var(--sw-text); word-break: break-all;
 }
 body.modern-config .sw-check-list label { font-size: 14px !important; font-weight: 400 !important; }
+
+/* ---------- admin: activity ---------- */
+body.modern-config .sw-activity { --c-api: var(--sw-accent); --c-web: #F59E0B; --c-rss: #5B9BD5; }
+body.modern-config .sw-activity .sw-c-api { background: var(--c-api); }
+body.modern-config .sw-activity .sw-c-web { background: var(--c-web); }
+body.modern-config .sw-activity .sw-c-rss { background: var(--c-rss); }
+body.modern-config .sw-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+body.modern-config .sw-kpi, body.modern-config .sw-panel {
+  background: var(--sw-surface-2); border: 1px solid var(--sw-border); border-radius: 14px; padding: 16px 18px;
+}
+body.modern-config .sw-kpi { display: flex; flex-direction: column; gap: 4px; }
+body.modern-config .sw-kpi span { color: var(--sw-text-2); font-size: 13px; }
+body.modern-config .sw-kpi strong, body.modern-config .sw-big {
+  font-family: var(--sw-font-display); font-size: 28px; font-weight: 600; color: var(--sw-text);
+  font-variant-numeric: tabular-nums; margin: 0 0 8px;
+}
+body.modern-config .sw-panel { margin-bottom: 16px; }
+body.modern-config .sw-panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+body.modern-config .sw-panel-grid .sw-panel { margin: 0; }
+body.modern-config .sw-panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; }
+body.modern-config .sw-legend { display: flex; gap: 14px; font-size: 12px; color: var(--sw-text-2); }
+body.modern-config .sw-legend span { display: flex; align-items: center; gap: 6px; }
+body.modern-config .sw-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+body.modern-config .sw-bars { display: flex; align-items: stretch; gap: 8px; height: 220px; padding-top: 6px; }
+body.modern-config .sw-bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+body.modern-config .sw-bar-stack {
+  flex: 1; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px;
+  border-bottom: 1px solid var(--sw-border-strong);
+}
+body.modern-config .sw-bar-stack i { display: block; width: 100%; min-height: 0; }
+body.modern-config .sw-bar-stack i:first-child { border-radius: 4px 4px 0 0; }
+body.modern-config .sw-bar-total, body.modern-config .sw-bar-label { font-size: 11px; color: var(--sw-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+body.modern-config .sw-table-wrap { overflow-x: auto; }
+body.modern-config table.sw-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+body.modern-config table.sw-table th {
+  text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--sw-muted); padding: 8px 10px; border-bottom: 1px solid var(--sw-border);
+}
+body.modern-config table.sw-table td { padding: 10px; border-bottom: 1px solid var(--sw-border); color: var(--sw-text); }
+body.modern-config table.sw-table .num, body.modern-config .sw-row .num { text-align: right; font-variant-numeric: tabular-nums; }
+body.modern-config .sw-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+body.modern-config .sw-pill-api { background: var(--sw-accent-soft); color: var(--sw-accent-text); }
+body.modern-config .sw-pill-web { background: var(--sw-warning-soft); color: var(--sw-warning); }
+body.modern-config .sw-pill-rss { background: var(--sw-info-soft); color: var(--sw-info); }
+body.modern-config .sw-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--sw-border); color: var(--sw-text); font-size: 14px; }
+body.modern-config .sw-row span:first-child { color: var(--sw-text-2); }
+body.modern-config .sw-admin.sw-nosave > .editSettingsButtons { display: none !important; }
