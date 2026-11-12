@@ -762,6 +762,7 @@ return array(
     'Services_Providers_SpotImage' => $baseDir . '/lib/services/Providers/Services_Providers_SpotImage.php',
     'Services_Providers_SpotList' => $baseDir . '/lib/services/Providers/Services_Providers_SpotList.php',
     'Services_Providers_Statistics' => $baseDir . '/lib/services/Providers/Services_Providers_Statistics.php',
+    'Services_Retriever_Backfill' => $baseDir . '/lib/services/Retriever/Services_Retriever_Backfill.php',
     'Services_Retriever_Base' => $baseDir . '/lib/services/Retriever/Services_Retriever_Base.php',
     'Services_Retriever_Comments' => $baseDir . '/lib/services/Retriever/Services_Retriever_Comments.php',
     'Services_Retriever_Progress' => $baseDir . '/lib/services/Retriever/Services_Retriever_Progress.php',

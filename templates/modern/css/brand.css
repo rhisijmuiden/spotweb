@@ -775,3 +775,11 @@ body.modern-config .sw-retrieve-facts { display: flex; flex-wrap: wrap; gap: 6px
 body.modern-config .sw-retrieve-facts span:empty { display: none; }
 body.modern-config .sw-retrieve-error { color: var(--sw-danger) !important; margin-top: 10px; }
 @media (prefers-reduced-motion: reduce) { body.modern-config .sw-progress i { transition: none; animation: none !important; } }
+body.modern-config .sw-gap-top { margin-top: 32px !important; }
+body.modern-config .sw-backfill-foot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding-top: 12px; }
+body.modern-config button.sw-btn-secondary {
+  height: 40px; padding: 0 18px; border-radius: 10px; cursor: pointer; font: 600 14px var(--sw-font);
+  background: var(--sw-surface); color: var(--sw-text); border: 1px solid var(--sw-border-strong);
+}
+body.modern-config button.sw-btn-secondary:hover { border-color: var(--sw-accent); }
+body.modern-config button.sw-btn-secondary:disabled { opacity: .45; cursor: default; border-color: var(--sw-border-strong); }

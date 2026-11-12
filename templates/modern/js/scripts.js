@@ -1589,7 +1589,7 @@ function initAdminRetrieve() {
 	var $title = $panel.find('.sw-retrieve-title');
 	var $sub = $panel.find('.sw-retrieve-sub');
 	var $bar = $panel.find('.sw-progress');
-	var $btn = $panel.find('[data-sw-retrieve-go]');
+	var $btn = $('[data-sw-retrieve-go]');
 	var $err = $panel.find('.sw-retrieve-error');
 	var idleSub = $sub.text();
 
@@ -1618,7 +1618,9 @@ function initAdminRetrieve() {
 		$t.text(status !== 'idle' && (totals.spots || totals.comments) ? fmt(totals.spots) + ' ' + $t.attr('data-sw-label-spots') + ', ' + fmt(totals.comments) + ' ' + $t.attr('data-sw-label-comments') : '');
 		$panel.find('[data-sw-fact=elapsed]').text(state.started && status !== 'idle' ? duration((state.updated || state.started) - state.started) : '');
 		$err.prop('hidden', status !== 'failed').text(state.message || '');
-		$btn.prop('disabled', status === 'running');
+		$btn.each(function () {
+			$(this).prop('disabled', status === 'running' || ($(this).attr('data-sw-retrieve-go') === 'backfill' && $(this).is('[data-sw-never]')));
+		});
 	}
 	function poll() {
 		$.getJSON($panel.attr('data-sw-retrieve-status')).done(function (state) {
@@ -1628,11 +1630,14 @@ function initAdminRetrieve() {
 		});
 	}
 	$btn.on('click', function () {
+		var data = { 'adminretrieveform[xsrfid]': $panel.attr('data-sw-xsrf') };
+		data[$(this).attr('data-sw-retrieve-go') === 'backfill' ? 'adminretrieveform[submitbackfill]' : 'adminretrieveform[submitstart]'] = '1';
 		$btn.prop('disabled', true);
+		$('html, body').animate({ scrollTop: $panel.offset().top - 90 }, 200);
 		$.ajax({
 			url: $panel.attr('data-sw-retrieve-start'),
 			type: 'POST',
-			data: { 'adminretrieveform[xsrfid]': $panel.attr('data-sw-xsrf'), 'adminretrieveform[submitstart]': '1' },
+			data: data,
 			dataType: 'json'
 		}).always(function () {
 			render({ status: 'running', phase: 'connecting', percent: 0, started: Math.floor(Date.now() / 1000) });

@@ -26,7 +26,7 @@ try {
     SpotTiming::disable();
 
     // Initialize commandline arguments
-    SpotCommandline::initialize(['force', 'debug', 'retro', 'timing'], ['force' => false, 'timing' => false, 'debug' => false, 'retro' => false]);
+    SpotCommandline::initialize(['force', 'debug', 'retro', 'timing', 'backfill'], ['force' => false, 'timing' => false, 'debug' => false, 'retro' => false, 'backfill' => false]);
 
     // Allow for timing to be displayed after retrieval of spots
     $showTiming = SpotCommandline::get('timing');
@@ -108,6 +108,13 @@ try {
     */
     $retroMode = SpotCommandline::get('retro');
 
+    /*
+     * Backfill: fetch spots older than the oldest one we have, back to the
+     * "retrieve spots newer than" date (php retrieve.php --backfill, or
+     * Admin > Retrieve)
+     */
+    $backfillMode = (bool) SpotCommandline::get('backfill') || defined('SPOTWEB_RETRIEVE_BACKFILL');
+
     $retrieveLock = new Services_Retriever_CommandLock($daoFactory->getConnection(), Services_Retriever_CommandLock::LockName, __DIR__);
     if (!$retrieveLock->acquire()) {
         throw new RetrieverRunningException();
@@ -119,7 +126,7 @@ try {
 
         // share progress with Admin > Retrieve
         Services_Retriever_Progress::attach($daoFactory->getConnection());
-        Services_Retriever_Progress::start(defined('SPOTWEB_RETRIEVE_FROM_ADMIN') ? 'admin' : 'cron', $retroMode ? 'backfill' : 'normal');
+        Services_Retriever_Progress::start(defined('SPOTWEB_RETRIEVE_FROM_ADMIN') ? 'admin' : 'cron', ($retroMode || $backfillMode) ? 'backfill' : 'normal');
 
         /*
          * Retention cleanup. Basically when we ask for Spotweb to only
@@ -130,7 +137,7 @@ try {
          * The full resources are everything beyond the bare minimum to
          * display the spots, so we delete nzb's, images, comments, etc.
          */
-        if (($settings->get('retention') > 0) && (!$retroMode)) {
+        if (($settings->get('retention') > 0) && (!$retroMode) && (!$backfillMode)) {
             echo 'Removing Spot information which is beyond retention period,';
 
             $spotDao = $daoFactory->getSpotDao();
@@ -162,13 +169,27 @@ try {
         /*
          * Actually retrieve spots from the server
          */
-        $retriever = new Services_Retriever_Spots(
-            $daoFactory,
-            $settings,
-            $forceMode,
-            $retroMode
-        );
-        $newSpotCount = $retriever->perform();
+        if ($backfillMode) {
+            $oldestSpot = (int) $daoFactory->getConnection()->singleQuery('SELECT MIN(stamp) FROM spots');
+            $backfillFrom = max(1230789600, (int) $settings->get('retrieve_newer_than'));
+            if (($oldestSpot === 0) || ($backfillFrom >= $oldestSpot)) {
+                echo 'Nothing to backfill: the oldest spot is already older than the start date.'.PHP_EOL;
+                $retriever = null;
+                $newSpotCount = 0;
+            } else {
+                echo 'Backfilling spots from '.date('Y-m-d', $backfillFrom).' to '.date('Y-m-d', $oldestSpot).PHP_EOL;
+                $retriever = new Services_Retriever_Backfill($daoFactory, $settings, $backfillFrom, $oldestSpot);
+                $newSpotCount = $retriever->perform();
+            } // else
+        } else {
+            $retriever = new Services_Retriever_Spots(
+                $daoFactory,
+                $settings,
+                $forceMode,
+                $retroMode
+            );
+            $newSpotCount = $retriever->perform();
+        } // else
         Services_Retriever_Progress::addTotal('spots', $newSpotCount);
 
         // Show the cumulative timings of the spotsretrieval
@@ -199,7 +220,7 @@ try {
         /*
          * Should we retrieve comments?
          */
-        if ($settings->get('retrieve_comments')) {
+        if ($settings->get('retrieve_comments') && !$backfillMode) {
             $retriever = new Services_Retriever_Comments(
                 $daoFactory,
                 $settings,
@@ -220,7 +241,7 @@ try {
         /*
          * Retrieval of reports
          */
-        if ($settings->get('retrieve_reports') && !$retroMode) {
+        if ($settings->get('retrieve_reports') && !$retroMode && !$backfillMode) {
             $retriever = new Services_Retriever_Reports(
                 $daoFactory,
                 $settings,

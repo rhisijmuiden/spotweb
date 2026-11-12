@@ -2330,3 +2330,18 @@ msgstr "Je hebt geen rechten om spots op te halen."
 
 msgid "A retrieve is already running."
 msgstr "Er loopt al een ophaalronde."
+
+msgid "Backfill older spots"
+msgstr "Oudere spots bijhalen"
+
+msgid "Moved \"Retrieve spots newer than\" further into the past? Fetch the spots from that date up to your oldest spot, without emptying the database. Spots you already have are skipped."
+msgstr "Heb je \"Spots ophalen nieuwer dan\" verder terug in de tijd gezet? Haal dan de spots op van die datum tot aan je oudste spot, zonder de database te legen. Spots die je al hebt worden overgeslagen."
+
+msgid "About %d days to fetch. This can take a long time; the progress shows above."
+msgstr "Ongeveer %d dagen op te halen. Dit kan lang duren; de voortgang zie je hierboven."
+
+msgid "Nothing to backfill. Set an earlier date under Retrieval &amp; cleanup first."
+msgstr "Niets bij te halen. Stel eerst een eerdere datum in onder Ophalen &amp; opschonen."
+
+msgid "Start backfill"
+msgstr "Bijhalen starten"

@@ -972,6 +972,7 @@ class ComposerStaticInit504c4440a019baf1c7be3e9f33abe7d1
         'Services_Providers_SpotImage' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_SpotImage.php',
         'Services_Providers_SpotList' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_SpotList.php',
         'Services_Providers_Statistics' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_Statistics.php',
+        'Services_Retriever_Backfill' => __DIR__ . '/../..' . '/lib/services/Retriever/Services_Retriever_Backfill.php',
         'Services_Retriever_Base' => __DIR__ . '/../..' . '/lib/services/Retriever/Services_Retriever_Base.php',
         'Services_Retriever_Comments' => __DIR__ . '/../..' . '/lib/services/Retriever/Services_Retriever_Comments.php',
         'Services_Retriever_Progress' => __DIR__ . '/../..' . '/lib/services/Retriever/Services_Retriever_Progress.php',

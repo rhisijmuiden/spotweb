@@ -539,6 +539,24 @@ if ($result->isSubmitted()) {
 				</div>
 				<p class="sw-hint sw-retrieve-error" hidden></p>
 			</div>
+
+<?php
+    $oldestSpot = ($activity !== null) ? (int) $activity['spots']['oldest'] : 0;
+    $backfillFrom = max(1230789600, (int) $this->_settings->get('retrieve_newer_than'));
+    $canBackfill = ($oldestSpot > 0) && ($backfillFrom < $oldestSpot);
+?>
+			<h3 class="sw-admin-section sw-gap-top"><?php echo _('Backfill older spots'); ?></h3>
+			<p class="sw-hint"><?php echo _('Moved "Retrieve spots newer than" further into the past? Fetch the spots from that date up to your oldest spot, without emptying the database. Spots you already have are skipped.'); ?></p>
+			<div class="sw-panel sw-backfill">
+				<div class="sw-row"><span><?php echo _('Retrieve spots newer than'); ?></span><span><?php echo date('j M Y', $backfillFrom); ?></span></div>
+				<div class="sw-row"><span><?php echo _('Oldest spot'); ?></span><span><?php echo $oldestSpot ? date('j M Y', $oldestSpot) : '–'; ?></span></div>
+				<div class="sw-backfill-foot">
+					<span class="sw-hint"><?php echo $canBackfill
+                        ? sprintf(_('About %d days to fetch. This can take a long time; the progress shows above.'), (int) ceil(($oldestSpot - $backfillFrom) / 86400))
+                        : _('Nothing to backfill. Set an earlier date under Retrieval &amp; cleanup first.'); ?></span>
+					<button type="button" class="sw-btn-secondary" data-sw-retrieve-go="backfill" <?php echo $canBackfill ? '' : 'disabled data-sw-never'; ?>><?php echo _('Start backfill'); ?></button>
+				</div>
+			</div>
 <?php } else { ?>
 			<p class="sw-hint"><?php echo _('You do not have permission to retrieve spots.'); ?></p>
 <?php } ?>

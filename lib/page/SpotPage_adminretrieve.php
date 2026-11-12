@@ -26,8 +26,8 @@ class SpotPage_adminretrieve extends SpotPage_Abs
         $conn = $this->_daoFactory->getConnection();
 
         // the form action is only set when the XSRF token is valid
-        if ($this->_form['action'] === 'start') {
-            $this->start($conn);
+        if (($this->_form['action'] === 'start') || ($this->_form['action'] === 'backfill')) {
+            $this->start($conn, $this->_form['action'] === 'backfill');
 
             return;
         } // if
@@ -35,7 +35,7 @@ class SpotPage_adminretrieve extends SpotPage_Abs
         $this->sendJson(Services_Retriever_Progress::read($conn));
     }
 
-    private function start(dbeng_abs $conn)
+    private function start(dbeng_abs $conn, $backfill)
     {
         $state = Services_Retriever_Progress::read($conn);
         if ($state['running'] || $this->_daoFactory->getUsenetStateDao()->isRetrieverRunning()) {
@@ -63,6 +63,9 @@ class SpotPage_adminretrieve extends SpotPage_Abs
         } // else
 
         define('SPOTWEB_RETRIEVE_FROM_ADMIN', true);
+        if ($backfill) {
+            define('SPOTWEB_RETRIEVE_BACKFILL', true);
+        } // if
         $GLOBALS['spotwebRetrieveSession'] = $this->_currentSession;
         $GLOBALS['spotwebRetrieveBoot'] = [$this->_settings, $this->_daoFactory, null];
 
