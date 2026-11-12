@@ -2087,3 +2087,33 @@ msgstr "Standaard van de site"
 
 msgid "Invalid theme"
 msgstr "Ongeldig thema"
+
+msgid "API &amp; RSS"
+msgstr "API &amp; RSS"
+
+msgid "Newznab API"
+msgstr "Newznab-API"
+
+msgid "Enable the API for Prowlarr, Sonarr, Radarr and other Newznab clients"
+msgstr "API aanzetten voor Prowlarr, Sonarr, Radarr en andere Newznab-clients"
+
+msgid "Indexer URL for these apps:"
+msgstr "Indexer-URL voor deze apps:"
+
+msgid "API path:"
+msgstr "API-pad:"
+
+msgid "Enable the RSS feed, with a download link to the NZB in every item"
+msgstr "RSS-feed aanzetten, met in elk item een downloadlink naar de NZB"
+
+msgid "Feed address (every user has their own API key, shown in their account):"
+msgstr "Feedadres (elke gebruiker heeft een eigen API-sleutel, te vinden in het eigen account):"
+
+msgid "YOUR-API-KEY"
+msgstr "JOUW-API-SLEUTEL"
+
+msgid "Add search terms or filters the same way as in the address bar of the spot list, for example &amp;search[tree]=cat0_z0 for movies."
+msgstr "Voeg zoektermen of filters toe zoals in de adresbalk van de spotlijst, bijvoorbeeld &amp;search[tree]=cat0_z0 voor films."
+
+msgid "A user also needs the RSS and API permissions in their group (User &amp; group management)."
+msgstr "Een gebruiker heeft ook de RSS- en API-rechten in zijn groep nodig (Gebruikers- &amp; groepsbeheer)."

@@ -36,6 +36,14 @@ class SpotPage_newznabapi extends SpotPage_Abs
             $outputtype = 'xml';
         } // else
 
+        // The admin can switch the API off (Admin > API & RSS)
+        if (!$this->_settings->isEnabled('api_enabled')) {
+            http_response_code(503);
+            $this->showApiError(910);
+
+            return;
+        } // if
+
         /*
          * CAPS function is used to query the server for supported features and the protocol version and other
          * meta data relevant to the implementation. This function doesn't require the client to provide any
@@ -942,6 +950,8 @@ class SpotPage_newznabapi extends SpotPage_Abs
             case 500: $errtext = 'Request limit reached';
                 break;
             case 501: $errtext = 'Download limit reached';
+                break;
+            case 910: $errtext = 'API disabled';
                 break;
             default: $errtext = 'Unknown error';
                 break;

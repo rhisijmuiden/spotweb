@@ -76,6 +76,19 @@ class Services_Settings_Container
 
     // get
 
+    /*
+     * For on/off switches that default to on: a setting that was never
+     * saved counts as enabled. Stored booleans come back as '1' or ''.
+     */
+    public function isEnabled($name)
+    {
+        $value = $this->get($name);
+
+        return ($value === null) ? true : (bool) $value;
+    }
+
+    // isEnabled
+
     /**
      * Removes a certain setting from our settings, and
      * notify our observers.
