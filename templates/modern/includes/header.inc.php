@@ -16,13 +16,42 @@
 		// Guards for legacy globals some plugins expect
 		try { if (typeof window.templates === 'undefined') { window.templates = {}; } } catch (e) { }
 		try { if (typeof window.modern === 'undefined') { window.modern = {}; } } catch (e) { }
-		(function(){
-		  try {
-		    var pref = localStorage.getItem('spotweb_theme') || 'auto';
-		    var mode = pref === 'auto' ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : pref;
-		    document.documentElement.setAttribute('data-theme', mode);
-		  } catch(e) {}
-		})();
+<?php
+    $swThemeNames = [];
+    foreach (Services_Admin_Themes::getThemes() as $swThemeId => $swTheme) {
+        $swThemeNames[$swThemeId] = $swTheme['name'];
+    } // foreach
+?>
+		// Colour theme: the admin picks the site theme, a visitor may override it in the toolbar
+		window.SpotwebThemes = {
+		  site: <?php echo json_encode(Services_Admin_Themes::getSiteTheme($settings)); ?>,
+		  modes: <?php echo json_encode(Services_Admin_Themes::getModes()); ?>,
+		  names: <?php echo json_encode($swThemeNames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+		  label: <?php echo json_encode(_('Theme'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+		  siteLabel: <?php echo json_encode(_('Site default'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+		  getPref: function () {
+		    var p = null;
+		    try { p = localStorage.getItem('spotweb_theme'); } catch (e) {}
+		    if (p === 'light') { p = 'daylight'; } else if (p === 'dark') { p = 'midnight'; }
+		    return (p && this.modes[p]) ? p : 'site';
+		  },
+		  resolve: function (pref) {
+		    var id = (pref === 'site' || !this.modes[pref]) ? this.site : pref;
+		    var mode = this.modes[id];
+		    if (mode === 'auto') {
+		      mode = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+		      return { id: id, mode: mode, palette: mode === 'dark' ? 'midnight' : 'daylight' };
+		    }
+		    return { id: id, mode: mode, palette: id };
+		  },
+		  apply: function (pref) {
+		    var t = this.resolve(pref);
+		    document.documentElement.setAttribute('data-theme', t.mode);
+		    document.documentElement.setAttribute('data-palette', t.palette);
+		    return t;
+		  }
+		};
+		try { window.SpotwebThemes.apply(window.SpotwebThemes.getPref()); } catch (e) {}
 		// Fallback for back button in full-page spot view
 		document.addEventListener('click', function(ev){
 		  var a = ev.target && ev.target.closest ? ev.target.closest('a.closeDetails') : null;

@@ -58,3 +58,25 @@ Text colours meet WCAG AA contrast on their surfaces in both themes.
 
 The design sketch is the reference for new screens (spots overview, admin
 centre, user menu with history, statistics).
+
+## Colour themes
+
+The admin picks the site theme under **Admin → Appearance**; visitors can
+override it for themselves in the toolbar (stored in their browser). Each
+theme only swaps the colour tokens (`html[data-palette="…"]` in
+`templates/modern/css/brand.css`); type, spacing and layout stay the same.
+All text and accent pairs meet WCAG AA contrast.
+
+| Theme | Mode | Background | Accent |
+|---|---|---|---|
+| Automatic | follows the device | Midnight or Daylight | violet |
+| Midnight (house style) | dark | `#0B0F14` | `#8B7CFF` |
+| Daylight | light | `#F5F6F9` | `#6D5DF5` |
+| Ocean | dark | `#071318` | `#22D3EE` |
+| Forest | dark | `#0A120E` | `#34D399` |
+| Ember | dark | `#120D0A` | `#F59E0B` |
+| Paper | light | `#F7F3EC` | `#C2410C` |
+| High contrast | dark | `#000000` | `#FFD400` |
+
+To add a theme: add a token block in `brand.css` and an entry in
+`lib/services/Admin/Services_Admin_Themes.php`.

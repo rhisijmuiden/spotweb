@@ -713,6 +713,7 @@ return array(
     'Services_Actions_SpeedDial' => $baseDir . '/lib/services/Actions/Services_Actions_SpeedDial.php',
     'Services_Actions_SpotStateList' => $baseDir . '/lib/services/Actions/Services_Actions_SpotStateList.php',
     'Services_Admin_Registration' => $baseDir . '/lib/services/Admin/Services_Admin_Registration.php',
+    'Services_Admin_Themes' => $baseDir . '/lib/services/Admin/Services_Admin_Themes.php',
     'Services_BWList_Retriever' => $baseDir . '/lib/services/BWList/Services_BWList_Retriever.php',
     'Services_Format_Creation' => $baseDir . '/lib/services/Format/Services_Format_Creation.php',
     'Services_Format_Parsing' => $baseDir . '/lib/services/Format/Services_Format_Parsing.php',
