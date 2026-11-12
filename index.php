@@ -301,6 +301,18 @@ try {
             break;
             // editsettings
 
+        case 'adminretrieve':
+            $page = new SpotPage_adminretrieve(
+                $daoFactory,
+                $settings,
+                $currentSession,
+                ['adminretrieveform' => $req->getForm('adminretrieveform'),
+                    'action'         => $req->getDef('action', 'status'), ]
+            );
+            $page->render();
+            break;
+            // adminretrieve
+
         case 'edituserprefs':
             $page = new SpotPage_edituserprefs(
                 $daoFactory,

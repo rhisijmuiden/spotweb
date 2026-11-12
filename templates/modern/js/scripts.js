@@ -480,6 +480,7 @@ function initializeUserManagementPage() {
 function initializeSettingsPage() {
     initDatePicker();
     // read-only sections (Activity) have nothing to save, so hide the buttons there
+    initAdminRetrieve();
     $("#editsettingstab").tabs({
         show: function (event, ui) {
             $("#editsettingstab").toggleClass("sw-nosave", $(ui.panel).is("[data-sw-nosave]"));
@@ -1576,4 +1577,68 @@ function initAccountPages() {
 			navigator.clipboard.writeText(key).then(function () { $btn.addClass('is-active'); setTimeout(function () { $btn.removeClass('is-active'); }, 1200); });
 		}
 	});
+}
+
+/*
+ * Admin > Retrieve: start a retrieve and follow its progress
+ */
+function initAdminRetrieve() {
+	var $panel = $('.sw-retrieve-panel');
+	if (!$panel.length) { return; }
+	var timer = null;
+	var $title = $panel.find('.sw-retrieve-title');
+	var $sub = $panel.find('.sw-retrieve-sub');
+	var $bar = $panel.find('.sw-progress');
+	var $btn = $panel.find('[data-sw-retrieve-go]');
+	var $err = $panel.find('.sw-retrieve-error');
+	var idleSub = $sub.text();
+
+	function fmt(n) { return (n || 0).toLocaleString(); }
+	function duration(s) {
+		s = Math.max(0, s | 0);
+		var m = Math.floor(s / 60), sec = s % 60;
+		return (m ? m + 'm ' : '') + sec + 's';
+	}
+	function render(state) {
+		var status = state.status || 'idle';
+		$title.text($title.attr('data-sw-text-' + status) || $title.attr('data-sw-text-idle'));
+		$panel.attr('data-status', status);
+		var pct = state.percent || 0;
+		$bar.attr('aria-valuenow', pct).find('i').css('width', pct + '%');
+		$panel.find('[data-sw-fact=percent]').text(status === 'idle' ? '' : pct + '%');
+		if (status === 'running' || status === 'stalled') {
+			$sub.text($sub.attr('data-sw-phase-' + state.phase) || state.phase);
+		} else {
+			$sub.text(idleSub);
+		}
+		var $p = $panel.find('[data-sw-fact=processed]');
+		$p.text(status === 'running' && state.processed ? fmt(state.processed) + ' ' + $p.attr('data-sw-label') : '');
+		var $t = $panel.find('[data-sw-fact=totals]');
+		var totals = state.totals || {};
+		$t.text(status !== 'idle' && (totals.spots || totals.comments) ? fmt(totals.spots) + ' ' + $t.attr('data-sw-label-spots') + ', ' + fmt(totals.comments) + ' ' + $t.attr('data-sw-label-comments') : '');
+		$panel.find('[data-sw-fact=elapsed]').text(state.started && status !== 'idle' ? duration((state.updated || state.started) - state.started) : '');
+		$err.prop('hidden', status !== 'failed').text(state.message || '');
+		$btn.prop('disabled', status === 'running');
+	}
+	function poll() {
+		$.getJSON($panel.attr('data-sw-retrieve-status')).done(function (state) {
+			render(state);
+			clearTimeout(timer);
+			if (state.running) { timer = setTimeout(poll, 2000); }
+		});
+	}
+	$btn.on('click', function () {
+		$btn.prop('disabled', true);
+		$.ajax({
+			url: $panel.attr('data-sw-retrieve-start'),
+			type: 'POST',
+			data: { 'adminretrieveform[xsrfid]': $panel.attr('data-sw-xsrf'), 'adminretrieveform[submitstart]': '1' },
+			dataType: 'json'
+		}).always(function () {
+			render({ status: 'running', phase: 'connecting', percent: 0, started: Math.floor(Date.now() / 1000) });
+			setTimeout(poll, 1500);
+		});
+	});
+	try { render(JSON.parse($panel.attr('data-sw-state'))); } catch (e) {}
+	poll();
 }

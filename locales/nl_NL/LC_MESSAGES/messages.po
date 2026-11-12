@@ -2279,3 +2279,54 @@ msgstr "Kopieer"
 
 msgid "Need a new API key? Use \"Change user\" in the user menu; your apps then need the new key."
 msgstr "Nieuwe API-sleutel nodig? Gebruik \"Gebruiker wijzigen\" in het gebruikersmenu; je apps hebben daarna de nieuwe sleutel nodig."
+
+msgid "Retrieve spots now"
+msgstr "Nu spots ophalen"
+
+msgid "Fetches new spots, comments and reports from the news server, just like the scheduled retrieve. You can leave this page; the retrieve keeps running."
+msgstr "Haalt nieuwe spots, reacties en meldingen op van de nieuwsserver, net als het geplande ophalen. Je kunt deze pagina verlaten; het ophalen loopt door."
+
+msgid "Ready"
+msgstr "Klaar om te starten"
+
+msgid "Retrieving…"
+msgstr "Bezig met ophalen…"
+
+msgid "Finished"
+msgstr "Klaar"
+
+msgid "Stopped with an error"
+msgstr "Gestopt met een fout"
+
+msgid "No progress for a while"
+msgstr "Al een tijd geen voortgang"
+
+msgid "Spots"
+msgstr "Spots"
+
+msgid "Reports"
+msgstr "Meldingen"
+
+msgid "Connecting to the news server"
+msgstr "Verbinden met de nieuwsserver"
+
+msgid "Last retrieve"
+msgstr "Laatst opgehaald"
+
+msgid "Start retrieve"
+msgstr "Start ophalen"
+
+msgid "new this phase"
+msgstr "nieuw in deze stap"
+
+msgid "spots"
+msgstr "spots"
+
+msgid "comments"
+msgstr "reacties"
+
+msgid "You do not have permission to retrieve spots."
+msgstr "Je hebt geen rechten om spots op te halen."
+
+msgid "A retrieve is already running."
+msgstr "Er loopt al een ophaalronde."

@@ -11,8 +11,13 @@ try {
     /*
      * Initialize the Spotweb base classes
      */
-    $bootstrap = new Bootstrap();
-    list($settings, $daoFactory, $req) = $bootstrap->boot();
+    if (defined('SPOTWEB_RETRIEVE_FROM_ADMIN')) {
+        // started from Admin > Retrieve, which already booted Spotweb
+        list($settings, $daoFactory, $req) = $GLOBALS['spotwebRetrieveBoot'];
+    } else {
+        $bootstrap = new Bootstrap();
+        list($settings, $daoFactory, $req) = $bootstrap->boot();
+    } // else
 
     /*
      * disable timing, all queries which are ran by retrieve this would make it use
@@ -40,7 +45,14 @@ try {
      */
     $svcUserRecord = new Services_User_Record($daoFactory, $settings);
     $svcUserAuth = new Services_User_Authentication($daoFactory, $settings);
-    if (!SpotCommandline::isCommandline()) {
+    if (defined('SPOTWEB_RETRIEVE_FROM_ADMIN')) {
+        /*
+         * Started from Admin > Retrieve: the admin page already checked the
+         * permissions and hands us the admin's session
+         */
+        $userSession = $GLOBALS['spotwebRetrieveSession'];
+        $userSession['session'] = ['ipaddr' => ''];
+    } elseif (!SpotCommandline::isCommandline()) {
         ignore_user_abort(true);
         /*
          * An API key is required, so request it and try to
@@ -105,6 +117,10 @@ try {
         $daoFactory->getUsenetStateDao()->initialize();
         $daoFactory->getUsenetStateDao()->setRetrieverRunning(true);
 
+        // share progress with Admin > Retrieve
+        Services_Retriever_Progress::attach($daoFactory->getConnection());
+        Services_Retriever_Progress::start(defined('SPOTWEB_RETRIEVE_FROM_ADMIN') ? 'admin' : 'cron', $retroMode ? 'backfill' : 'normal');
+
         /*
          * Retention cleanup. Basically when we ask for Spotweb to only
          * keep spots for 'xx' days (eg: 30 days), we either have to delete
@@ -153,6 +169,7 @@ try {
             $retroMode
         );
         $newSpotCount = $retriever->perform();
+        Services_Retriever_Progress::addTotal('spots', $newSpotCount);
 
         // Show the cumulative timings of the spotsretrieval
         if ($showTiming) {
@@ -189,7 +206,9 @@ try {
                 $forceMode,
                 $retroMode
             );
+            Services_Retriever_Progress::phase('comments');
             $newCommentCount = $retriever->perform();
+            Services_Retriever_Progress::addTotal('comments', $newCommentCount);
 
             // Show the cumulative timings of the caching of these comments
             if ($showTiming) {
@@ -208,7 +227,9 @@ try {
                 $forceMode,
                 $retroMode
             );
+            Services_Retriever_Progress::phase('reports');
             $newReportCount = $retriever->perform();
+            Services_Retriever_Progress::addTotal('reports', $newReportCount);
 
             // Show the cumulative timings of the caching of these reports
             if ($showTiming) {
@@ -281,6 +302,11 @@ try {
             } // foreach
         } // if
         $spotsNotifications->sendRetrieverFinished($newSpotCount, $newCommentCount, $newReportCount);
+        Services_Retriever_Progress::finish();
+    } catch (Throwable $x) {
+        Services_Retriever_Progress::fail($x->getMessage());
+
+        throw $x;
     } finally {
         if ($retrieveLock->isAcquired()) {
             try {

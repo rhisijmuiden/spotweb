@@ -751,3 +751,27 @@ body.modern-config .closeuserpreferences a.toggle {
 body.modern-config .closeuserpreferences a.toggle:hover { color: var(--sw-text) !important; }
 body.modern-config .sw-admin > ul.sw-admin-nav li.sw-account-who { display: flex !important; flex-direction: row; }
 body.modern-config .sw-history-table a { text-decoration: none !important; }
+
+/* ---------- admin: retrieve ---------- */
+body.modern-config .sw-retrieve-head { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+body.modern-config .sw-retrieve-head > div { display: flex; flex-direction: column; gap: 4px; }
+body.modern-config .sw-retrieve-title { font: 600 18px var(--sw-font-display); color: var(--sw-text); }
+body.modern-config button.sw-btn-primary {
+  height: 42px; padding: 0 20px; border-radius: 10px; border: 0; cursor: pointer;
+  background: var(--sw-accent); color: var(--sw-on-accent); font: 600 14px var(--sw-font);
+}
+body.modern-config button.sw-btn-primary:hover { background: var(--sw-accent-hover); }
+body.modern-config button.sw-btn-primary:disabled { opacity: .5; cursor: default; }
+body.modern-config .sw-progress { height: 12px; border-radius: 99px; background: var(--sw-surface-3); overflow: hidden; }
+body.modern-config .sw-progress i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--sw-accent); transition: width .6s ease; }
+body.modern-config .sw-retrieve-panel[data-status="running"] .sw-progress i {
+  background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,.25) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200px 100%; background-repeat: no-repeat; animation: sw-shimmer 1.6s linear infinite;
+}
+body.modern-config .sw-retrieve-panel[data-status="done"] .sw-progress i { background: var(--sw-success); }
+body.modern-config .sw-retrieve-panel[data-status="failed"] .sw-progress i { background: var(--sw-danger); }
+@keyframes sw-shimmer { from { background-position: -200px 0; } to { background-position: calc(100% + 200px) 0; } }
+body.modern-config .sw-retrieve-facts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 13px; color: var(--sw-text-2); font-variant-numeric: tabular-nums; }
+body.modern-config .sw-retrieve-facts span:empty { display: none; }
+body.modern-config .sw-retrieve-error { color: var(--sw-danger) !important; margin-top: 10px; }
+@media (prefers-reduced-motion: reduce) { body.modern-config .sw-progress i { transition: none; animation: none !important; } }

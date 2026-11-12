@@ -222,6 +222,8 @@ abstract class Services_Retriever_Base
         $this->displayStatus('lastmsg', $this->_msgdata['last']);
         $this->displayStatus('curartnr', $curArticleNr);
         $this->displayStatus('', '');
+        $progressFirst = $curArticleNr;
+        Services_Retriever_Progress::report($this->progressPhase(), $curArticleNr, $progressFirst, $this->_msgdata['last'], 0);
 
         SpotTiming::start(__CLASS__.'::'.__FUNCTION__.':whileLoop');
         while ($curArticleNr < $this->_msgdata['last']) {
@@ -248,6 +250,7 @@ abstract class Services_Retriever_Base
             $processed += $processOutput['count'];
             $headersProcessed += $processOutput['headercount'];
             $highestMessageId = $processOutput['lastmsgid'];
+            Services_Retriever_Progress::report($this->progressPhase(), $curArticleNr, $progressFirst, $this->_msgdata['last'], $processed);
 
             /*
              * Make sure if we run with timing on, we do not fetch too many
@@ -288,6 +291,21 @@ abstract class Services_Retriever_Base
     }
 
     // quit()
+
+    /*
+     * Name of this retriever for the progress bar: spots, comments or reports
+     */
+    protected function progressPhase()
+    {
+        $class = get_class($this);
+        if (stripos($class, 'Comments') !== false) {
+            return 'comments';
+        } elseif (stripos($class, 'Reports') !== false) {
+            return 'reports';
+        } // elseif
+
+        return 'spots';
+    }
 
     protected function articlePipelineWindow()
     {
