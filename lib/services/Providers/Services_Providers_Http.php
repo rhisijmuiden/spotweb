@@ -57,6 +57,11 @@ class Services_Providers_Http
      * @var string
      */
     private $_cookie = null;
+
+    /**
+     * Maximum time in seconds a request may take as a whole
+     */
+    private $_timeout = 60;
     /**
      * POST data which is intended to be sent as one stream of data to the
      * server without local processing.
@@ -207,7 +212,7 @@ class Services_Providers_Http
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->_timeout);
         curl_setopt($ch, CURLOPT_ENCODING, '');
         // Don't use fail on error, because sometimes we do want to se
         // the output of the content
@@ -630,6 +635,13 @@ class Services_Providers_Http
     /**
      * @param null $cookie
      */
+    public function setTimeout($seconds)
+    {
+        $this->_timeout = max(1, (int) $seconds);
+    }
+
+    // setTimeout
+
     public function setCookie($cookie)
     {
         $this->_cookie = $cookie;

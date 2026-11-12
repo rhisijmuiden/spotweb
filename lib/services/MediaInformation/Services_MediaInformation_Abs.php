@@ -31,6 +31,12 @@ abstract class Services_MediaInformation_Abs
     {
         $this->_cacheDao = $cacheDao;
         $this->_httpProvider = new Services_Providers_Http($cacheDao);
+
+        /*
+         * Lookups (TVmaze, TMDB) run while an API client such as Prowlarr
+         * waits for an answer, so never let one hang for long
+         */
+        $this->_httpProvider->setTimeout(10);
     }
 
     // ctor
