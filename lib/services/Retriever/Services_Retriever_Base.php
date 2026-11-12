@@ -206,11 +206,18 @@ abstract class Services_Retriever_Base
      * Process all headers in $increment pieces and call the corresponding
      * actual implementation
      */
-    public function loopTillEnd($curArticleNr, $increment = 1000)
+    public function loopTillEnd($curArticleNr, $increment = 1000, $endArticleNr = null)
     {
         $processed = 0;
         $headersProcessed = 0;
         $highestMessageId = '';
+
+        /*
+         * A backfill stops at a given article instead of at the newest one.
+         * It must not prune "too new" records afterwards, because everything
+         * after its end point is legitimately newer.
+         */
+        $lastArticleNr = ($endArticleNr === null) ? $this->_msgdata['last'] : min((int) $endArticleNr, $this->_msgdata['last']);
 
         // make sure we handle articlenumber wrap arounds
         if ($curArticleNr < $this->_msgdata['first']) {
@@ -222,14 +229,16 @@ abstract class Services_Retriever_Base
         $this->displayStatus('lastmsg', $this->_msgdata['last']);
         $this->displayStatus('curartnr', $curArticleNr);
         $this->displayStatus('', '');
+        $progressFirst = $curArticleNr;
+        Services_Retriever_Progress::report($this->progressPhase(), $curArticleNr, $progressFirst, $lastArticleNr, 0);
 
         SpotTiming::start(__CLASS__.'::'.__FUNCTION__.':whileLoop');
-        while ($curArticleNr < $this->_msgdata['last']) {
+        while ($curArticleNr < $lastArticleNr) {
             $timer = microtime(true);
 
             // get the list of headers (XOVER)
             SpotTiming::start(__CLASS__.'::'.__FUNCTION__.':getOverview');
-            $hdrList = $this->_svcNntpTextPipelined->getOverview($curArticleNr, $curArticleNr + $increment);
+            $hdrList = $this->_svcNntpTextPipelined->getOverview($curArticleNr, min($curArticleNr + $increment, $lastArticleNr));
             SpotTiming::stop(__CLASS__.'::'.__FUNCTION__.':getOverview');
 
             $saveCurArtNr = $curArticleNr;
@@ -248,6 +257,7 @@ abstract class Services_Retriever_Base
             $processed += $processOutput['count'];
             $headersProcessed += $processOutput['headercount'];
             $highestMessageId = $processOutput['lastmsgid'];
+            Services_Retriever_Progress::report($this->progressPhase(), $curArticleNr, $progressFirst, $lastArticleNr, $processed);
 
             /*
              * Make sure if we run with timing on, we do not fetch too many
@@ -261,7 +271,7 @@ abstract class Services_Retriever_Base
 
         // we are done updating, make sure that if the newsserver deleted
         // earlier retrieved messages, we remove them from our database
-        if ($highestMessageId != '') {
+        if (($highestMessageId != '') && ($endArticleNr === null)) {
             SpotDebug::msg(SpotDebug::DEBUG, 'loopTillEnd() finished, highestMessageId = '.$highestMessageId);
             $this->removeTooNewRecords($highestMessageId);
         } // if
@@ -288,6 +298,29 @@ abstract class Services_Retriever_Base
     }
 
     // quit()
+
+    /*
+     * First and last article number of the selected group
+     */
+    protected function groupRange()
+    {
+        return ['first' => (int) $this->_msgdata['first'], 'last' => (int) $this->_msgdata['last']];
+    }
+
+    /*
+     * Name of this retriever for the progress bar: spots, comments or reports
+     */
+    protected function progressPhase()
+    {
+        $class = get_class($this);
+        if (stripos($class, 'Comments') !== false) {
+            return 'comments';
+        } elseif (stripos($class, 'Reports') !== false) {
+            return 'reports';
+        } // elseif
+
+        return 'spots';
+    }
 
     protected function articlePipelineWindow()
     {

@@ -24,7 +24,7 @@ class ServicesSettingsBaseTest extends TestCase
 
     public function testSchemaVersionIsBumpedForInnoDbConversion()
     {
-        $this->assertSame('0.72', SPOTDB_SCHEMA_VERSION);
+        $this->assertSame('0.73', SPOTDB_SCHEMA_VERSION);
     }
 
     public function testSchemaVersionGateRequiresCurrentSchema()
@@ -149,6 +149,23 @@ class ServicesSettingsBaseTest extends TestCase
         $this->assertFalse($settings->isEnabled('rss_enabled'));
         $this->assertTrue($settings->isEnabled('api_enabled'));
         $this->assertTrue($settings->isEnabled('never_saved_switch'));
+    }
+
+    public function testApiLimitsAcceptWholeNumbersOnly()
+    {
+        $service = new Services_Settings_Base(new Services_Settings_Container(), new ServicesSettingsBaseTestBlackWhiteListDao());
+        $form = $this->validSettingsWithoutPipelineDepth();
+        $form['api_limit_minute'] = '60';
+        $form['api_limit_day'] = '';
+        $result = $service->validateSettings($form);
+        $this->assertTrue($result->isSuccess());
+        $this->assertSame(60, $result->getData('settings')['api_limit_minute']);
+        $this->assertSame(0, $result->getData('settings')['api_limit_day']);
+
+        $form['api_limit_minute'] = '-5';
+        $this->assertFalse($service->validateSettings($form)->isSuccess());
+        $form['api_limit_minute'] = '1e3';
+        $this->assertFalse($service->validateSettings($form)->isSuccess());
     }
 
     private function validSettingsWithoutPipelineDepth()

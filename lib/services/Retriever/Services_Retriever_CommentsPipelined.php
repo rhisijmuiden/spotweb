@@ -147,6 +147,8 @@ class Services_Retriever_CommentsPipelined
         $this->displayStatus('lastmsg', $this->_msgdata['last']);
         $this->displayStatus('curartnr', $curArticleNr);
         $this->displayStatus('', '');
+        $progressFirst = $curArticleNr;
+        Services_Retriever_Progress::report('comments', $curArticleNr, $progressFirst, $this->_msgdata['last'], 0);
 
         SpotTiming::start(__CLASS__.'::'.__FUNCTION__.':whileLoop');
         while ($curArticleNr < $this->_msgdata['last']) {
@@ -170,6 +172,7 @@ class Services_Retriever_CommentsPipelined
             $processed += $processOutput['count'];
             $headersProcessed += $processOutput['headercount'];
             $highestMessageId = $processOutput['lastmsgid'];
+            Services_Retriever_Progress::report('comments', $curArticleNr, $progressFirst, $this->_msgdata['last'], $processed);
 
             if (($processed > 3000) && SpotTiming::isEnabled()) {
                 break;

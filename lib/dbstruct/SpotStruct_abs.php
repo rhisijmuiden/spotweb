@@ -452,6 +452,13 @@ abstract class SpotStruct_abs
         $this->validateColumn('client', 'downloadhistory', 'VARCHAR(64)', "''", true, 'utf8');
         $this->alterStorageEngine('downloadhistory', 'InnoDB');
 
+        // ---- ratelimit table: API requests per user per minute ---- #
+        $this->createTable('ratelimit', 'utf8');
+        $this->validateColumn('userid', 'ratelimit', 'INTEGER', '0', true, '');
+        $this->validateColumn('timewindow', 'ratelimit', 'INTEGER', '0', true, '');
+        $this->validateColumn('hits', 'ratelimit', 'INTEGER', '0', true, '');
+        $this->alterStorageEngine('ratelimit', 'InnoDB');
+
         // ---- reportsxover table ---- #
         $this->createTable('reportsxover', 'utf8');
         $this->validateColumn('messageid', 'reportsxover', 'VARCHAR(128)', "''", true, 'ascii');
@@ -777,6 +784,8 @@ abstract class SpotStruct_abs
         $this->validateIndex('idx_requeststats_1', 'UNIQUE', 'requeststats', ['day', 'userid', 'channel']);
         $this->validateIndex('idx_downloadhistory_1', '', 'downloadhistory', ['userid', 'stamp']);
         $this->validateIndex('idx_downloadhistory_2', '', 'downloadhistory', ['stamp']);
+        $this->validateIndex('idx_ratelimit_1', 'UNIQUE', 'ratelimit', ['userid', 'timewindow']);
+        $this->validateIndex('idx_ratelimit_2', '', 'ratelimit', ['timewindow']);
 
         // ---- Indexes on reportsxover ----
         $this->validateIndex('idx_reportsxover_1', 'UNIQUE', 'reportsxover', ['messageid']);

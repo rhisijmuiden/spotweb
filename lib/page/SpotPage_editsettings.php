@@ -91,8 +91,19 @@ class SpotPage_editsettings extends SpotPage_Abs
             $activity = null;
         } // catch
 
+        // state of the retriever for Admin > Retrieve
+        try {
+            $retrieveState = Services_Retriever_Progress::read($this->_daoFactory->getConnection());
+            $lastRetrieve = $this->_daoFactory->getUsenetStateDao()->getLastUpdate(Dao_UsenetState::State_Spots);
+        } catch (Exception $x) {
+            $retrieveState = ['status' => 'idle', 'running' => false, 'percent' => 0];
+            $lastRetrieve = 0;
+        } // catch
+
         $this->template('editsettings', ['editsettingsform' => $this->_settings,
             'activity'                                      => $activity,
+            'retrievestate'                                 => $retrieveState,
+            'lastretrieve'                                  => $lastRetrieve,
             'registrationmode'                              => $svcRegistration->getMode(),
             'newusergroups'                                 => $svcRegistration->getNewUserGroups(),
             'result'                                        => $result,

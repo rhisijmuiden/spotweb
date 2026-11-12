@@ -10,7 +10,8 @@ class SpotPage_edituserprefs extends SpotPage_Abs
     {
         parent::__construct($daoFactory, $settings, $currentSession);
         $this->_editUserPrefsForm = $params['edituserprefsform'];
-        $this->_userIdToEdit = $params['userid'];
+        // without a userid (e.g. <spotweb>/account) a user edits their own preferences
+        $this->_userIdToEdit = ($params['userid'] === '' || $params['userid'] === null) ? $currentSession['user']['userid'] : $params['userid'];
         $this->_dialogembedded = $params['dialogembedded'];
     }
 
@@ -87,7 +88,20 @@ class SpotPage_edituserprefs extends SpotPage_Abs
         } // if
 
         //- display stuff -#
+        // the user's download history and API details for the account pages
+        $history = null;
+        if (!$this->_dialogembedded && ($spotUser !== false)) {
+            try {
+                $svcStats = new Services_Stats_Requests($this->_daoFactory->getConnection());
+                $history = $svcStats->getUserHistory($spotUser['userid'], 200);
+            } catch (Exception $x) {
+                // tables missing until bin/upgrade-db.php has run
+                $history = null;
+            } // catch
+        } // if
+
         $this->template('edituserprefs', ['edituserprefsform' => $spotUser['prefs'],
+            'history'                                         => $history,
             'spotuser'                                        => $spotUser,
             'dialogembedded'                                  => $this->_dialogembedded,
             'http_referer'                                    => $this->_editUserPrefsForm['http_referer'],

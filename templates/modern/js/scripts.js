@@ -480,6 +480,7 @@ function initializeUserManagementPage() {
 function initializeSettingsPage() {
     initDatePicker();
     // read-only sections (Activity) have nothing to save, so hide the buttons there
+    initAdminRetrieve();
     $("#editsettingstab").tabs({
         show: function (event, ui) {
             $("#editsettingstab").toggleClass("sw-nosave", $(ui.panel).is("[data-sw-nosave]"));
@@ -492,7 +493,12 @@ function initializeSettingsPage() {
  * Initializes the user preferences screen
  */
 function initializeUserPreferencesScreen() {
-	$("#edituserpreferencetabs").tabs();
+	$("#edituserpreferencetabs").tabs({
+		show: function (event, ui) {
+			$("#edituserpreferencetabs").toggleClass("sw-nosave", $(ui.panel).is("[data-sw-nosave]"));
+		}
+	});
+	initAccountPages();
 
 	/* If the user preferences tab is loaded, make the filters sortable */
 	$('#edituserpreferencetabs').bind('tabsload', function(event, ui) {
@@ -1525,3 +1531,119 @@ function initDatePicker() {
             maxDate: "today" });
     } // retrieveNewerThanDate
 } // initDatePicker()
+
+
+/*
+ * Account pages: history filter, CSV export and the API key helpers
+ */
+function initAccountPages() {
+	var $history = $('.sw-history');
+	$history.on('click', '[data-sw-filter]', function () {
+		var by = $(this).attr('data-sw-filter');
+		$history.find('[data-sw-filter]').removeClass('is-active');
+		$(this).addClass('is-active');
+		$history.find('tbody tr[data-sw-by]').each(function () {
+			$(this).toggle(by === '' || $(this).attr('data-sw-by') === by);
+		});
+	});
+	$history.on('click', '[data-sw-export]', function () {
+		var lines = [];
+		$history.find('table tr:visible').each(function () {
+			var cells = [];
+			$(this).children('th,td').each(function () {
+				cells.push('"' + $.trim($(this).text()).replace(/"/g, '""') + '"');
+			});
+			lines.push(cells.join(','));
+		});
+		var blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+		var a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = 'spotweb-history.csv';
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+	});
+
+	$('[data-sw-reveal]').on('click', function () {
+		var $code = $(this).siblings('[data-sw-secret]');
+		var shown = $code.data('shown');
+		$code.text(shown ? '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022' : $code.attr('data-sw-secret'));
+		$code.data('shown', !shown);
+	});
+	$('[data-sw-copy]').on('click', function () {
+		var key = $(this).siblings('[data-sw-secret]').attr('data-sw-secret');
+		var $btn = $(this);
+		if (navigator.clipboard) {
+			navigator.clipboard.writeText(key).then(function () { $btn.addClass('is-active'); setTimeout(function () { $btn.removeClass('is-active'); }, 1200); });
+		}
+	});
+}
+
+/*
+ * Admin > Retrieve: start a retrieve and follow its progress
+ */
+function initAdminRetrieve() {
+	var $panel = $('.sw-retrieve-panel');
+	if (!$panel.length) { return; }
+	var timer = null;
+	var $title = $panel.find('.sw-retrieve-title');
+	var $sub = $panel.find('.sw-retrieve-sub');
+	var $bar = $panel.find('.sw-progress');
+	var $btn = $('[data-sw-retrieve-go]');
+	var $err = $panel.find('.sw-retrieve-error');
+	var idleSub = $sub.text();
+
+	function fmt(n) { return (n || 0).toLocaleString(); }
+	function duration(s) {
+		s = Math.max(0, s | 0);
+		var m = Math.floor(s / 60), sec = s % 60;
+		return (m ? m + 'm ' : '') + sec + 's';
+	}
+	function render(state) {
+		var status = state.status || 'idle';
+		$title.text($title.attr('data-sw-text-' + status) || $title.attr('data-sw-text-idle'));
+		$panel.attr('data-status', status);
+		var pct = state.percent || 0;
+		$bar.attr('aria-valuenow', pct).find('i').css('width', pct + '%');
+		$panel.find('[data-sw-fact=percent]').text(status === 'idle' ? '' : pct + '%');
+		if (status === 'running' || status === 'stalled') {
+			$sub.text($sub.attr('data-sw-phase-' + state.phase) || state.phase);
+		} else {
+			$sub.text(idleSub);
+		}
+		var $p = $panel.find('[data-sw-fact=processed]');
+		$p.text(status === 'running' && state.processed ? fmt(state.processed) + ' ' + $p.attr('data-sw-label') : '');
+		var $t = $panel.find('[data-sw-fact=totals]');
+		var totals = state.totals || {};
+		$t.text(status !== 'idle' && (totals.spots || totals.comments) ? fmt(totals.spots) + ' ' + $t.attr('data-sw-label-spots') + ', ' + fmt(totals.comments) + ' ' + $t.attr('data-sw-label-comments') : '');
+		$panel.find('[data-sw-fact=elapsed]').text(state.started && status !== 'idle' ? duration((state.updated || state.started) - state.started) : '');
+		$err.prop('hidden', status !== 'failed').text(state.message || '');
+		$btn.each(function () {
+			$(this).prop('disabled', status === 'running' || ($(this).attr('data-sw-retrieve-go') === 'backfill' && $(this).is('[data-sw-never]')));
+		});
+	}
+	function poll() {
+		$.getJSON($panel.attr('data-sw-retrieve-status')).done(function (state) {
+			render(state);
+			clearTimeout(timer);
+			if (state.running) { timer = setTimeout(poll, 2000); }
+		});
+	}
+	$btn.on('click', function () {
+		var data = { 'adminretrieveform[xsrfid]': $panel.attr('data-sw-xsrf') };
+		data[$(this).attr('data-sw-retrieve-go') === 'backfill' ? 'adminretrieveform[submitbackfill]' : 'adminretrieveform[submitstart]'] = '1';
+		$btn.prop('disabled', true);
+		$('html, body').animate({ scrollTop: $panel.offset().top - 90 }, 200);
+		$.ajax({
+			url: $panel.attr('data-sw-retrieve-start'),
+			type: 'POST',
+			data: data,
+			dataType: 'json'
+		}).always(function () {
+			render({ status: 'running', phase: 'connecting', percent: 0, started: Math.floor(Date.now() / 1000) });
+			setTimeout(poll, 1500);
+		});
+	});
+	try { render(JSON.parse($panel.attr('data-sw-state'))); } catch (e) {}
+	poll();
+}

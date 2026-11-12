@@ -110,6 +110,20 @@ class Services_Settings_Base
             $result->addError(_('The amount of comments must be a number above 1'));
         }
 
+        // optional API limits, 0 means no limit
+        foreach (['api_limit_minute', 'api_limit_day', 'api_download_limit'] as $limitName) {
+            if (isset($settings[$limitName])) {
+                $value = trim((string) $settings[$limitName]);
+                if ($value === '') {
+                    $value = '0';
+                } // if
+                if (!ctype_digit($value) || ((int) $value > 1000000)) {
+                    $result->addError(_('API limits must be whole numbers between 0 and 1,000,000'));
+                } // if
+                $settings[$limitName] = (int) $value;
+            } // if
+        } // foreach
+
         // the site colour theme
         if (isset($settings['site_theme']) && !Services_Admin_Themes::isValid($settings['site_theme'])) {
             $result->addError(_('Invalid theme'));

@@ -199,6 +199,38 @@ class Services_Stats_Requests
     }
 
     /*
+     * The latest NZBs a user fetched, with the spot title where the spot
+     * still exists, newest first
+     */
+    public function getUserHistory($userId, $limit)
+    {
+        $rows = $this->_conn->arrayQuery(
+            'SELECT h.stamp, h.channel, h.client, h.messageid, s.title, s.filesize, s.category
+                FROM downloadhistory h
+                LEFT JOIN spots s ON (s.messageid = h.messageid)
+                WHERE h.userid = :userid
+                ORDER BY h.stamp DESC
+                LIMIT '.(int) $limit,
+            [':userid' => [(int) $userId, PDO::PARAM_INT]]
+        );
+
+        $weekAgo = strtotime('-7 days');
+        $counts = ['week' => 0, 'me' => 0, 'apps' => 0];
+        foreach ($rows as $row) {
+            if ((int) $row['stamp'] >= $weekAgo) {
+                $counts['week']++;
+                if ($row['channel'] === self::CHANNEL_API) {
+                    $counts['apps']++;
+                } else {
+                    $counts['me']++;
+                } // else
+            } // if
+        } // foreach
+
+        return ['rows' => $rows, 'counts' => $counts];
+    }
+
+    /*
      * Oldest and newest spot in the database, and how many there are
      */
     public function getSpotRange()

@@ -2186,3 +2186,162 @@ msgstr "Nieuwste spot"
 
 msgid "Retrieve spots newer than"
 msgstr "Spots ophalen nieuwer dan"
+
+msgid "Limits per user"
+msgstr "Limieten per gebruiker"
+
+msgid "Protects the server against apps that ask too much. 0 means no limit. Apps get a \"limit reached\" answer with the time to wait, which Prowlarr, Sonarr and Radarr respect."
+msgstr "Beschermt de server tegen apps die te veel vragen. 0 betekent geen limiet. Apps krijgen een \"limiet bereikt\"-antwoord met de wachttijd, waar Prowlarr, Sonarr en Radarr zich aan houden."
+
+msgid "API requests per minute"
+msgstr "API-verzoeken per minuut"
+
+msgid "API requests per day"
+msgstr "API-verzoeken per dag"
+
+msgid "NZB downloads via the API per day"
+msgstr "NZB-downloads via de API per dag"
+
+msgid "API limits must be whole numbers between 0 and 1,000,000"
+msgstr "API-limieten moeten hele getallen tussen 0 en 1.000.000 zijn"
+
+msgid "My account"
+msgstr "Mijn account"
+
+msgid "API key &amp; apps"
+msgstr "API-sleutel &amp; apps"
+
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+msgid "Everything you downloaded, and everything your apps picked up with your API key."
+msgstr "Alles wat je zelf hebt gedownload, en alles wat je apps met je API-sleutel hebben opgehaald."
+
+msgid "Last 7 days"
+msgstr "Laatste 7 dagen"
+
+msgid "By you"
+msgstr "Door jou"
+
+msgid "By apps (API)"
+msgstr "Door apps (API)"
+
+msgid "Show"
+msgstr "Toon"
+
+msgid "All"
+msgstr "Alles"
+
+msgid "By me"
+msgstr "Door mij"
+
+msgid "Export CSV"
+msgstr "Exporteer CSV"
+
+msgid "When"
+msgstr "Wanneer"
+
+msgid "Spot"
+msgstr "Spot"
+
+msgid "Grabbed by"
+msgstr "Opgehaald door"
+
+msgid "Sent to"
+msgstr "Verstuurd naar"
+
+msgid "App"
+msgstr "App"
+
+msgid "You"
+msgstr "Jij"
+
+msgid "(spot no longer available)"
+msgstr "(spot niet meer beschikbaar)"
+
+msgid "Nothing downloaded yet. New downloads show up here."
+msgstr "Nog niets gedownload. Nieuwe downloads verschijnen hier."
+
+msgid "Connect your apps"
+msgstr "Koppel je apps"
+
+msgid "Add Spotweb as a Newznab indexer in Prowlarr, Sonarr or Radarr with these details. Keep your API key private: it gives access to your account."
+msgstr "Voeg Spotweb met deze gegevens toe als Newznab-indexer in Prowlarr, Sonarr of Radarr. Houd je API-sleutel geheim: daarmee kom je in je account."
+
+msgid "URL"
+msgstr "URL"
+
+msgid "API path"
+msgstr "API-pad"
+
+msgid "Copy"
+msgstr "Kopieer"
+
+msgid "Need a new API key? Use \"Change user\" in the user menu; your apps then need the new key."
+msgstr "Nieuwe API-sleutel nodig? Gebruik \"Gebruiker wijzigen\" in het gebruikersmenu; je apps hebben daarna de nieuwe sleutel nodig."
+
+msgid "Retrieve spots now"
+msgstr "Nu spots ophalen"
+
+msgid "Fetches new spots, comments and reports from the news server, just like the scheduled retrieve. You can leave this page; the retrieve keeps running."
+msgstr "Haalt nieuwe spots, reacties en meldingen op van de nieuwsserver, net als het geplande ophalen. Je kunt deze pagina verlaten; het ophalen loopt door."
+
+msgid "Ready"
+msgstr "Klaar om te starten"
+
+msgid "Retrieving…"
+msgstr "Bezig met ophalen…"
+
+msgid "Finished"
+msgstr "Klaar"
+
+msgid "Stopped with an error"
+msgstr "Gestopt met een fout"
+
+msgid "No progress for a while"
+msgstr "Al een tijd geen voortgang"
+
+msgid "Spots"
+msgstr "Spots"
+
+msgid "Reports"
+msgstr "Meldingen"
+
+msgid "Connecting to the news server"
+msgstr "Verbinden met de nieuwsserver"
+
+msgid "Last retrieve"
+msgstr "Laatst opgehaald"
+
+msgid "Start retrieve"
+msgstr "Start ophalen"
+
+msgid "new this phase"
+msgstr "nieuw in deze stap"
+
+msgid "spots"
+msgstr "spots"
+
+msgid "comments"
+msgstr "reacties"
+
+msgid "You do not have permission to retrieve spots."
+msgstr "Je hebt geen rechten om spots op te halen."
+
+msgid "A retrieve is already running."
+msgstr "Er loopt al een ophaalronde."
+
+msgid "Backfill older spots"
+msgstr "Oudere spots bijhalen"
+
+msgid "Moved \"Retrieve spots newer than\" further into the past? Fetch the spots from that date up to your oldest spot, without emptying the database. Spots you already have are skipped."
+msgstr "Heb je \"Spots ophalen nieuwer dan\" verder terug in de tijd gezet? Haal dan de spots op van die datum tot aan je oudste spot, zonder de database te legen. Spots die je al hebt worden overgeslagen."
+
+msgid "About %d days to fetch. This can take a long time; the progress shows above."
+msgstr "Ongeveer %d dagen op te halen. Dit kan lang duren; de voortgang zie je hierboven."
+
+msgid "Nothing to backfill. Set an earlier date under Retrieval &amp; cleanup first."
+msgstr "Niets bij te halen. Stel eerst een eerdere datum in onder Ophalen &amp; opschonen."
+
+msgid "Start backfill"
+msgstr "Bijhalen starten"

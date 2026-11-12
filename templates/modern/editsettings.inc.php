@@ -72,6 +72,7 @@ if ($result->isSubmitted()) {
 			<li><a href="#editsettingstab-6"><span><?php echo _('Users &amp; registration'); ?></span></a></li>
 			<li><a href="#editsettingstab-5"><span><?php echo _('Appearance'); ?></span></a></li>
 			<li class="sw-admin-heading"><?php echo _('Usenet'); ?></li>
+			<li><a href="#editsettingstab-9"><span><?php echo _('Retrieve'); ?></span></a></li>
 			<li><a href="#editsettingstab-2"><span><?php echo _('News servers'); ?></span></a></li>
 			<li><a href="#editsettingstab-3"><span><?php echo _('Retrieval &amp; cleanup'); ?></span></a></li>
 			<li class="sw-admin-heading"><?php echo _('System'); ?></li>
@@ -512,6 +513,55 @@ if ($result->isSubmitted()) {
 <?php } ?>
 		</div>
 
+<!-- Retrieve now -->
+		<div id="editsettingstab-9" class="ui-tabs-hide sw-retrieve" data-sw-nosave="1">
+<?php if ($tplHelper->allowed(SpotSecurity::spotsec_retrieve_spots, '')) { ?>
+			<h3 class="sw-admin-section"><?php echo _('Retrieve spots now'); ?></h3>
+			<p class="sw-hint"><?php echo _('Fetches new spots, comments and reports from the news server, just like the scheduled retrieve. You can leave this page; the retrieve keeps running.'); ?></p>
+			<div class="sw-panel sw-retrieve-panel"
+				data-sw-retrieve-status="<?php echo htmlspecialchars($tplHelper->makeBaseUrl('path').'?page=adminretrieve&action=status', ENT_QUOTES); ?>"
+				data-sw-retrieve-start="<?php echo htmlspecialchars($tplHelper->makeBaseUrl('path').'?page=adminretrieve', ENT_QUOTES); ?>"
+				data-sw-xsrf="<?php echo htmlspecialchars($tplHelper->generateXsrfCookie('adminretrieveform'), ENT_QUOTES); ?>"
+				data-sw-state="<?php echo htmlspecialchars(json_encode($retrievestate), ENT_QUOTES); ?>">
+				<div class="sw-retrieve-head">
+					<div>
+						<strong class="sw-retrieve-title" data-sw-text-idle="<?php echo _('Ready'); ?>" data-sw-text-running="<?php echo _('Retrieving…'); ?>" data-sw-text-done="<?php echo _('Finished'); ?>" data-sw-text-failed="<?php echo _('Stopped with an error'); ?>" data-sw-text-stalled="<?php echo _('No progress for a while'); ?>"><?php echo _('Ready'); ?></strong>
+						<span class="sw-hint sw-retrieve-sub" data-sw-phase-spots="<?php echo _('Spots'); ?>" data-sw-phase-comments="<?php echo _('Comments'); ?>" data-sw-phase-reports="<?php echo _('Reports'); ?>" data-sw-phase-connecting="<?php echo _('Connecting to the news server'); ?>"><?php echo _('Last retrieve'); ?>: <?php echo $lastretrieve ? $tplHelper->formatDate($lastretrieve, 'lastupdate') : '–'; ?></span>
+					</div>
+					<button type="button" class="sw-btn-primary" data-sw-retrieve-go><?php echo _('Start retrieve'); ?></button>
+				</div>
+				<div class="sw-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div>
+				<div class="sw-retrieve-facts">
+					<span data-sw-fact="percent">0%</span>
+					<span data-sw-fact="processed" data-sw-label="<?php echo _('new this phase'); ?>"></span>
+					<span data-sw-fact="totals" data-sw-label-spots="<?php echo _('spots'); ?>" data-sw-label-comments="<?php echo _('comments'); ?>"></span>
+					<span data-sw-fact="elapsed"></span>
+				</div>
+				<p class="sw-hint sw-retrieve-error" hidden></p>
+			</div>
+
+<?php
+    $oldestSpot = ($activity !== null) ? (int) $activity['spots']['oldest'] : 0;
+    $backfillFrom = max(1230789600, (int) $this->_settings->get('retrieve_newer_than'));
+    $canBackfill = ($oldestSpot > 0) && ($backfillFrom < $oldestSpot);
+?>
+			<h3 class="sw-admin-section sw-gap-top"><?php echo _('Backfill older spots'); ?></h3>
+			<p class="sw-hint"><?php echo _('Moved "Retrieve spots newer than" further into the past? Fetch the spots from that date up to your oldest spot, without emptying the database. Spots you already have are skipped.'); ?></p>
+			<div class="sw-panel sw-backfill">
+				<div class="sw-row"><span><?php echo _('Retrieve spots newer than'); ?></span><span><?php echo date('j M Y', $backfillFrom); ?></span></div>
+				<div class="sw-row"><span><?php echo _('Oldest spot'); ?></span><span><?php echo $oldestSpot ? date('j M Y', $oldestSpot) : '–'; ?></span></div>
+				<div class="sw-backfill-foot">
+					<span class="sw-hint"><?php echo $canBackfill
+                        ? sprintf(_('About %d days to fetch. This can take a long time; the progress shows above.'), (int) ceil(($oldestSpot - $backfillFrom) / 86400))
+                        : _('Nothing to backfill. Set an earlier date under Retrieval &amp; cleanup first.'); ?></span>
+					<button type="button" class="sw-btn-secondary" data-sw-retrieve-go="backfill" <?php echo $canBackfill ? '' : 'disabled data-sw-never'; ?>><?php echo _('Start backfill'); ?></button>
+				</div>
+			</div>
+<?php } else { ?>
+			<p class="sw-hint"><?php echo _('You do not have permission to retrieve spots.'); ?></p>
+<?php } ?>
+		</div>
+
 <!-- API & RSS -->
 		<div id="editsettingstab-7" class="ui-tabs-hide">
 			<fieldset>
@@ -520,6 +570,14 @@ if ($result->isSubmitted()) {
 					<label><input type="checkbox" name="editsettingsform[api_enabled]" <?php if ($this->_settings->isEnabled('api_enabled')) { echo 'checked="checked"'; } ?>> <?php echo _('Enable the API for Prowlarr, Sonarr, Radarr and other Newznab clients'); ?></label>
 				</div>
 				<p class="sw-hint"><?php echo _('Indexer URL for these apps:'); ?> <code class="sw-code"><?php echo htmlspecialchars($tplHelper->makeBaseUrl('full'), ENT_QUOTES); ?></code> &middot; <?php echo _('API path:'); ?> <code class="sw-code">/api</code></p>
+
+				<h3 class="sw-admin-section"><?php echo _('Limits per user'); ?></h3>
+				<p class="sw-hint"><?php echo _('Protects the server against apps that ask too much. 0 means no limit. Apps get a "limit reached" answer with the time to wait, which Prowlarr, Sonarr and Radarr respect.'); ?></p>
+				<div class="sw-limit-grid">
+					<label><span><?php echo _('API requests per minute'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_limit_minute]" value="<?php echo (int) $this->_settings->get('api_limit_minute'); ?>"></label>
+					<label><span><?php echo _('API requests per day'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_limit_day]" value="<?php echo (int) $this->_settings->get('api_limit_day'); ?>"></label>
+					<label><span><?php echo _('NZB downloads via the API per day'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_download_limit]" value="<?php echo (int) $this->_settings->get('api_download_limit'); ?>"></label>
+				</div>
 
 				<h3 class="sw-admin-section"><?php echo _('RSS feed'); ?></h3>
 				<div class="sw-check-list sw-check-list--stack">
