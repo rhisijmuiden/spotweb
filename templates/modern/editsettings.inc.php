@@ -63,18 +63,30 @@ if ($result->isSubmitted()) {
 	<input type="hidden" name="editsettingsform[xsrfid]" value="<?php echo $tplHelper->generateXsrfCookie('editsettingsform'); ?>">
 	<input type="hidden" name="editsettingsform[http_referer]" value="<?php echo $http_referer; ?>">
 	
-	<div id="editsettingstab" class="ui-tabs">
-		<ul>
-
+	<div id="editsettingstab" class="ui-tabs sw-admin">
+		<ul class="sw-admin-nav">
+			<li class="sw-admin-title"><?php echo _('Admin'); ?></li>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_edit_settings, '')) { ?>
+			<li class="sw-admin-heading"><?php echo _('Site'); ?></li>
 			<li><a href="#editsettingstab-1"><span><?php echo _('General'); ?></span></a></li>
-			<li><a href="#editsettingstab-2"><span><?php echo _('Newsservers'); ?></span></a></li>
-			<li><a href="#editsettingstab-3"><span><?php echo _('Retrieve'); ?></span></a></li>
-			<li><a href="#editsettingstab-4"><span><?php echo _('Performance'); ?></span></a></li>
-			<li><a href="#editsettingstab-5"><span><?php echo _('Custom CSS'); ?></span></a></li>
+			<li><a href="#editsettingstab-6"><span><?php echo _('Users &amp; registration'); ?></span></a></li>
+			<li><a href="#editsettingstab-5"><span><?php echo _('Appearance'); ?></span></a></li>
+			<li class="sw-admin-heading"><?php echo _('Usenet'); ?></li>
+			<li><a href="#editsettingstab-2"><span><?php echo _('News servers'); ?></span></a></li>
+			<li><a href="#editsettingstab-3"><span><?php echo _('Retrieval &amp; cleanup'); ?></span></a></li>
+			<li class="sw-admin-heading"><?php echo _('System'); ?></li>
+			<li><a href="#editsettingstab-4"><span><?php echo _('Performance &amp; cache'); ?></span></a></li>
 <?php } ?>
 		</ul>
-			
+		<div class="sw-admin-links">
+<?php if ($tplHelper->allowed(SpotSecurity::spotsec_list_all_users, '') || $tplHelper->allowed(SpotSecurity::spotsec_edit_securitygroups, '')) { ?>
+			<a href="?page=render&amp;tplname=usermanagement"><?php echo _('User &amp; group management'); ?></a>
+<?php } ?>
+<?php if ($tplHelper->allowed(SpotSecurity::spotsec_view_statics, '')) { ?>
+			<a href="?page=statistics"><?php echo _('Statistics'); ?></a>
+<?php } ?>
+		</div>
+
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_edit_settings, '')) { ?>		
 		<div id="editsettingstab-1" class="ui-tabs-hide newsservers">
 			<fieldset>
@@ -388,6 +400,31 @@ if ($result->isSubmitted()) {
 			</fieldset>
 		</div>
 
+<!-- Users & registration -->
+		<div id="editsettingstab-6" class="ui-tabs-hide">
+			<fieldset>
+				<h3 class="sw-admin-section"><?php echo _('Who can create an account?'); ?></h3>
+				<div class="sw-choice-grid">
+					<label class="sw-choice">
+						<input type="radio" name="editsettingsform[registration][mode]" value="admins" <?php if ($registrationmode === 'admins') { echo 'checked="checked"'; } ?>>
+						<span><strong><?php echo _('Admins only'); ?></strong><span><?php echo _('Only admins and trusted users create accounts. Visitors cannot sign up.'); ?></span></span>
+					</label>
+					<label class="sw-choice">
+						<input type="radio" name="editsettingsform[registration][mode]" value="open" <?php if ($registrationmode === 'open') { echo 'checked="checked"'; } ?>>
+						<span><strong><?php echo _('Open registration'); ?></strong><span><?php echo _('Visitors can create an account themselves. Their password is sent by e-mail, so make sure mail works.'); ?></span></span>
+					</label>
+				</div>
+
+				<h3 class="sw-admin-section"><?php echo _('New users are added to these groups'); ?></h3>
+				<div class="sw-check-list">
+<?php foreach ($newusergroups as $group) { ?>
+					<label><input type="checkbox" name="editsettingsform[registration][groups][]" value="<?php echo (int) $group['id']; ?>" <?php if ($group['selected']) { echo 'checked="checked"'; } ?>> <?php echo htmlspecialchars($group['name'], ENT_QUOTES); ?></label>
+<?php } ?>
+				</div>
+				<p class="sw-hint"><?php echo _('Group permissions are managed under User &amp; group management.'); ?></p>
+			</fieldset>
+		</div>
+
 <!-- Custom Stylesheet -->
 		<div id="editsettingstab-5" class="ui-tabs-hide">
 			<fieldset>
@@ -404,7 +441,7 @@ if ($result->isSubmitted()) {
 <?php } ?>
 
 		<div class="editSettingsButtons">
-			<input class="greyButton" type="submit" name="editsettingsform[submitedit]" value="<?php echo _('Change'); ?>">
+			<input class="greyButton" type="submit" name="editsettingsform[submitedit]" value="<?php echo _('Save changes'); ?>">
 			<input class="greyButton" type="submit" name="editsettingsform[submitcancel]" value="<?php echo _('Cancel'); ?>">
 			<div class="clear"></div>
 		</div>

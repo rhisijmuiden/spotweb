@@ -35,12 +35,36 @@ class SpotPage_editsettings extends SpotPage_Abs
                 case 'edit':
                     // Validate and apply all settings
                     $svcSettings = new Services_Settings_Base($this->_settings, $this->_daoFactory->getBlackWhiteListDao());
+
+                    // registration is stored as permissions, not as a setting
+                    $registration = (isset($this->_editSettingsForm['registration']) && is_array($this->_editSettingsForm['registration']))
+                                        ? $this->_editSettingsForm['registration'] : null;
+                    unset($this->_editSettingsForm['registration']);
+
                     $result = $svcSettings->validateSettings($this->_editSettingsForm);
+
+                    if ($registration !== null) {
+                        $mode = $registration['mode'] ?? '';
+                        $groups = (isset($registration['groups']) && is_array($registration['groups'])) ? $registration['groups'] : [];
+                        if (!in_array($mode, Services_Admin_Registration::validModes(), true)) {
+                            $result->addError(_('Invalid registration setting'));
+                        } elseif (empty($groups)) {
+                            $result->addError(_('Choose at least one group for new users'));
+                        } // elseif
+                    } // if
 
                     if ($result->isSuccess()) {
                         // and actually update the user in the database
                         $newSettings = $result->getData('settings');
                         $svcSettings->setSettings($newSettings);
+
+                        if ($registration !== null) {
+                            $svcRegistration = new Services_Admin_Registration($this->_settings, $this->_daoFactory->getUserDao());
+                            $svcRegistration->setMode($mode);
+                            if (!$svcRegistration->setNewUserGroups($groups)) {
+                                $result->addError(_('Choose at least one group for new users'));
+                            } // if
+                        } // if
                     } // if
 
                     break;
@@ -53,7 +77,11 @@ class SpotPage_editsettings extends SpotPage_Abs
         } // if
 
         //- display stuff -#
+        $svcRegistration = new Services_Admin_Registration($this->_settings, $this->_daoFactory->getUserDao());
+
         $this->template('editsettings', ['editsettingsform' => $this->_settings,
+            'registrationmode'                              => $svcRegistration->getMode(),
+            'newusergroups'                                 => $svcRegistration->getNewUserGroups(),
             'result'                                        => $result,
             'http_referer'                                  => $this->_editSettingsForm['http_referer'], ]);
     }
