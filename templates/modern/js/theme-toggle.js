@@ -1,20 +1,23 @@
 (function () {
   var STORAGE_KEY = 'spotweb_theme';
 
-  function getPref() { return localStorage.getItem(STORAGE_KEY) || 'auto'; }
-  function humanize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-  function resolveMode(pref) { if (pref === 'auto') { return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; } return pref; }
-  function updateLabel(mode, pref) {
+  var T = window.SpotwebThemes;
+  function getPref() { return T ? T.getPref() : 'site'; }
+  function updateLabel(t, pref) {
     var el = document.getElementById('themeCurrent');
-    if (!el) return;
-    el.textContent = pref === 'auto' ? 'Theme: Auto (' + humanize(mode) + ')' : 'Theme: ' + humanize(mode);
+    if (!el || !T) return;
+    el.textContent = T.label + ': ' + (pref === 'site' ? T.siteLabel : T.names[t.id]);
   }
   function apply(pref) {
-    var mode = resolveMode(pref);
-    document.documentElement.setAttribute('data-theme', mode);
-    updateLabel(mode, pref);
+    if (!T) return;
+    updateLabel(T.apply(pref), pref);
   }
-  function set(pref) { try { localStorage.setItem(STORAGE_KEY, pref); } catch (e) {} apply(pref); }
+  function set(pref) {
+    try {
+      if (pref === 'site') { localStorage.removeItem(STORAGE_KEY); } else { localStorage.setItem(STORAGE_KEY, pref); }
+    } catch (e) {}
+    apply(pref);
+  }
   function init() {
     apply(getPref());
     var toolbar = document.getElementById('toolbar');
@@ -22,13 +25,17 @@
     if (toolbar && !document.getElementById('themeCurrent')) {
       var themeWrap = document.createElement('div');
       themeWrap.className = 'toolbarButton theme dropdown right';
-      themeWrap.innerHTML = "<ul><li><p><a id=\"themeCurrent\">Theme</a></p>" +
-                            "<ul>" +
-                            "<li><a href=\"#\" onclick=\"window.SpotwebTheme && window.SpotwebTheme.set('light'); return false;\">Light</a></li>" +
-                            "<li><a href=\"#\" onclick=\"window.SpotwebTheme && window.SpotwebTheme.set('dark'); return false;\">Dark</a></li>" +
-                            "<li><a href=\"#\" onclick=\"window.SpotwebTheme && window.SpotwebTheme.set('auto'); return false;\">Auto</a></li>" +
-                            "</ul></li></ul>";
+      var items = '<li><a href="#" data-sw-theme="site"></a></li>';
+      if (T) { for (var id in T.names) { if (T.names.hasOwnProperty(id)) { items += '<li><a href="#" data-sw-theme="' + id + '"></a></li>'; } } }
+      themeWrap.innerHTML = '<ul><li><p><a id="themeCurrent">Theme</a></p><ul>' + items + '</ul></li></ul>';
+      var links = themeWrap.querySelectorAll('a[data-sw-theme]');
+      for (var i = 0; i < links.length; i++) {
+        var key = links[i].getAttribute('data-sw-theme');
+        links[i].textContent = key === 'site' ? (T ? T.siteLabel : 'Site default') : T.names[key];
+        links[i].onclick = function () { set(this.getAttribute('data-sw-theme')); return false; };
+      }
       toolbar.appendChild(themeWrap);
+      apply(getPref());
     }
 
     // View controls
@@ -81,7 +88,7 @@
     } catch(e){}
     try {
       var mql = window.matchMedia('(prefers-color-scheme: dark)');
-      var onChange = function(){ if ((localStorage.getItem(STORAGE_KEY) || 'auto') === 'auto') { apply('auto'); } };
+      var onChange = function(){ apply(getPref()); };
       if (mql.addEventListener) { mql.addEventListener('change', onChange); }
       else if (mql.addListener) { mql.addListener(onChange); }
     } catch (e) {}

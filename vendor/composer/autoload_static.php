@@ -923,6 +923,7 @@ class ComposerStaticInit504c4440a019baf1c7be3e9f33abe7d1
         'Services_Actions_SpeedDial' => __DIR__ . '/../..' . '/lib/services/Actions/Services_Actions_SpeedDial.php',
         'Services_Actions_SpotStateList' => __DIR__ . '/../..' . '/lib/services/Actions/Services_Actions_SpotStateList.php',
         'Services_Admin_Registration' => __DIR__ . '/../..' . '/lib/services/Admin/Services_Admin_Registration.php',
+        'Services_Admin_Themes' => __DIR__ . '/../..' . '/lib/services/Admin/Services_Admin_Themes.php',
         'Services_BWList_Retriever' => __DIR__ . '/../..' . '/lib/services/BWList/Services_BWList_Retriever.php',
         'Services_Format_Creation' => __DIR__ . '/../..' . '/lib/services/Format/Services_Format_Creation.php',
         'Services_Format_Parsing' => __DIR__ . '/../..' . '/lib/services/Format/Services_Format_Parsing.php',

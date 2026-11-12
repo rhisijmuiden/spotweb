@@ -108,6 +108,48 @@ html[data-theme="dark"] {
   color-scheme: dark;
 }
 
+
+/* ---------- extra colour themes (picked in Admin > Appearance) ----------
+ * Each one overrides only the colour tokens; light/dark specifics come from
+ * data-theme, which the theme script sets to the theme's mode. */
+html[data-palette="ocean"] {
+  --sw-bg: #071318; --sw-surface: #0C1B22; --sw-surface-2: #11242D; --sw-surface-3: #173039;
+  --sw-border: #173039; --sw-border-strong: #24434F;
+  --sw-text: #E3F2F6; --sw-text-2: #B9D2DA; --sw-muted: #7FA0AB;
+  --sw-accent: #22D3EE; --sw-accent-hover: #67E8F9; --sw-accent-soft: #0B2E36;
+  --sw-accent-text: #A5F3FC; --sw-on-accent: #04141A;
+}
+html[data-palette="forest"] {
+  --sw-bg: #0A120E; --sw-surface: #0F1A14; --sw-surface-2: #14231B; --sw-surface-3: #1B2E24;
+  --sw-border: #1B2E24; --sw-border-strong: #2A4537;
+  --sw-text: #E4F1E9; --sw-text-2: #BCD3C5; --sw-muted: #84A291;
+  --sw-accent: #34D399; --sw-accent-hover: #6EE7B7; --sw-accent-soft: #0F2D20;
+  --sw-accent-text: #A7F3D0; --sw-on-accent: #05140D;
+}
+html[data-palette="ember"] {
+  --sw-bg: #120D0A; --sw-surface: #1A1310; --sw-surface-2: #221915; --sw-surface-3: #2C211B;
+  --sw-border: #2C211B; --sw-border-strong: #44332A;
+  --sw-text: #F5EBE4; --sw-text-2: #D8C6BA; --sw-muted: #A8907F;
+  --sw-accent: #F59E0B; --sw-accent-hover: #FBBF24; --sw-accent-soft: #33240C;
+  --sw-accent-text: #FDE68A; --sw-on-accent: #1A1003;
+}
+html[data-palette="paper"] {
+  --sw-bg: #F7F3EC; --sw-surface: #FFFDF8; --sw-surface-2: #F1EBE0; --sw-surface-3: #E8E0D2;
+  --sw-border: #E3D9C8; --sw-border-strong: #CFC2AC;
+  --sw-text: #2A2118; --sw-text-2: #4F4234; --sw-muted: #6E5F4E;
+  --sw-accent: #C2410C; --sw-accent-hover: #9A3412; --sw-accent-soft: #FCE9DD;
+  --sw-accent-text: #9A3412; --sw-on-accent: #FFFFFF;
+}
+html[data-palette="contrast"] {
+  --sw-bg: #000000; --sw-surface: #0A0A0A; --sw-surface-2: #141414; --sw-surface-3: #1F1F1F;
+  --sw-border: #3A3A3A; --sw-border-strong: #6B6B6B;
+  --sw-text: #FFFFFF; --sw-text-2: #F0F0F0; --sw-muted: #C8C8C8;
+  --sw-accent: #FFD400; --sw-accent-hover: #FFE44D; --sw-accent-soft: #2B2600;
+  --sw-accent-text: #FFE66D; --sw-on-accent: #000000;
+}
+html[data-palette="contrast"] a { text-decoration: underline; text-underline-offset: 2px; }
+html[data-palette="contrast"] :focus-visible { outline: 3px solid var(--sw-accent) !important; outline-offset: 2px; }
+
 /* ---------- base ---------- */
 
 html, body {
@@ -598,3 +640,13 @@ body.modern-config .closeeditsettings a.toggle {
   background: var(--sw-surface) !important; border-radius: 8px !important;
 }
 body.modern-config .closeeditsettings a.toggle:hover { color: var(--sw-text) !important; }
+body.modern-config .sw-theme-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 12px 0 28px;
+}
+body.modern-config .sw-theme-choice > span { gap: 6px !important; }
+body.modern-config .sw-theme-swatch {
+  position: relative; display: block; height: 56px; border-radius: 8px; margin-bottom: 4px;
+  border: 1px solid var(--sw-border-strong); overflow: hidden;
+}
+body.modern-config .sw-theme-swatch i { position: absolute; left: 10px; right: 10px; bottom: 0; height: 30px; border-radius: 6px 6px 0 0; }
+body.modern-config .sw-theme-swatch b { position: absolute; left: 20px; bottom: 10px; width: 46px; height: 10px; border-radius: 99px; }

@@ -428,6 +428,23 @@ if ($result->isSubmitted()) {
 <!-- Custom Stylesheet -->
 		<div id="editsettingstab-5" class="ui-tabs-hide">
 			<fieldset>
+				<h3 class="sw-admin-section"><?php echo _('Site theme'); ?></h3>
+				<p class="sw-hint"><?php echo _('The colours every visitor sees. Visitors can still pick another theme for themselves in the toolbar.'); ?></p>
+				<div class="sw-theme-grid">
+<?php $siteTheme = Services_Admin_Themes::getSiteTheme($this->_settings);
+foreach (Services_Admin_Themes::getThemes() as $themeId => $theme) { ?>
+					<label class="sw-choice sw-theme-choice">
+						<input type="radio" name="editsettingsform[site_theme]" value="<?php echo $themeId; ?>" <?php if ($siteTheme === $themeId) { echo 'checked="checked"'; } ?>>
+						<span>
+							<span class="sw-theme-swatch" aria-hidden="true" style="background: <?php echo $theme['swatch'][0]; ?>;"><i style="background: <?php echo $theme['swatch'][1]; ?>;"></i><b style="background: <?php echo $theme['swatch'][2]; ?>;"></b></span>
+							<strong><?php echo htmlspecialchars($theme['name'], ENT_QUOTES); ?></strong>
+							<span><?php echo htmlspecialchars($theme['description'], ENT_QUOTES); ?></span>
+						</span>
+					</label>
+<?php } ?>
+				</div>
+
+				<h3 class="sw-admin-section"><?php echo _('Custom CSS'); ?></h3>
 				<dt>
 					<label for="editsettingsform[customcss]"><?php echo _('Use custom CSS?'); ?></label>
 				</dt>

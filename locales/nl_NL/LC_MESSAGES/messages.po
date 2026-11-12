@@ -2024,3 +2024,66 @@ msgstr "Ongeldige registratie-instelling"
 
 msgid "Choose at least one group for new users"
 msgstr "Kies minstens één groep voor nieuwe gebruikers"
+
+msgid "Automatic"
+msgstr "Automatisch"
+
+msgid "Midnight or Daylight, following the visitor's device"
+msgstr "Midnight of Daylight, afhankelijk van het apparaat van de bezoeker"
+
+msgid "Midnight"
+msgstr "Midnight"
+
+msgid "Dark with a violet accent (house style)"
+msgstr "Donker met een violet accent (huisstijl)"
+
+msgid "Daylight"
+msgstr "Daylight"
+
+msgid "Light with a violet accent"
+msgstr "Licht met een violet accent"
+
+msgid "Ocean"
+msgstr "Oceaan"
+
+msgid "Deep blue-green with a cyan accent"
+msgstr "Diep blauwgroen met een cyaan accent"
+
+msgid "Forest"
+msgstr "Bos"
+
+msgid "Dark green with an emerald accent"
+msgstr "Donkergroen met een smaragdgroen accent"
+
+msgid "Ember"
+msgstr "Gloed"
+
+msgid "Warm dark brown with an amber accent"
+msgstr "Warm donkerbruin met een amber accent"
+
+msgid "Paper"
+msgstr "Papier"
+
+msgid "Warm off-white with a terracotta accent"
+msgstr "Warm gebroken wit met een terracotta accent"
+
+msgid "High contrast"
+msgstr "Hoog contrast"
+
+msgid "Black and white with a yellow accent, for readability"
+msgstr "Zwart en wit met een geel accent, voor betere leesbaarheid"
+
+msgid "Site theme"
+msgstr "Thema van de site"
+
+msgid "The colours every visitor sees. Visitors can still pick another theme for themselves in the toolbar."
+msgstr "De kleuren die elke bezoeker ziet. Bezoekers kunnen in de werkbalk zelf een ander thema kiezen."
+
+msgid "Theme"
+msgstr "Thema"
+
+msgid "Site default"
+msgstr "Standaard van de site"
+
+msgid "Invalid theme"
+msgstr "Ongeldig thema"

@@ -110,6 +110,11 @@ class Services_Settings_Base
             $result->addError(_('The amount of comments must be a number above 1'));
         }
 
+        // the site colour theme
+        if (!isset($settings['site_theme']) || !Services_Admin_Themes::isValid($settings['site_theme'])) {
+            $result->addError(_('Invalid theme'));
+        } // if
+
         // We don't want to save megabyts of CSS, so put a limit to the size
         if (strlen($settings['customcss']) > 1024 * 10) {
             $result->addError(_('Custom CSS is too large'));
