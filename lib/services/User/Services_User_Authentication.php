@@ -79,12 +79,15 @@ class Services_User_Authentication
         setcookie(
             'spotsession',
             $userSession['session']['sessionid'].'.'.$userSession['user']['userid'],
-            time() + (max(1, (int) $this->_settings->get('cookie_expires')) * 60 * 60 * 24),
-            '', // path: The default value is the current directory that the cookie is being set in.
-            $this->_settings->get('cookie_host'),
-            false,	// Indicates if the cookie should only be transmitted over a secure HTTPS connection from the client.
-            true
-        );	// Only available to the HTTP protocol. This means that the cookie won't be accessible by scripting languages, such as JavaScript.
+            [
+                'expires'  => time() + (max(1, (int) $this->_settings->get('cookie_expires')) * 60 * 60 * 24),
+                'path'     => '', // the directory the cookie is set in
+                'domain'   => (string) $this->_settings->get('cookie_host'),
+                'secure'   => SpotReq::isSecureRequest(), // HTTPS only when the site is served over HTTPS (also behind Cloudflare)
+                'httponly' => true, // not readable from JavaScript
+                'samesite' => 'Lax',
+            ]
+        );
     }
 
     // updateCookie
@@ -352,27 +355,7 @@ class Services_User_Authentication
      */
     private function determineUsersIpAddress()
     {
-        /*
-         * We now compare the X-Fowarded-For header and it's not clear if this
-         * is the right thing to do.
-         */
-        $hdrsToCheck = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED',
-            'REMOTE_ADDR', ];
-
-        $remote_addr = 'N/A';
-        foreach ($hdrsToCheck as $key) {
-            if (isset($_SERVER[$key])) {
-                foreach (explode(',', $_SERVER[$key]) as $ip) {
-                    if (filter_var($ip, FILTER_VALIDATE_IP) !== false) {
-                        $remote_addr = $ip;
-                    } // if
-                } // foreach
-            } // if
-        } // foreach
-
-        return $remote_addr;
+        return SpotReq::getClientIp();
     }
 
     // determineUsersIpAddress

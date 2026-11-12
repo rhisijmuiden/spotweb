@@ -75,18 +75,127 @@ class SpotReq
 
     public static function getRequestProtocol()
     {
-        $protocol = 'http';
+        return self::isSecureRequest() ? 'https' : 'http';
+    }
 
-        if ((isset($_SERVER['HTTPS'])) && ($_SERVER['HTTPS'] == 'on')) {
-            $protocol = 'https';
+    /*
+     * Proxies we trust to tell us the real client address and protocol:
+     * the local machine, private networks (a reverse proxy on the LAN) and
+     * Cloudflare (https://www.cloudflare.com/ips/).
+     */
+    private static $_trustedProxies = [
+        '127.0.0.0/8', '::1/128', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16', 'fc00::/7',
+        '173.245.48.0/20', '103.21.244.0/22', '103.22.200.0/22', '103.31.4.0/22', '141.101.64.0/18',
+        '108.162.192.0/18', '190.93.240.0/20', '188.114.96.0/20', '197.234.240.0/22', '198.41.128.0/17',
+        '162.158.0.0/15', '104.16.0.0/13', '104.24.0.0/14', '172.64.0.0/13', '131.0.72.0/22',
+        '2400:cb00::/32', '2606:4700::/32', '2803:f800::/32', '2405:b500::/32', '2405:8100::/32',
+        '2a06:98c0::/29', '2c0f:f248::/32',
+    ];
+
+    /*
+     * Returns true when $ip lies within the CIDR range $range (IPv4 or IPv6)
+     */
+    public static function ipInRange($ip, $range)
+    {
+        list($subnet, $bits) = array_pad(explode('/', $range, 2), 2, null);
+        $ipBin = @inet_pton($ip);
+        $subnetBin = @inet_pton($subnet);
+        if (($ipBin === false) || ($subnetBin === false) || (strlen($ipBin) !== strlen($subnetBin))) {
+            return false;
+        } // if
+
+        $bits = ($bits === null) ? strlen($ipBin) * 8 : (int) $bits;
+        $bytes = intdiv($bits, 8);
+        if (substr($ipBin, 0, $bytes) !== substr($subnetBin, 0, $bytes)) {
+            return false;
+        } // if
+
+        $remainder = $bits % 8;
+        if ($remainder === 0) {
+            return true;
+        } // if
+
+        $mask = (0xFF << (8 - $remainder)) & 0xFF;
+
+        return (ord($ipBin[$bytes]) & $mask) === (ord($subnetBin[$bytes]) & $mask);
+    }
+
+    public static function isTrustedProxy($ip)
+    {
+        foreach (self::$_trustedProxies as $range) {
+            if (self::ipInRange($ip, $range)) {
+                return true;
+            } // if
+        } // foreach
+
+        return false;
+    }
+
+    /*
+     * Returns the address of the client. Forwarding headers are only
+     * believed when the request comes from a trusted proxy, so behind
+     * Cloudflare or a reverse proxy we see the visitor, and nobody can
+     * fake an address by sending such a header directly.
+     */
+    public static function getClientIp()
+    {
+        $remote = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        if (filter_var($remote, FILTER_VALIDATE_IP) === false) {
+            return 'N/A';
+        } // if
+
+        if (!self::isTrustedProxy($remote)) {
+            return $remote;
+        } // if
+
+        $cfIp = trim((string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+        if (filter_var($cfIp, FILTER_VALIDATE_IP) !== false) {
+            return $cfIp;
+        } // if
+
+        /* walk X-Forwarded-For from the right, the first untrusted hop is the client */
+        $hops = array_reverse(array_map('trim', explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? ''))));
+        foreach ($hops as $hop) {
+            if (filter_var($hop, FILTER_VALIDATE_IP) === false) {
+                break;
+            } // if
+            if (!self::isTrustedProxy($hop)) {
+                return $hop;
+            } // if
+        } // foreach
+
+        $realIp = trim((string) ($_SERVER['HTTP_X_REAL_IP'] ?? ''));
+        if (filter_var($realIp, FILTER_VALIDATE_IP) !== false) {
+            return $realIp;
+        } // if
+
+        return $remote;
+    }
+
+    /*
+     * Was the request made over HTTPS, also when TLS ends at Cloudflare or
+     * a reverse proxy in front of us?
+     */
+    public static function isSecureRequest()
+    {
+        if (isset($_SERVER['HTTPS']) && (strtolower((string) $_SERVER['HTTPS']) !== 'off') && ($_SERVER['HTTPS'] !== '')) {
+            return true;
         } // if
 
         // nginx reverse proxy, check GH issue 1569
-        if ((isset($_SERVER['HTTP_X_FORWARDED_SSL'])) && ($_SERVER['HTTP_X_FORWARDED_SSL'] == 'on')) {
-            $protocol = 'https';
+        if (strtolower((string) ($_SERVER['HTTP_X_FORWARDED_SSL'] ?? '')) == 'on') {
+            return true;
         } // if
 
-        return $protocol;
+        if (!self::isTrustedProxy((string) ($_SERVER['REMOTE_ADDR'] ?? ''))) {
+            return false;
+        } // if
+
+        if (strtolower(trim(explode(',', (string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''))[0])) == 'https') {
+            return true;
+        } // if
+
+        return strpos((string) ($_SERVER['HTTP_CF_VISITOR'] ?? ''), '"https"') !== false;
     }
 
     // getRequestProtocol

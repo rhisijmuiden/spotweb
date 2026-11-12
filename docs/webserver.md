@@ -40,3 +40,36 @@ example.com {
     respond @private 403
 }
 ```
+
+## Behind Cloudflare
+
+Spotweb reads the visitor's address from `CF-Connecting-IP` when the request
+comes from a Cloudflare address, and detects HTTPS from `CF-Visitor` /
+`X-Forwarded-Proto`. You do not have to configure anything in Spotweb.
+
+For nginx itself (access logs, `limit_req`, `limit_conn`) it is still wise to
+restore the visitor address, otherwise all visitors share a few Cloudflare
+addresses and rate limits hit everyone at once:
+
+```nginx
+# list from https://www.cloudflare.com/ips/
+set_real_ip_from 173.245.48.0/20;
+set_real_ip_from 103.21.244.0/22;
+# ... the other Cloudflare ranges ...
+real_ip_header CF-Connecting-IP;
+```
+
+Let Prowlarr, Sonarr and Radarr on your own network talk to Spotweb directly
+(LAN address or `localhost`) instead of through Cloudflare. That avoids
+Cloudflare's timeouts and bot checks for API traffic.
+
+## Page caches (nginx `fastcgi_cache`, Cloudflare)
+
+Spotweb pages are personal. Spotweb sends `Cache-Control: private, no-store`
+for them, which nginx and Cloudflare respect. If your cache configuration
+ignores those headers, add a bypass for the Spotweb session cookie:
+
+```nginx
+fastcgi_cache_bypass $cookie_spotsession;
+fastcgi_no_cache     $cookie_spotsession;
+```

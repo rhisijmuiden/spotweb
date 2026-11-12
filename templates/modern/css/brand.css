@@ -1,0 +1,490 @@
+/*
+ * Spotweb brand layer
+ *
+ * The house style from docs/brand/README.md. Loaded after all other theme
+ * stylesheets so it can restyle the existing markup without touching it.
+ * Colors come from the tokens below; change them there, not per component.
+ */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../fonts/inter-latin-wght-normal.woff2) format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../fonts/inter-latin-ext-wght-normal.woff2) format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face { font-family: "Space Grotesk"; font-weight: 500; font-display: swap; src: url(../fonts/space-grotesk-latin-500-normal.woff2) format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-weight: 600; font-display: swap; src: url(../fonts/space-grotesk-latin-600-normal.woff2) format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-weight: 700; font-display: swap; src: url(../fonts/space-grotesk-latin-700-normal.woff2) format("woff2"); }
+
+/* ---------- tokens ---------- */
+
+:root,
+html[data-theme="light"] {
+  --sw-bg: #F5F6F9;
+  --sw-surface: #FFFFFF;
+  --sw-surface-2: #F0F2F6;
+  --sw-surface-3: #E7EAF0;
+  --sw-border: #DDE2EA;
+  --sw-border-strong: #C9D0DB;
+  --sw-text: #111827;
+  --sw-text-2: #3F4A5A;
+  --sw-muted: #5B6676;
+  --sw-accent: #6D5DF5;
+  --sw-accent-hover: #5B4AE6;
+  --sw-accent-soft: #EEEBFF;
+  --sw-accent-text: #4B3CC9;
+  --sw-on-accent: #FFFFFF;
+  --sw-success: #0F9F6E;
+  --sw-success-soft: #E3F7EF;
+  --sw-warning: #B7791F;
+  --sw-warning-soft: #FDF3DC;
+  --sw-danger: #D93B3B;
+  --sw-danger-soft: #FDE8E8;
+  --sw-info: #2563EB;
+  --sw-info-soft: #E5EEFF;
+  --sw-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --sw-shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.14);
+  --sw-radius: 12px;
+  --sw-radius-sm: 8px;
+  --sw-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --sw-font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+
+  /* map onto the variables the existing theme files use */
+  --color-bg: var(--sw-bg);
+  --color-surface: var(--sw-surface);
+  --color-surface-2: var(--sw-surface-2);
+  --color-border: var(--sw-border);
+  --color-text: var(--sw-text);
+  --color-muted: var(--sw-muted);
+  --color-accent: var(--sw-accent);
+  --radius: var(--sw-radius-sm);
+  --sw-sidebar-w: 248px;
+  --sw-toolbar-offset: 56px;
+  --sw-strip-gradient: var(--sw-surface-2);
+  --sw-strip-border: var(--sw-border);
+  --sw-strip-text: var(--sw-text);
+  --filter-card-bg: transparent;
+  --filter-card-border: transparent;
+  --filter-card-text: var(--sw-text-2);
+  --filter-chip-bg: var(--sw-accent);
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  --sw-bg: #0B0F14;
+  --sw-surface: #10151C;
+  --sw-surface-2: #161D27;
+  --sw-surface-3: #1E2733;
+  --sw-border: #1E2733;
+  --sw-border-strong: #2C3850;
+  --sw-text: #E6EDF5;
+  --sw-text-2: #C2CCD8;
+  --sw-muted: #8B98A9;
+  --sw-accent: #8B7CFF;
+  --sw-accent-hover: #A194FF;
+  --sw-accent-soft: #1F1B3D;
+  --sw-accent-text: #CFC8FF;
+  --sw-on-accent: #0B0F14;
+  --sw-success: #34D399;
+  --sw-success-soft: #0F2A22;
+  --sw-warning: #FBBF24;
+  --sw-warning-soft: #2A2410;
+  --sw-danger: #F87171;
+  --sw-danger-soft: #2E1515;
+  --sw-info: #93C5FD;
+  --sw-info-soft: #10233A;
+  --sw-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --sw-shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+/* ---------- base ---------- */
+
+html, body {
+  background: var(--sw-bg) !important;
+  color: var(--sw-text) !important;
+}
+body, input, select, textarea, button, table, .ui-widget {
+  font-family: var(--sw-font) !important;
+}
+body { font-size: 14px; -webkit-font-smoothing: antialiased; }
+a { color: var(--sw-accent-text); }
+h1, h2, h3, .sw-display { font-family: var(--sw-font-display); letter-spacing: -0.01em; }
+:focus-visible { outline: 2px solid var(--sw-accent) !important; outline-offset: 2px; }
+::selection { background: var(--sw-accent-soft); color: var(--sw-text); }
+
+/* ---------- top bar ---------- */
+
+html[data-theme] div#toolbar {
+  height: 56px !important;
+  background: color-mix(in srgb, var(--sw-surface) 90%, transparent) !important;
+  backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--sw-border) !important;
+  box-shadow: none !important;
+}
+html[data-theme] div#toolbar span.scroll {
+  top: 14px !important;
+  left: 14px !important;
+  height: 28px !important;
+  width: 28px;
+  background: transparent !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 8px !important;
+}
+html[data-theme] form#filterform { margin: 9px 0 0 56px !important; width: 380px !important; padding: 0 !important; }
+html[data-theme] form#filterform div.search {
+  width: 100% !important;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  background: var(--sw-surface-2) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 10px !important;
+  box-sizing: border-box;
+}
+html[data-theme] form#filterform div.search:focus-within { border-color: var(--sw-accent) !important; box-shadow: 0 0 0 3px var(--sw-accent-soft); }
+html[data-theme] form#filterform div.search input.searchbox {
+  flex: 1;
+  height: 36px !important;
+  min-height: 0;
+  width: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--sw-text) !important;
+  font-size: 14px !important;
+  padding: 0 12px !important;
+  text-shadow: none !important;
+}
+html[data-theme] form#filterform div.search input.filtersubmit {
+  height: 28px !important;
+  margin-right: 4px !important;
+  padding: 0 10px !important;
+  border-radius: 7px !important;
+  background: var(--sw-surface-3) !important;
+  color: var(--sw-text-2) !important;
+  text-shadow: none !important;
+  font-size: 12px !important;
+}
+html[data-theme] div#toolbar .toolbarButton p {
+  background: transparent !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: var(--sw-radius-sm) !important;
+  color: var(--sw-text-2) !important;
+  height: 36px !important;
+  line-height: 34px !important;
+  padding: 0 14px !important;
+  margin-top: 10px !important;
+  font-weight: 500 !important;
+  font-size: 13px !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+html[data-theme] div#toolbar .toolbarButton p:hover {
+  background: var(--sw-surface-2) !important;
+  border-color: var(--sw-border-strong) !important;
+  color: var(--sw-text) !important;
+}
+html[data-theme] div#toolbar .toolbarButton ul ul {
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: var(--sw-radius) !important;
+  box-shadow: var(--sw-shadow-lg) !important;
+  padding: 6px !important;
+}
+html[data-theme] div#toolbar .toolbarButton ul ul li,
+html[data-theme] div#toolbar .toolbarButton ul ul li a {
+  color: var(--sw-text-2) !important;
+  border-radius: 6px;
+  background: transparent !important;
+  text-shadow: none !important;
+}
+html[data-theme] div#toolbar .toolbarButton ul ul li a:hover { background: var(--sw-surface-2) !important; color: var(--sw-text) !important; }
+
+/* ---------- left sidebar ---------- */
+
+html[data-theme] div#filter {
+  --filter-card-bg: transparent;
+  --filter-card-border: transparent;
+  --filter-card-text: var(--sw-text-2);
+  --filter-muted: var(--sw-muted);
+  --filter-backdrop: var(--sw-surface);
+  width: var(--sw-sidebar-w) !important;
+  background: var(--sw-surface) !important;
+  backdrop-filter: none !important;
+  border-right: 1px solid var(--sw-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 8px 10px 24px !important;
+  box-sizing: border-box;
+}
+html[data-theme] div#filter a.viewState h4,
+html[data-theme] div#filter h4 {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--sw-muted) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  text-align: left !important;
+  padding: 14px 10px 6px !important;
+  margin: 0 !important;
+}
+html[data-theme] div#filter ul.filterlist li a.filter,
+html[data-theme] div#filter ul.subfilterlist li a,
+html[data-theme] div#filter ul.filterlist.quicklinks li a.filter {
+  display: flex !important;
+  align-items: center;
+  width: 100% !important;
+  min-height: 34px;
+  padding: 6px 30px 6px 10px !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  border-radius: var(--sw-radius-sm) !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--sw-text-2) !important;
+  transform: none !important;
+  gap: 10px !important;
+  box-sizing: border-box;
+}
+html[data-theme] div#filter ul.filterlist li a.filter::before,
+html[data-theme] div#filter ul.filterlist li a.filter::after { display: none !important; }
+html[data-theme] div#filter ul.filterlist li a.filter:hover,
+html[data-theme] div#filter ul.subfilterlist li a:hover {
+  background: var(--sw-surface-2) !important;
+  color: var(--sw-text) !important;
+}
+html[data-theme] div#filter ul.filterlist li a.filter.selected,
+html[data-theme] div#filter ul.subfilterlist li a.selected {
+  background: var(--sw-accent-soft) !important;
+  color: var(--sw-accent-text) !important;
+  box-shadow: inset 3px 0 0 var(--sw-accent) !important;
+}
+html[data-theme] div#filter ul.filterlist li a span.newspots {
+  background: var(--sw-accent) !important;
+  color: var(--sw-on-accent) !important;
+  font-weight: 600 !important;
+  border-radius: 999px;
+  padding: 0 7px;
+  font-size: 11px !important;
+}
+html[data-theme] div#filter ul.filterlist ul,
+html[data-theme] div#filter ul.subfilterlist {
+  border-left: 1px solid var(--sw-border) !important;
+  margin: 2px 0 4px 18px !important;
+  padding-left: 6px !important;
+}
+html[data-theme] div#filter ul.filterlist li { margin: 1px 0 !important; }
+html[data-theme] div#filter li span.toggle {
+  border-radius: 6px !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--sw-muted) !important;
+}
+html[data-theme] div#filter li span.toggle:hover { background: var(--sw-surface-3) !important; color: var(--sw-text) !important; }
+html[data-theme] div#filter img,
+html[data-theme] div#filter .spoticon { filter: none !important; }
+
+/* ---------- spot list: cards ---------- */
+
+.cardsGrid { grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)) !important; gap: 14px !important; padding-top: 14px; }
+.spotCard {
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: var(--sw-radius) !important;
+  padding: 10px !important;
+  gap: 8px !important;
+  box-shadow: var(--sw-shadow) !important;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.spotCard:hover { border-color: var(--sw-border-strong) !important; box-shadow: var(--sw-shadow-lg) !important; transform: translateY(-1px); }
+.spotCard.new { border-color: var(--sw-accent) !important; box-shadow: 0 0 0 1px var(--sw-accent) !important; }
+.spotCard .thumb img { height: 120px !important; border-radius: var(--sw-radius-sm) !important; background: var(--sw-surface-2); }
+.spotCard .title a { color: var(--sw-text) !important; font-weight: 600 !important; }
+.spotCard .badge { border-radius: 6px !important; font-weight: 600 !important; }
+.spotCard .meta { color: var(--sw-muted) !important; }
+.spotCard .actions a.nzb {
+  background: var(--sw-accent) !important;
+  color: var(--sw-on-accent) !important;
+  border-radius: 7px !important;
+  padding: 5px 10px !important;
+}
+.spotCard .actions a.nzb:hover { background: var(--sw-accent-hover) !important; }
+.spotCard .comments { color: var(--sw-accent-text) !important; font-weight: 600 !important; }
+
+/* ---------- spot list: table ---------- */
+
+div.spots table.spots {
+  background: var(--sw-surface);
+  border: 1px solid var(--sw-border);
+  border-radius: var(--sw-radius);
+  border-collapse: separate !important;
+  border-spacing: 0;
+  overflow: hidden;
+}
+table.spots tr.head th,
+table.spots tr.head td {
+  background: var(--sw-surface-2) !important;
+  color: var(--sw-muted) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--sw-border) !important;
+}
+table.spots tr td { border-color: var(--sw-border) !important; padding-top: 9px !important; padding-bottom: 9px !important; }
+table.spots tr:hover td { background: var(--sw-surface-2) !important; }
+html[data-theme="dark"] table.spots tr[class*="spotcat"] td { background: transparent !important; }
+html[data-theme="dark"] table.spots tr[class*="spotcat"]:hover td { background: var(--sw-surface-2) !important; }
+
+/* ---------- buttons & forms (everywhere) ---------- */
+
+input[type="submit"], input[type="button"], button, a.greyButton, .button {
+  border-radius: var(--sw-radius-sm) !important;
+  font-weight: 600 !important;
+}
+.greyButton, input[type="button"], button.secondary {
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border-strong) !important;
+  color: var(--sw-text) !important;
+  box-shadow: none !important;
+}
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="url"],
+select, textarea {
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border-strong) !important;
+  border-radius: var(--sw-radius-sm) !important;
+  color: var(--sw-text) !important;
+  min-height: 36px;
+  padding: 6px 10px !important;
+  box-sizing: border-box;
+  box-shadow: none !important;
+}
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="number"]:focus,
+select:focus, textarea:focus { border-color: var(--sw-accent) !important; box-shadow: 0 0 0 3px var(--sw-accent-soft) !important; outline: none !important; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--sw-accent); width: 16px; height: 16px; }
+
+/* ---------- settings / config pages ---------- */
+
+body.modern-config div.container > div,
+body.modern-config form.editsettingsform,
+body.modern-config form.edituserprefsform {
+  font-size: 14px;
+}
+body.modern-config .ui-tabs {
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--sw-shadow) !important;
+}
+body.modern-config .ui-tabs .ui-tabs-nav {
+  background: var(--sw-surface-2) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  padding: 4px !important;
+  box-shadow: none !important;
+}
+body.modern-config .ui-tabs .ui-tabs-nav li,
+body.modern-config .ui-tabs .ui-tabs-nav li a {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  color: var(--sw-text-2) !important;
+  box-shadow: none !important;
+  font-weight: 500 !important;
+}
+body.modern-config .ui-tabs .ui-tabs-nav li.ui-tabs-selected,
+body.modern-config .ui-tabs .ui-tabs-nav li.ui-state-active,
+body.modern-config .ui-tabs .ui-tabs-nav li.ui-tabs-selected a,
+body.modern-config .ui-tabs .ui-tabs-nav li.ui-state-active a {
+  background: var(--sw-surface) !important;
+  color: var(--sw-text) !important;
+  box-shadow: var(--sw-shadow) !important;
+}
+body.modern-config .ui-tabs .ui-tabs-panel,
+body.modern-config fieldset {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--sw-text) !important;
+}
+body.modern-config dt, body.modern-config label { color: var(--sw-text-2) !important; }
+body.modern-config input[type="submit"] {
+  background: var(--sw-accent) !important;
+  color: var(--sw-on-accent) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  height: 40px;
+  padding: 0 20px !important;
+}
+body.modern-config input[type="submit"]:hover { background: var(--sw-accent-hover) !important; }
+body.modern-config input[type="submit"][name*="cancel"] {
+  background: var(--sw-surface) !important;
+  color: var(--sw-text) !important;
+  border: 1px solid var(--sw-border-strong) !important;
+}
+
+/* ---------- dialogs & misc ---------- */
+
+.ui-dialog, .ui-widget-content {
+  background: var(--sw-surface) !important;
+  color: var(--sw-text) !important;
+  border-color: var(--sw-border) !important;
+}
+.ui-dialog { border-radius: 16px !important; box-shadow: var(--sw-shadow-lg) !important; }
+.ui-widget-header {
+  background: var(--sw-surface-2) !important;
+  border: 0 !important;
+  color: var(--sw-text) !important;
+  border-radius: 10px !important;
+}
+div#overlay { background: rgba(5, 8, 12, 0.55) !important; backdrop-filter: blur(2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .spotCard, div#toolbar .toolbarButton p { transition: none !important; }
+  .spotCard:hover { transform: none; }
+}
+
+/* ---------- fine-tuning ---------- */
+
+html[data-theme] div#toolbar .toolbarButton p *,
+html[data-theme] div#toolbar .toolbarButton p {
+  color: var(--sw-text-2) !important;
+  text-shadow: none !important;
+}
+html[data-theme] div#filter li { position: relative; }
+html[data-theme] div#filter li span.toggle {
+  position: absolute !important;
+  right: 6px !important;
+  top: 7px !important;
+  transform: none !important;
+  width: 22px !important;
+  height: 22px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+html[data-theme] div#filter a.viewState { position: relative; display: block; }
+html[data-theme] div#filter a.viewState h4 span {
+  position: absolute; right: 8px; top: 12px;
+  filter: none !important; opacity: .6;
+  background-color: transparent !important; border: 0 !important;
+}
+html[data-theme] div#filter a.filter span.inclusive { margin-left: auto !important; opacity: .55; }
+html[data-theme] div#filter a.filter:hover span.inclusive { opacity: 1; }
+html[data-theme] div#toolbar { margin-top: 0 !important; top: 0 !important; }

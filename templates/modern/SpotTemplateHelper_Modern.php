@@ -21,6 +21,7 @@ class SpotTemplateHelper_Modern extends SpotTemplateHelper
         return [
             $this->getThemeAssetPath('css/posting.css'),
             $this->getThemeAssetPath('css/config.css'),
+            $this->getThemeAssetPath('css/brand.css'),
         ];
     }
 
