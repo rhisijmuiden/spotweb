@@ -2186,3 +2186,21 @@ msgstr "Nieuwste spot"
 
 msgid "Retrieve spots newer than"
 msgstr "Spots ophalen nieuwer dan"
+
+msgid "Limits per user"
+msgstr "Limieten per gebruiker"
+
+msgid "Protects the server against apps that ask too much. 0 means no limit. Apps get a \"limit reached\" answer with the time to wait, which Prowlarr, Sonarr and Radarr respect."
+msgstr "Beschermt de server tegen apps die te veel vragen. 0 betekent geen limiet. Apps krijgen een \"limiet bereikt\"-antwoord met de wachttijd, waar Prowlarr, Sonarr en Radarr zich aan houden."
+
+msgid "API requests per minute"
+msgstr "API-verzoeken per minuut"
+
+msgid "API requests per day"
+msgstr "API-verzoeken per dag"
+
+msgid "NZB downloads via the API per day"
+msgstr "NZB-downloads via de API per dag"
+
+msgid "API limits must be whole numbers between 0 and 1,000,000"
+msgstr "API-limieten moeten hele getallen tussen 0 en 1.000.000 zijn"

@@ -521,6 +521,14 @@ if ($result->isSubmitted()) {
 				</div>
 				<p class="sw-hint"><?php echo _('Indexer URL for these apps:'); ?> <code class="sw-code"><?php echo htmlspecialchars($tplHelper->makeBaseUrl('full'), ENT_QUOTES); ?></code> &middot; <?php echo _('API path:'); ?> <code class="sw-code">/api</code></p>
 
+				<h3 class="sw-admin-section"><?php echo _('Limits per user'); ?></h3>
+				<p class="sw-hint"><?php echo _('Protects the server against apps that ask too much. 0 means no limit. Apps get a "limit reached" answer with the time to wait, which Prowlarr, Sonarr and Radarr respect.'); ?></p>
+				<div class="sw-limit-grid">
+					<label><span><?php echo _('API requests per minute'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_limit_minute]" value="<?php echo (int) $this->_settings->get('api_limit_minute'); ?>"></label>
+					<label><span><?php echo _('API requests per day'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_limit_day]" value="<?php echo (int) $this->_settings->get('api_limit_day'); ?>"></label>
+					<label><span><?php echo _('NZB downloads via the API per day'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_download_limit]" value="<?php echo (int) $this->_settings->get('api_download_limit'); ?>"></label>
+				</div>
+
 				<h3 class="sw-admin-section"><?php echo _('RSS feed'); ?></h3>
 				<div class="sw-check-list sw-check-list--stack">
 					<label><input type="checkbox" name="editsettingsform[rss_enabled]" <?php if ($this->_settings->isEnabled('rss_enabled')) { echo 'checked="checked"'; } ?>> <?php echo _('Enable the RSS feed, with a download link to the NZB in every item'); ?></label>

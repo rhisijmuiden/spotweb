@@ -706,3 +706,6 @@ body.modern-config .sw-pill-rss { background: var(--sw-info-soft); color: var(--
 body.modern-config .sw-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--sw-border); color: var(--sw-text); font-size: 14px; }
 body.modern-config .sw-row span:first-child { color: var(--sw-text-2); }
 body.modern-config .sw-admin.sw-nosave > .editSettingsButtons { display: none !important; }
+body.modern-config .sw-limit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 12px 0 28px; }
+body.modern-config .sw-limit-grid label { display: flex; flex-direction: column; gap: 6px; font-size: 13px !important; }
+body.modern-config .sw-limit-grid input { width: 100%; }

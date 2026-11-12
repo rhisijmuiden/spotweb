@@ -108,7 +108,24 @@ try {
 
     // count the request per day, user and channel (web, API, RSS) for the admin statistics
     $svcRequestStats = new Services_Stats_Requests($daoFactory->getConnection());
-    $svcRequestStats->record($currentSession['user']['userid'], Services_Stats_Requests::channelFor($page, $req->doesExist('apikey')));
+    $requestChannel = Services_Stats_Requests::channelFor($page, $req->doesExist('apikey'));
+    $svcRequestStats->record($currentSession['user']['userid'], $requestChannel);
+
+    // optional API limits (Admin > API & RSS)
+    if ($requestChannel === Services_Stats_Requests::CHANNEL_API) {
+        $svcRateLimit = new Services_Stats_RateLimit($daoFactory->getConnection(), $settings);
+        $retryAfter = $svcRateLimit->checkApiRequest($currentSession['user']['userid']);
+        if (($retryAfter === null) && ($page === 'getnzb')) {
+            $retryAfter = $svcRateLimit->checkApiDownload($currentSession['user']['userid']);
+            if ($retryAfter !== null) {
+                Services_Stats_RateLimit::sendLimitReached(501, $retryAfter);
+                exit;
+            } // if
+        } elseif ($retryAfter !== null) {
+            Services_Stats_RateLimit::sendLimitReached(500, $retryAfter);
+            exit;
+        } // elseif
+    } // if
 
     SpotTiming::start('renderpage');
     switch ($page) {
