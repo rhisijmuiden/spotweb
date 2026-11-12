@@ -228,6 +228,23 @@ class Dao_Base_User implements Dao_User
 
     // setUser
 
+    /**
+     * Only updates the last API usage timestamp of a user. Used on every API
+     * request, so it should not rewrite the complete user record.
+     */
+    public function setUserLastApiUsage($userId, $stamp)
+    {
+        $this->_conn->modify(
+            'UPDATE users SET lastapiusage = :lastapiusage WHERE id = :userid',
+            [
+                ':lastapiusage' => [(int) $stamp, PDO::PARAM_INT],
+                ':userid'       => [(int) $userId, PDO::PARAM_INT],
+            ]
+        );
+    }
+
+    // setUserLastApiUsage
+
     /*
      * Set users' password. We are expected to be given an updated
      * passhash member

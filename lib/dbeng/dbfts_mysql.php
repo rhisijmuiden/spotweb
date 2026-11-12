@@ -61,6 +61,127 @@ class dbfts_mysql extends dbfts_abs
         'yourselves', 'zero', ];
 
     /*
+     * InnoDB uses a much smaller default stopword list than MyISAM
+     * (INFORMATION_SCHEMA.INNODB_FT_DEFAULT_STOPWORD)
+     */
+    private $innodb_stop_words = ['a', 'about', 'an', 'are', 'as', 'at', 'be', 'by', 'com', 'de', 'en',
+        'for', 'from', 'how', 'i', 'in', 'is', 'it', 'la', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
+        'was', 'what', 'when', 'where', 'who', 'will', 'with', 'und', 'www', ];
+
+    /*
+     * Server FTS configuration, cached per process because it is the same
+     * for every query and used to cost an extra roundtrip per search
+     */
+    private static $ftsConfig = null;
+
+    /**
+     * Returns the minimum indexed word length and the stopword list which
+     * apply to the spots table. InnoDB and MyISAM use different settings.
+     *
+     * @return array [int minWordLen, array stopWords]
+     */
+    protected function getFtsConfig()
+    {
+        if (self::$ftsConfig === null) {
+            $isInnoDb = true;
+            $minWordLen = 3;
+
+            try {
+                $row = $this->_db->arrayQuery(
+                    "SELECT ENGINE AS engine, @@innodb_ft_min_token_size AS innodb_len, @@ft_min_word_len AS myisam_len
+                       FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'spots'"
+                );
+                if (!empty($row)) {
+                    $isInnoDb = (strcasecmp((string) $row[0]['engine'], 'MyISAM') !== 0);
+                    $minWordLen = (int) ($isInnoDb ? $row[0]['innodb_len'] : $row[0]['myisam_len']);
+                } // if
+            } catch (Exception $e) {
+                /* fall back to the most conservative settings */
+                $isInnoDb = false;
+                $minWordLen = 4;
+            } // catch
+
+            self::$ftsConfig = [
+                max(1, $minWordLen),
+                $isInnoDb ? $this->innodb_stop_words : $this->stop_words,
+            ];
+        } // if
+
+        return self::$ftsConfig;
+    }
+
+    // getFtsConfig
+
+    /**
+     * Returns the words of a search value which are certain to be in the
+     * fulltext index for a matching row: words which are required (prefixed
+     * with a +, or part of a +"phrase"), long enough and not a stopword.
+     *
+     * @return array
+     */
+    protected function getRequiredIndexWords($searchValue, $minWordLen, $stopWords)
+    {
+        $words = [];
+
+        if (preg_match_all('/\+("[^"]*"|\S+)/u', $searchValue, $matches)) {
+            foreach ($matches[1] as $term) {
+                $isPrefix = (substr($term, -1) == '*') && ($term[0] != '"');
+                foreach (preg_split('/\s+/u', trim($term, '"*()')) as $word) {
+                    if (!preg_match('/^\w+$/u', $word)) {
+                        continue;
+                    } // if
+                    if ((mb_strlen($word) < $minWordLen) || in_array(mb_strtolower($word), $stopWords)) {
+                        continue;
+                    } // if
+
+                    $words[mb_strtolower($word).($isPrefix ? '*' : '')] = true;
+                } // foreach
+            } // foreach
+        } // if
+
+        return array_keys($words);
+    }
+
+    // getRequiredIndexWords
+
+    /**
+     * InnoDB phrase searches ("a b") are very slow because every candidate
+     * row has to be verified. A required phrase is therefore rewritten into
+     * its required words (which the index can resolve quickly), and the exact
+     * phrase is checked with a LIKE on that much smaller set of rows.
+     *
+     * @return array [string rewritten value, array extra LIKE conditions]
+     */
+    protected function rewriteRequiredPhrases($field, $searchValue, $minWordLen, $stopWords)
+    {
+        $likeParts = [];
+
+        $rewritten = preg_replace_callback('/\+"([^"]*)"/u', function ($m) use ($field, $minWordLen, $stopWords, &$likeParts) {
+            $words = [];
+            foreach (preg_split('/\s+/u', trim($m[1])) as $word) {
+                if (preg_match('/^\w+$/u', $word) && (mb_strlen($word) >= $minWordLen) && !in_array(mb_strtolower($word), $stopWords)) {
+                    $words[] = '+'.$word;
+                } // if
+            } // foreach
+
+            /* nothing the index can use, keep the phrase as is */
+            if (empty($words)) {
+                return $m[0];
+            } // if
+
+            if (count(preg_split('/\s+/u', trim($m[1]))) > 1) {
+                $likeParts[] = ' '.$field.' LIKE '.$this->_db->safe('%'.str_replace(' ', '_', trim($m[1])).'%');
+            } // if
+
+            return '+('.implode(' ', $words).')';
+        }, $searchValue);
+
+        return [$rewritten, $likeParts];
+    }
+
+    // rewriteRequiredPhrases
+
+    /*
      * Constructs a query part to match textfields. Abstracted so we can use
      * a database specific FTS engine if one is provided by the DBMS
      */
@@ -75,6 +196,7 @@ class dbfts_mysql extends dbfts_abs
         $filterValueSql = [];
         $sortFields = [];
         $addFields = [];
+        $requiredWordSets = [];
 
         /*
          * MySQL's fultxt search has a minimum length of words for indexes. Per default this is
@@ -84,8 +206,7 @@ class dbfts_mysql extends dbfts_abs
          * We query the server setting, and if this is the case, we fall back to a basic LIKE
          * search because it has no such limitation
          */
-        $serverSetting = $this->_db->arrayQuery("SHOW VARIABLES WHERE variable_name = 'ft_min_word_len'");
-        $minWordLen = $serverSetting[0]['Value'];
+        list($minWordLen, $stopWords) = $this->getFtsConfig();
 
         //var_dump($searchFields);
 
@@ -126,7 +247,7 @@ class dbfts_mysql extends dbfts_abs
                  * If the term is a stopword (things like: the, it, ...) we have to
                  * fallback to a like search as well.
                  */
-                if (in_array(strtolower($term), $this->stop_words) !== false) {
+                if (in_array(strtolower($term), $stopWords) !== false) {
                     $hasStopWords = true;
                 } else {
                     $hasNoStopWords = true;
@@ -211,7 +332,7 @@ class dbfts_mysql extends dbfts_abs
                     $tmpTermList = explode(' ', $strippedTerm);
                     foreach ($tmpTermList as $tmpTerm) {
                         if (strlen($tmpTerm) >= $minWordLen) {
-                            if (in_array(strtolower($tmpTerm), $this->stop_words) === false) {
+                            if (in_array(strtolower($tmpTerm), $stopWords) === false) {
                                 $tmpFoundValidTerms = true;
                             } // if
                         } // if
@@ -309,9 +430,21 @@ class dbfts_mysql extends dbfts_abs
              * stopwords because stopwords are not in the index and cannot be found
              */
             if (($searchMode == 'match-boolean') || ($searchMode == 'both-match-boolean')) {
-                $matchPart = ' MATCH('.$field.') AGAINST ('.$this->_db->safe($searchValue).' IN BOOLEAN MODE)';
+                list($indexValue, $phraseLikes) = $this->rewriteRequiredPhrases($field, $searchValue, $minWordLen, $stopWords);
+                if ($searchMode == 'match-boolean') {
+                    /* in 'both' mode every term already has a LIKE condition */
+                    $queryPart = array_merge($queryPart, $phraseLikes);
+                } // if
+
+                $matchPart = ' MATCH('.$field.') AGAINST ('.$this->_db->safe($indexValue).' IN BOOLEAN MODE)';
                 $queryPart[] = $matchPart;
             } // if
+
+            if ($searchMode != 'normal') {
+                $requiredWordSets[] = $this->getRequiredIndexWords($searchValue, $minWordLen, $stopWords);
+            } else {
+                $requiredWordSets[] = [];
+            } // else
 
             /*
              * Add the textqueries with an AND per search term
@@ -339,6 +472,25 @@ class dbfts_mysql extends dbfts_abs
             }  // if
         } // foreach
 
+        /*
+         * When several searches on this field are combined with OR, MySQL cannot
+         * use the fulltext index for any of them and has to scan every spot.
+         * If all searches share required words, we add one MATCH on those
+         * words in front of the OR: the index then narrows the rows first.
+         */
+        $filterPrefix = '';
+        if ((count($searchFields) > 1) && (strtoupper($searchFields[0]['booloper']) == 'OR')) {
+            $commonWords = array_shift($requiredWordSets);
+            foreach ($requiredWordSets as $wordSet) {
+                $commonWords = array_values(array_intersect($commonWords, $wordSet));
+            } // foreach
+
+            if (!empty($commonWords)) {
+                $filterPrefix = ' MATCH('.$searchFields[0]['fieldname'].') AGAINST ('.
+                    $this->_db->safe('+'.implode(' +', $commonWords)).' IN BOOLEAN MODE) ';
+            } // if
+        } // if
+
         SpotTiming::stop(__CLASS__.'::'.__FUNCTION__, [$filterValueSql, $addFields, $sortFields]);
 
         //var_dump($filterValueSql);
@@ -347,6 +499,7 @@ class dbfts_mysql extends dbfts_abs
         //die();
 
         return ['filterValueSql' => $filterValueSql,
+            'filterPrefix'       => $filterPrefix,
             'additionalTables'   => [],
             'additionalFields'   => $addFields,
             'sortFields'         => $sortFields, ];

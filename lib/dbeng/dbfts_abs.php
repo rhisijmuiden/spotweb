@@ -28,8 +28,12 @@ abstract class dbfts_abs
          *  \
          *  *
          *  '
+         *
+         * Quoted phrases are matched non-greedy so that a query like
+         * +"Some Show" +"Season 2" yields two phrases instead of one
+         * phrase spanning from the first to the last quote.
          */
-        if (preg_match_all('([\\\/\+-\\\*\'\w]+|".+")u', $s, $matches)) {
+        if (preg_match_all('([\\\/\+-\\\*\'\w]+|"[^"]*")u', $s, $matches)) {
             $newList = [];
             foreach ($matches[0] as $word) {
                 $strippedWord = trim($word, "\r\n\t "); // removed + and - from trim
