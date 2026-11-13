@@ -112,7 +112,7 @@ if ($show_nzbhandler_button) { ?>
         $newSpotClass = ($tplHelper->isSpotNew($spot)) ? 'new' : '';
         $tipTipClass = $show_mouseover_subcats ? 'showTipTip' : '';
         $dateTitleText = $tplHelper->formatDate($spot['stamp'], 'force_spotlist');
-        $commentCountValue = $spot['commentcount'];
+        $commentCountValue = ($spot['commentcount'] > 0) ? $spot['commentcount'] : '';
         if (isset($newCommentCount[$spot['messageid']])) {
             $commentCountValue .= '*';
         } // if
