@@ -217,7 +217,9 @@ class ServicesRetrieverCommentsPipelinedTest extends TestCase
         foreach ([false, true] as $buggy) {
             $runner = $this->newRunner(new ServicesRetrieverCommentsPipelinedTransport(), new Services_Retriever_CommentsCaptureSink());
             $serverProperty = new ReflectionProperty(Services_Retriever_CommentsPipelined::class, '_textServer');
-            $serverProperty->setAccessible(true);
+            if (PHP_VERSION_ID < 80100) {
+                $serverProperty->setAccessible(true);
+            }
             $server = $serverProperty->getValue($runner);
             $server['buggy'] = $buggy;
             $serverProperty->setValue($runner, $server);
@@ -226,7 +228,9 @@ class ServicesRetrieverCommentsPipelinedTest extends TestCase
             $dao->expects($buggy ? $this->never() : $this->once())
                 ->method('removeExtraComments')->with('fixture-highest@example.invalid');
             $daoProperty = new ReflectionProperty(Services_Retriever_CommentsPipelined::class, '_commentDao');
-            $daoProperty->setAccessible(true);
+            if (PHP_VERSION_ID < 80100) {
+                $daoProperty->setAccessible(true);
+            }
             $daoProperty->setValue($runner, $dao);
 
             $runner->removeTooNewRecords('fixture-highest@example.invalid');
@@ -264,14 +268,18 @@ class ServicesRetrieverCommentsPipelinedTest extends TestCase
     private function setPipelineWindow($runner, $window)
     {
         $property = new ReflectionProperty('Services_Retriever_CommentsPipelined', '_pipelineWindow');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
         $property->setValue($runner, $window);
     }
 
     private function setParser($runner, $parser)
     {
         $property = new ReflectionProperty('Services_Retriever_CommentsPipelined', '_parser');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
         $property->setValue($runner, $parser);
     }
 

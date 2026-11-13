@@ -1,0 +1,83 @@
+name: 4.x on PHP 8.x
+
+# Run this workflow every time a new commit pushed to your repository
+on:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+  push:
+    branches: ['4.x']
+    paths-ignore:
+      - '*.md'
+      - '.github/**'
+      - 'scripts/**'
+
+  pull_request:
+    branches: ['4.x']
+    paths-ignore:
+      - '*.md'
+      - '.github/**'
+      - 'scripts/**'
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        php-version: [8.2, 8.3, 8.4]
+        os: ['ubuntu-latest']
+        composer-version: ['latest']
+        phpunit-version: ['^9.6.18']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP ${{ matrix.php-version }} on ${{ matrix.os }}
+        uses: shivammathur/setup-php@verbose
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, intl
+          ini-values: post_max_size=256M, max_execution_time=180
+          coverage: xdebug
+          tools: phpunit:${{ matrix.phpunit-version }}, composer:${{ matrix.composer-version }}
+
+      - name: Install composer
+        run: composer install
+
+      - name: Run linting
+        run: vendor/bin/phpcs
+
+      - name: Run quality rules
+        run: vendor/bin/phpstan analyse --debug --memory-limit=1G --level 3 src tests
+
+      - name: Run tests
+        run: XDEBUG_MODE=coverage && phpunit -v -c tests/phpunit.xml --coverage-text --strict-coverage --stop-on-risky
+        shell: bash
+
+  # Verifies that Cache remains LSP-compatible with every supported major of
+  # psr/simple-cache. If a future PSR-16 revision narrows the interface in a way
+  # that breaks our widened signatures, this job fatals at class load.
+  # See https://github.com/serbanghita/Mobile-Detect/issues/989.
+  psr16-compat:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version: [8.2, 8.4]
+        psr-simple-cache: ['^1.0', '^2.0', '^3.0']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@verbose
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: mbstring, intl
+          tools: composer:latest
+
+      - name: Install with psr/simple-cache ${{ matrix.psr-simple-cache }}
+        run: composer require "psr/simple-cache:${{ matrix.psr-simple-cache }}" --update-with-dependencies --no-interaction
+
+      - name: Run tests
+        run: vendor/bin/phpunit -c tests/phpunit.xml

@@ -1,0 +1,158 @@
+<?php
+
+namespace DetectionTests;
+
+use Detection\Cache\Cache;
+use Detection\Exception\MobileDetectException;
+use Detection\MobileDetect;
+use PHPUnit\Framework\TestCase;
+use Psr\SimpleCache\InvalidArgumentException;
+
+final class MobileDetectWithCacheTest extends TestCase
+{
+    /**
+     * @var MobileDetect
+     */
+    protected MobileDetect $detect;
+
+    public function testFlattenHeaders()
+    {
+        $detect = new MobileDetect();
+        $cacheKey = $detect->flattenHeaders([
+            'HTTP_REQUEST_METHOD' => 'DELETE',
+            'HTTP_USER_AGENT'     => 'Mozilla/5.0 iPhone;',
+            'HTTP_ACCEPT_LANGUAGE' => 'en-us,en;q=0.5',
+        ]);
+
+        $expectedString = "HTTP_REQUEST_METHOD: DELETE" . PHP_EOL .
+        "HTTP_USER_AGENT: Mozilla/5.0 iPhone;" . PHP_EOL .
+        "HTTP_ACCEPT_LANGUAGE: en-us,en;q=0.5";
+
+        $this->assertEquals($expectedString, $cacheKey);
+    }
+
+    /**
+     * @throws MobileDetectException
+     * @throws InvalidArgumentException
+     */
+    public function testDefaultCacheClassCreatesACacheRecord()
+    {
+        $detect = new MobileDetect();
+        $detect->setUserAgent('Some iPhone user agent');
+        $isMobile = $detect->isMobile();
+
+        $this->assertTrue($isMobile);
+        $this->assertTrue($detect->getCache()->has(sha1("mobile:Some iPhone user agent:")));
+    }
+
+    /**
+     * @throws MobileDetectException|InvalidArgumentException
+     */
+    public function testDefaultCacheClassCreatesMultipleCacheRecordsForAllCalls()
+    {
+        $userAgent = 'iPad; AppleWebKit/533.17.9 Version/5.0.2 Mobile/8C148 Safari/6533.18.5';
+        $detect = new MobileDetect();
+        $detect->setUserAgent($userAgent);
+
+        $isMobile = $detect->isMobile();
+        $isTablet = $detect->isTablet();
+        $isMobile2 = $detect->is("mobile");
+        $isTablet2 = $detect->is("tablet");
+
+        $isIpad = $detect->isiPad();
+        $isIpad2 = $detect->is("iPad");
+        $isiOS = $detect->isiOS();
+        $isiOS2 = $detect->is("iOS");
+
+        $this->assertTrue($isMobile);
+        $this->assertTrue($isTablet);
+        $this->assertTrue($isMobile2);
+        $this->assertTrue($isTablet2);
+        $this->assertTrue($isIpad);
+        $this->assertTrue($isIpad2);
+        $this->assertTrue($isiOS);
+        $this->assertTrue($isiOS2);
+
+
+        $this->assertTrue($detect->getCache()->get(sha1("mobile:$userAgent:")));
+        $this->assertTrue($detect->getCache()->get(sha1("tablet:$userAgent:")));
+        $this->assertTrue($detect->getCache()->get(sha1("iPad:$userAgent:")));
+        $this->assertTrue($detect->getCache()->get(sha1("iOS:$userAgent:")));
+    }
+
+    /**
+     * @throws MobileDetectException
+     */
+    public function testCustomCacheWithInvalidFnThrowsException()
+    {
+        $this->expectException(MobileDetectException::class);
+        $this->expectExceptionMessage('Cache problem in isMobile(): cacheKeyFn is not a function.');
+        $cache = new Cache();
+
+        $detect = new MobileDetect($cache, ['cacheKeyFn' => 'not a function']);
+        $detect->setUserAgent('iPad; AppleWebKit/533.17.9 Version/5.0.2 Mobile/8C148 Safari/6533.18.5');
+        $detect->isMobile();
+    }
+
+    /**
+     * @throws MobileDetectException
+     */
+    public function testCustomCacheForConsecutiveCalls()
+    {
+        $cache = new Cache();
+
+        $detect = new MobileDetect($cache, ['cacheKeyFn' => fn ($key) => sha1($key)]);
+        $detect->setUserAgent('iPad; AppleWebKit/533.17.9 Version/5.0.2 Mobile/8C148 Safari/6533.18.5');
+
+        $detect->isMobile();
+        $this->assertCount(1, $cache->getKeys());
+
+        $detect->isMobile();
+        $this->assertCount(1, $cache->getKeys());
+    }
+
+    /**
+     * @throws MobileDetectException
+     */
+    public function testGetCacheKeyIsUsedInConsecutiveCallsIfFoundIn()
+    {
+        $cache = $this->getMockBuilder(Cache::class)
+            ->enableProxyingToOriginalMethods()
+            ->getMock();
+
+        $cache->expects($this->exactly(3))->method('get');
+        $cache->expects($this->exactly(1))->method('set');
+
+        $detect = new MobileDetect($cache);
+        $detect->setUserAgent('iPad; AppleWebKit/533.17.9 Version/5.0.2 Mobile/8C148 Safari/6533.18.5');
+
+        $detect->isMobile();
+        $detect->isMobile();
+        $detect->isMobile();
+    }
+
+    /**
+     * Regression test for GHSA-mgj4-qjmw-v56v.
+     *
+     * Reusing a single MobileDetect instance across many distinct User-Agents
+     * (the documented long-running worker pattern) must not grow the in-memory
+     * cache without bound. The bundled Cache caps itself at
+     * Cache::DEFAULT_MAX_ENTRIES with FIFO eviction.
+     *
+     * @throws MobileDetectException
+     */
+    public function testMobileDetectCacheStaysBoundedUnderUniqueUserAgents(): void
+    {
+        $detect = new MobileDetect(null, ['autoInitOfHttpHeaders' => false]);
+
+        for ($i = 0; $i < 2000; $i++) {
+            $detect->setUserAgent('Mozilla/5.0 Android attacker-' . str_pad((string) $i, 8, '0', STR_PAD_LEFT));
+            $detect->isMobile();
+            $detect->isTablet();
+        }
+
+        $cache = $detect->getCache();
+        $this->assertInstanceOf(Cache::class, $cache);
+        $this->assertLessThanOrEqual(Cache::DEFAULT_MAX_ENTRIES, count($cache->getKeys()));
+    }
+}

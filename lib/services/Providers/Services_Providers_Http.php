@@ -385,10 +385,7 @@ class Services_Providers_Http
             $data = '';
         } // else
 
-        if (PHP_MAJOR_VERSION < 8) {
-            // deprecated code
-            curl_close($ch);
-        }
+        // curl handles are freed automatically (curl_close() is a no-op since PHP 8.0 and deprecated in 8.5)
 
         /*
          * Sometimes we get an HTTP error of 0 back, which

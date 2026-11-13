@@ -185,7 +185,9 @@ class ServicesNntpConfigurationParityTest extends TestCase
                     $transport->connect();
                     $transport->sendNoop();
                     $property = new ReflectionProperty(Services_Nntp_PipelinedTransport::class, '_stream');
-                    $property->setAccessible(true);
+                    if (PHP_VERSION_ID < 80100) {
+                        $property->setAccessible(true);
+                    }
                     $metadata = stream_get_meta_data($property->getValue($transport));
                     $this->assertSame($protocol, $metadata['crypto']['protocol'], $mode.' negotiates '.$protocol);
                     $this->assertSame(1, $transport->getOpenedConnectionCount());
@@ -210,7 +212,9 @@ class ServicesNntpConfigurationParityTest extends TestCase
             } catch (NntpException $exception) {
                 $this->assertSame(502, $exception->getCode());
                 $property = new ReflectionProperty(Services_Nntp_PipelinedTransport::class, '_stream');
-                $property->setAccessible(true);
+                if (PHP_VERSION_ID < 80100) {
+                    $property->setAccessible(true);
+                }
                 $this->assertNull($property->getValue($transport), 'Failed upgrades must not leave a reusable plaintext connection');
             } finally {
                 $transport->disconnect();
@@ -280,7 +284,9 @@ class ServicesNntpConfigurationParityTest extends TestCase
     private function server($transport)
     {
         $property = new ReflectionProperty(Services_Nntp_PipelinedTransport::class, '_server');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
 
         return $property->getValue($transport);
     }
@@ -289,7 +295,9 @@ class ServicesNntpConfigurationParityTest extends TestCase
     {
         foreach ($values as $name => $value) {
             $property = new ReflectionProperty($class, $name);
-            $property->setAccessible(true);
+            if (PHP_VERSION_ID < 80100) {
+                $property->setAccessible(true);
+            }
             $property->setValue(null, $value);
         }
     }
