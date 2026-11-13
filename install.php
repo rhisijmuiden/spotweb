@@ -7,8 +7,9 @@ require_once __DIR__.'/vendor/autoload.php';
 if (file_exists(__DIR__.'/settings.php')) {
     require_once __DIR__.'/settings.php';
 }
-if (file_exists(__DIR__.'/dbsettings.inc.php')) {
-    require_once __DIR__.'/dbsettings.inc.php';
+$dbsettings = Bootstrap::loadDbSettings();
+if ($dbsettings === null) {
+    unset($dbsettings);
 }
 
 set_error_handler('SpotInstall::ownWarning', E_WARNING);

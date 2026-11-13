@@ -58,6 +58,34 @@ release that adds an index can take a few minutes. Run it from a shell (not
 through the browser) so it is not stopped by a web timeout. MariaDB and MySQL
 add normal indexes online, so Spotweb stays usable while it runs.
 
+## Where the database settings live
+
+Spotweb reads the database settings from the first of these that exists:
+
+1. the file named in the `SPOTWEB_DBSETTINGS` environment variable;
+2. `spotweb-config/dbsettings.inc.php` **next to** the Spotweb folder, so
+   outside the webroot;
+3. `dbsettings.inc.php` in the Spotweb folder (where the install wizard
+   writes it).
+
+Option 2 is recommended: the file is then out of reach of the webserver, and
+a `git pull` or a fresh ZIP never touches it. To move it:
+
+```sh
+cd /path/to/spotweb
+mkdir -p ../spotweb-config
+mv dbsettings.inc.php ../spotweb-config/
+chmod 640 ../spotweb-config/dbsettings.inc.php
+```
+
+If PHP runs with `open_basedir`, the parent folder must be allowed, otherwise
+keep the file where it is.
+
+Without a settings file, Spotweb also reads `SPOTWEB_DB_ENGINE`
+(`pdo_mysql`, `pdo_pgsql` or `pdo_sqlite`), `SPOTWEB_DB_HOST`,
+`SPOTWEB_DB_PORT`, `SPOTWEB_DB_NAME`, `SPOTWEB_DB_USER`, `SPOTWEB_DB_PASS`
+and `SPOTWEB_DB_SCHEMA` from the environment, which is handy in Docker.
+
 ## Webserver, `/api` and Cloudflare
 
 - The Newznab API at `<spotweb>/api` no longer needs the `.htaccess` rewrite
