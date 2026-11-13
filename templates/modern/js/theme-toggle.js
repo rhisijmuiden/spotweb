@@ -38,54 +38,65 @@
       apply(getPref());
     }
 
-    // View controls
-    if (toolbar && !document.getElementById('viewCurrent')) {
-      var viewPref = localStorage.getItem('spotweb_view') || 'cards';
-
-      var viewWrap = document.createElement('div');
-      viewWrap.className = 'toolbarButton theme dropdown right';
-      viewWrap.innerHTML = "<ul><li><p><a id=\"viewCurrent\">View: " + (viewPref==='table'?'Table':'Cards') + "</a></p>" +
-                          "<ul>" +
-                          "<li><a href=\"#\" id=\"viewCards\">Cards</a></li>" +
-                          "<li><a href=\"#\" id=\"viewTable\">Table</a></li>" +
-                          "</ul></li></ul>";
-      toolbar.appendChild(viewWrap);
-
-      function setViewCookie(v){ try { document.cookie = 'spotweb_view=' + v + '; path=/; max-age=' + (60*60*24*365); } catch(e){} }
-      document.getElementById('viewCards').onclick = function(){
-        try { localStorage.setItem('spotweb_view','cards'); } catch(e){}
-        setViewCookie('cards');
-        var u = new URL(location.href);
-        u.searchParams.set('view','cards');
-        location.href = u.toString();
-        return false;
-      };
-      document.getElementById('viewTable').onclick = function(){
-        try { localStorage.setItem('spotweb_view','table'); } catch(e){}
-        setViewCookie('table');
-        var u = new URL(location.href);
-        u.searchParams.set('view','table');
-        location.href = u.toString();
-        return false;
-      };
-
-      // Sync cookie from storage if missing
-      try {
-        if (!document.cookie.match(/(?:^|; )spotweb_view=/)) {
-          var prefView = localStorage.getItem('spotweb_view') || 'cards';
-          setViewCookie(prefView);
-        }
-      } catch(e){}
+    // View controls: the admin sets the default view and can lock it for everyone
+    var siteView = (T && T.view) || 'cards';
+    var viewLocked = !!(T && T.viewLocked);
+    var L = (T && T.viewLabels) || { view: 'View', cards: 'Cards', table: 'Table' };
+    function storedView() {
+      var v = null;
+      try { v = localStorage.getItem('spotweb_view'); } catch (e) {}
+      return (v === 'cards' || v === 'table') ? v : null;
+    }
+    function setViewCookie(v) { try { document.cookie = 'spotweb_view=' + v + '; path=/; max-age=' + (60*60*24*365); } catch (e) {} }
+    function clearViewCookie() { try { document.cookie = 'spotweb_view=; path=/; max-age=0'; } catch (e) {} }
+    function chooseView(v) {
+      var u = new URL(location.href);
+      if (v === 'site') {
+        try { localStorage.removeItem('spotweb_view'); } catch (e) {}
+        clearViewCookie();
+        u.searchParams.delete('view');
+      } else {
+        try { localStorage.setItem('spotweb_view', v); } catch (e) {}
+        setViewCookie(v);
+        u.searchParams.set('view', v);
+      }
+      location.href = u.toString();
     }
 
-    // If a view preference exists but URL lacks ?view=, redirect to it
-    try {
-      var u = new URL(location.href);
-      if (!u.searchParams.has('view')) {
-        var prefView = localStorage.getItem('spotweb_view');
-        if (prefView) { u.searchParams.set('view', prefView); location.replace(u.toString()); }
+    if (viewLocked) {
+      // a locked view ignores personal choices; forget them so nothing lingers
+      try { localStorage.removeItem('spotweb_view'); } catch (e) {}
+      clearViewCookie();
+    } else if (toolbar && !document.getElementById('viewCurrent')) {
+      var viewPref = storedView();
+      var current = viewPref || siteView;
+      var viewWrap = document.createElement('div');
+      viewWrap.className = 'toolbarButton theme dropdown right';
+      viewWrap.innerHTML = '<ul><li><p><a id="viewCurrent"></a></p><ul>' +
+        '<li><a href="#" data-sw-view="site"></a></li>' +
+        '<li><a href="#" data-sw-view="cards"></a></li>' +
+        '<li><a href="#" data-sw-view="table"></a></li>' +
+        '</ul></li></ul>';
+      toolbar.appendChild(viewWrap);
+      document.getElementById('viewCurrent').textContent = L.view + ': ' + (viewPref ? L[current] : (T ? T.siteLabel : 'Site default'));
+      var vlinks = viewWrap.querySelectorAll('a[data-sw-view]');
+      for (var vi = 0; vi < vlinks.length; vi++) {
+        var key = vlinks[vi].getAttribute('data-sw-view');
+        vlinks[vi].textContent = key === 'site' ? ((T ? T.siteLabel : 'Site default') + ' (' + L[siteView] + ')') : L[key];
+        vlinks[vi].onclick = function () { chooseView(this.getAttribute('data-sw-view')); return false; };
       }
-    } catch(e){}
+      // keep the cookie in step with the stored choice, so the server renders the same view
+      if (viewPref) { setViewCookie(viewPref); }
+
+      // a stored choice that differs from what the page shows: reload once with it
+      try {
+        var cu = new URL(location.href);
+        if (viewPref && !cu.searchParams.has('view')) {
+          var shown = document.querySelector('.cardsGrid') ? 'cards' : (document.querySelector('table.spots') ? 'table' : null);
+          if (shown && shown !== viewPref) { cu.searchParams.set('view', viewPref); location.replace(cu.toString()); }
+        }
+      } catch (e) {}
+    }
     try {
       var mql = window.matchMedia('(prefers-color-scheme: dark)');
       var onChange = function(){ apply(getPref()); };

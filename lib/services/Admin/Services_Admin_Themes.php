@@ -39,6 +39,50 @@ class Services_Admin_Themes
     }
 
     /*
+     * The spot list layouts: cards (default) or a compact table
+     */
+    const DEFAULT_VIEW = 'cards';
+
+    public static function getViews()
+    {
+        return ['cards' => _('Cards'), 'table' => _('Table')];
+    }
+
+    public static function isValidView($view)
+    {
+        return is_string($view) && array_key_exists($view, self::getViews());
+    }
+
+    public static function getSiteView(Services_Settings_Container $settings)
+    {
+        $view = $settings->get('site_view');
+
+        return self::isValidView($view) ? $view : self::DEFAULT_VIEW;
+    }
+
+    // when locked, everyone gets the site view and the View button is hidden
+    public static function isViewLocked(Services_Settings_Container $settings)
+    {
+        return (bool) $settings->get('site_view_locked');
+    }
+
+    /*
+     * The view to render: the locked site view, else ?view=, else the cookie, else the site view
+     */
+    public static function resolveView(Services_Settings_Container $settings, $requested, $cookie)
+    {
+        if (!self::isViewLocked($settings)) {
+            foreach ([$requested, $cookie] as $candidate) {
+                if (self::isValidView($candidate)) {
+                    return $candidate;
+                } // if
+            } // foreach
+        } // if
+
+        return self::getSiteView($settings);
+    }
+
+    /*
      * Theme id => light/dark/auto, for the script that applies a theme
      */
     public static function getModes()

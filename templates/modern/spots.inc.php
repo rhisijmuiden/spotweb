@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     SpotTiming::start('tpl:spotsinc-modern-cards');
 
-    $viewMode = isset($_GET['view']) ? $_GET['view'] : (isset($_COOKIE['spotweb_view']) ? $_COOKIE['spotweb_view'] : 'cards');
+    $viewMode = Services_Admin_Themes::resolveView($settings, $_GET['view'] ?? null, $_COOKIE['spotweb_view'] ?? null);
     if ($viewMode === 'table') {
         $data['spotsonly'] = true;
         require __DIR__.'/spots.table.inc.php';

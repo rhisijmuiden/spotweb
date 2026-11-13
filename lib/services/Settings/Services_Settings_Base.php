@@ -129,6 +129,12 @@ class Services_Settings_Base
             $result->addError(_('Invalid theme'));
         } // if
 
+        // the default spot list layout, optionally locked for everyone
+        if (isset($settings['site_view']) && !Services_Admin_Themes::isValidView($settings['site_view'])) {
+            $result->addError(_('Invalid view'));
+        } // if
+        $settings['site_view_locked'] = (isset($settings['site_view_locked'])) ? true : false;
+
         // We don't want to save megabyts of CSS, so put a limit to the size
         if (strlen($settings['customcss']) > 1024 * 10) {
             $result->addError(_('Custom CSS is too large'));

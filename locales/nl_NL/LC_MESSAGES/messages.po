@@ -2486,3 +2486,27 @@ msgid "%s spot"
 msgid_plural "%s spots"
 msgstr[0] "%s spot"
 msgstr[1] "%s spots"
+
+msgid "Table"
+msgstr "Tabel"
+
+msgid "View"
+msgstr "Weergave"
+
+msgid "Invalid view"
+msgstr "Ongeldige weergave"
+
+msgid "Spot list view"
+msgstr "Weergave van de spotlijst"
+
+msgid "How the list of spots is shown by default. Visitors can pick another view in the toolbar, unless you lock it."
+msgstr "Hoe de lijst met spots standaard wordt getoond. Bezoekers kunnen in de werkbalk een andere weergave kiezen, tenzij je die vastzet."
+
+msgid "Posters with title and details, easy to browse"
+msgstr "Posters met titel en details, makkelijk om door te bladeren"
+
+msgid "A compact list with one row per spot"
+msgstr "Een compacte lijst met één regel per spot"
+
+msgid "Lock this view for everyone"
+msgstr "Deze weergave voor iedereen vastzetten"
