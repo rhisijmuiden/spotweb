@@ -2510,3 +2510,15 @@ msgstr "Een compacte lijst met één regel per spot"
 
 msgid "Lock this view for everyone"
 msgstr "Deze weergave voor iedereen vastzetten"
+
+msgid "Speed"
+msgstr "Snelheid"
+
+msgid "API and RSS answers are kept for a short time, so apps that ask the same question again get the answer at once. A new spot always gives a fresh answer. 0 switches this off."
+msgstr "Antwoorden van de API en RSS worden even bewaard, zodat apps die dezelfde vraag nog eens stellen meteen antwoord krijgen. Een nieuwe spot geeft altijd een vers antwoord. 0 zet dit uit."
+
+msgid "Keep answers for (seconds)"
+msgstr "Antwoorden bewaren (seconden)"
+
+msgid "The API cache time must be a whole number of seconds between 0 and %d"
+msgstr "De bewaartijd voor de API moet een heel aantal seconden tussen 0 en %d zijn"

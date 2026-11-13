@@ -9,6 +9,12 @@ class SpotPage_newznabapi extends SpotPage_Abs
 
     private $_params;
 
+    /*
+     * Set by showResults(), so cachedSearch() knows a search result (and
+     * not an error) was written
+     */
+    private $_resultsShown = false;
+
     public function __construct(Dao_Factory $daoFactory, Services_Settings_Container $settings, array $currentSession, array $params)
     {
         parent::__construct($daoFactory, $settings, $currentSession);
@@ -70,7 +76,7 @@ class SpotPage_newznabapi extends SpotPage_Abs
             case 't':
             case 'music':
             case 'movie':
-            case 'm': $this->search($outputtype);
+            case 'm': $this->cachedSearch($outputtype);
                 break;
             case 'd':
             case 'details': $this->spotDetails($outputtype);
@@ -83,6 +89,75 @@ class SpotPage_newznabapi extends SpotPage_Abs
     }
 
     // render()
+
+    /**
+     * Runs search(), but serves the response from the response cache when the
+     * same user asked the same question since the last new spot arrived.
+     * Prowlarr, Sonarr and Radarr ask the same RSS questions over and over.
+     *
+     * @param $outputtype
+     */
+    public function cachedSearch($outputtype)
+    {
+        $cache = new Services_Providers_ResponseCache(
+            $this->_daoFactory->getCachePath(),
+            Services_Providers_ResponseCache::ttlFromSettings($this->_settings)
+        );
+
+        $user = $this->_currentSession['user'];
+        $key = $cache->makeKey([
+            'newznabapi',
+            SPOTWEB_VERSION,
+            (int) $user['userid'],
+            $outputtype,
+            $this->_params,
+            $user['prefs']['perpage'] ?? null,
+            $user['prefs']['nzbhandling']['prepare_action'] ?? null,
+            $this->_spotSec->allowed(SpotSecurity::spotsec_keep_own_watchlist, ''),
+            $this->_settings->get('spotweburl'),
+            $cache->isEnabled() ? Services_Providers_ResponseCache::spotGeneration($this->_daoFactory->getConnection()) : 0,
+        ]);
+
+        $uncachedBody = null;
+        $response = $cache->remember($key, function () use ($outputtype, &$uncachedBody) {
+            $this->_resultsShown = false;
+
+            ob_start();
+            try {
+                $this->search($outputtype);
+            } finally {
+                $body = ob_get_clean();
+            } // finally
+
+            if (!$this->_resultsShown) {
+                // An error message, not worth caching
+                $uncachedBody = $body;
+
+                return null;
+            } // if
+
+            return [
+                'headers' => [($outputtype == 'json') ? 'Content-Type: application/json; charset=utf-8' : 'Content-Type: text/xml; charset=utf-8'],
+                'body'    => $body,
+            ];
+        });
+
+        if ($response === null) {
+            echo $uncachedBody;
+
+            return;
+        } // if
+
+        if (!headers_sent()) {
+            foreach ($response['headers'] as $header) {
+                header($header);
+            } // foreach
+            header('X-Spotweb-Cache: '.$response['cache']);
+        } // if
+        echo $response['body'];
+    }
+
+    // cachedSearch
 
     /**
      * Search the spotweb database for a specific piece of information.
@@ -374,7 +449,7 @@ class SpotPage_newznabapi extends SpotPage_Abs
         * this action even when the watchlist is editted
         */
         $svcProvSpotList = new Services_Providers_SpotList($this->_daoFactory->getSpotDao());
-        $spotsTmp = $svcProvSpotList->fetchSpotList(
+        $spotsTmp = $svcProvSpotList->fetchNewestSpotList(
             $this->_currentSession['user']['userid'],
             $pageNr,
             $limit,
@@ -413,6 +488,7 @@ class SpotPage_newznabapi extends SpotPage_Abs
      */
     public function showResults($spots, $offset, $outputtype, $total)
     {
+        $this->_resultsShown = true;
         $nzbhandling = $this->_currentSession['user']['prefs']['nzbhandling'];
 
         if ($outputtype == 'json') {
@@ -448,6 +524,7 @@ class SpotPage_newznabapi extends SpotPage_Abs
                 $doc[] = $data;
             } // foreach
 
+            $this->sendContentTypeHeader('json');
             echo json_encode($doc);
         } else {
             // Create XML

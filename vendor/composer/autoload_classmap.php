@@ -761,6 +761,7 @@ return array(
     'Services_Providers_Http' => $baseDir . '/lib/services/Providers/Services_Providers_Http.php',
     'Services_Providers_HttpNzb' => $baseDir . '/lib/services/Providers/Services_Providers_HttpNzb.php',
     'Services_Providers_Nzb' => $baseDir . '/lib/services/Providers/Services_Providers_Nzb.php',
+    'Services_Providers_ResponseCache' => $baseDir . '/lib/services/Providers/Services_Providers_ResponseCache.php',
     'Services_Providers_SpotImage' => $baseDir . '/lib/services/Providers/Services_Providers_SpotImage.php',
     'Services_Providers_SpotList' => $baseDir . '/lib/services/Providers/Services_Providers_SpotList.php',
     'Services_Providers_Statistics' => $baseDir . '/lib/services/Providers/Services_Providers_Statistics.php',

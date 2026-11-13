@@ -124,6 +124,18 @@ class Services_Settings_Base
             } // if
         } // foreach
 
+        // how long API and RSS answers are kept, 0 switches the cache off
+        if (isset($settings['api_cache_ttl'])) {
+            $value = trim((string) $settings['api_cache_ttl']);
+            if ($value === '') {
+                $value = (string) Services_Providers_ResponseCache::DEFAULT_TTL;
+            } // if
+            if (!ctype_digit($value) || ((int) $value > Services_Providers_ResponseCache::MAX_TTL)) {
+                $result->addError(sprintf(_('The API cache time must be a whole number of seconds between 0 and %d'), Services_Providers_ResponseCache::MAX_TTL));
+            } // if
+            $settings['api_cache_ttl'] = (int) $value;
+        } // if
+
         // the site colour theme
         if (isset($settings['site_theme']) && !Services_Admin_Themes::isValid($settings['site_theme'])) {
             $result->addError(_('Invalid theme'));

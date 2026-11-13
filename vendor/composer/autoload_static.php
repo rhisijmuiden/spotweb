@@ -976,6 +976,7 @@ class ComposerStaticInit504c4440a019baf1c7be3e9f33abe7d1
         'Services_Providers_Http' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_Http.php',
         'Services_Providers_HttpNzb' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_HttpNzb.php',
         'Services_Providers_Nzb' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_Nzb.php',
+        'Services_Providers_ResponseCache' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_ResponseCache.php',
         'Services_Providers_SpotImage' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_SpotImage.php',
         'Services_Providers_SpotList' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_SpotList.php',
         'Services_Providers_Statistics' => __DIR__ . '/../..' . '/lib/services/Providers/Services_Providers_Statistics.php',
