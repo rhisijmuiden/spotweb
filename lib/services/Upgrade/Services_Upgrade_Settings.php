@@ -62,6 +62,8 @@ class Services_Upgrade_Settings
         $this->normalizeNntpServerSetting('nntp_hdr');
         $this->normalizeNntpServerSetting('nntp_post');
         $this->setIfNot('smtp', ['use' => false, 'host' => '', 'user' => '', 'pass' => '', 'port' => 587]);
+        $this->upgradeSmtpSetting();
+        $this->setIfNot('password_reset_enabled', true);
         $this->setIfNot('retrieve_newer_than', 0);
         $this->setIfNot('retrieve_full', false);
         $this->setIfNot('prefetch_image', false);
@@ -127,6 +129,21 @@ class Services_Upgrade_Settings
     }
 
     // setIfNot
+
+    /*
+     * Older versions stored only use, host, user, pass and port and always
+     * used STARTTLS with authentication and without a hostname check. Keep
+     * that behaviour for an existing SMTP setup, so mail keeps working.
+     */
+    private function upgradeSmtpSetting()
+    {
+        $smtp = $this->_settings->get('smtp');
+        if (!is_array($smtp) || isset($smtp['encryption'])) {
+            return;
+        } // if
+        $smtp += ['encryption' => Services_Mail_Sender::ENC_STARTTLS, 'auth' => true, 'verify_cert' => empty($smtp['use'])];
+        $this->_settings->set('smtp', Services_Mail_Sender::normalize($smtp));
+    }
 
     /*
      * Remove a setting, silently fails if not set

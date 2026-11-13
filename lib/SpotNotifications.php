@@ -194,18 +194,34 @@ class SpotNotifications
      * Send the new user itself a notification mail
      * that his / her account has been created
      */
-    public function sendNewUserMail($user)
+    public function sendNewUserMail($user, $force = false)
     {
         // Because sending if the message has been explicitily reqested,
-        // we do not run extra security-checks on the receiver.
-        if ($this->_spotSec->allowed(SpotSecurity::spotsec_send_notifications_services, 'welcomemail')) {
-            $notification = $this->_notificationTemplate->template('user_added_email', ['user' => $user, 'adminUser' => $this->_currentSession['user']]);
-            $user['prefs']['notifications']['email']['sender'] = $this->_settings->get('systemfrommail');
-            $user['prefs']['notifications']['email']['receiver'] = $user['mail'];
-            $this->_notificationServices['email'] = Notifications_Factory::build('Spotweb', 'email', $user['prefs']['notifications']['email']);
-            $this->_notificationServices['email']->sendMessage('Single', $notification['title'], implode(PHP_EOL, $notification['body']), $this->_settings->get('spotweburl'), $this->_settings->get('smtp'));
-            $this->_notificationServices = [];
+        // we do not run extra security-checks on the receiver. When the admin
+        // turned on "always send a welcome e-mail" that is permission enough.
+        if (!$force && !$this->_spotSec->allowed(SpotSecurity::spotsec_send_notifications_services, 'welcomemail')) {
+            return false;
         } // if
+
+        try {
+            $svcReset = new Services_User_PasswordReset($this->_daoFactory, $this->_settings);
+            if ($svcReset->isEnabled() && !empty($user['userid'])) {
+                // a link to choose a password, no password in plain text
+                $fullUser = $this->_daoFactory->getUserDao()->getUser($user['userid']);
+                $svcReset->sendWelcome(($fullUser !== false) ? $fullUser : $user);
+
+                return true;
+            } // if
+
+            $notification = $this->_notificationTemplate->template('user_added_email', ['user' => $user, 'adminUser' => $this->_currentSession['user']]);
+            Services_Mail_Sender::fromSettings($this->_settings)->send($user['mail'], $notification['title'], implode(PHP_EOL, $notification['body']));
+
+            return true;
+        } catch (Exception $e) {
+            error_log('Spotweb: welcome e-mail failed: '.$e->getMessage());
+
+            return false;
+        } // catch
     }
 
     // sendNewUserMail
@@ -326,7 +342,7 @@ class SpotNotifications
 
                 // Now the message really is sent.
                 foreach ($this->_notificationServices as $notificationService) {
-                    $notificationService->sendMessage($newMessage['type'], utf8_decode($newMessage['title']), utf8_decode($newMessage['body']), $spotweburl, $this->_settings->get('smtp'));
+                    $notificationService->sendMessage($newMessage['type'], $newMessage['title'], $newMessage['body'], $spotweburl, $this->_settings->get('smtp'));
                 } // foreach
 
                 // Reset all service these cannot be re-used.

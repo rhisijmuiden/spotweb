@@ -5,6 +5,8 @@ interface Dao_User
     public function findUserIdForName($username);
 
     public function userEmailExists($mail);
+    public function findUserIdForMail($mail);
+    public function getUserPassHash($userid);
 
     public function getUser($userid);
 

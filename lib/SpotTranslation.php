@@ -5,6 +5,16 @@
  */
 class SpotTranslation
 {
+    private static $_current = 'en_US';
+
+    /*
+     * The language that _() translates into right now
+     */
+    public static function current()
+    {
+        return self::$_current;
+    }
+
     private static function getLocaleCandidates($lang)
     {
         $localeCandidates = [
@@ -43,6 +53,7 @@ class SpotTranslation
 
     public static function initialize($lang)
     {
+        self::$_current = $lang;
         /*
          * Do we have native gettext? We also check to see if this function exists,
          * because if the gettext module fails to load, this function will not exist.
