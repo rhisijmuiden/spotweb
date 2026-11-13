@@ -104,7 +104,7 @@ if ($result->isSubmitted()) {
 						<dd><input type="text" name="editsettingsform[smtp][user]" value="<?php echo htmlspecialchars($smtp['user'], ENT_QUOTES); ?>"></dd>
 
 						<dt><label for="editsettingsform[smtp][pass]"><?php echo _('Password'); ?></label></dt>
-						<dd><input type="password" name="editsettingsform[smtp][pass]" value="<?php echo htmlspecialchars($smtp['pass'], ENT_QUOTES); ?>"></dd>
+						<dd><input type="password" name="editsettingsform[smtp][pass]" value="" autocomplete="new-password" placeholder="<?php echo _('Leave empty to keep the current password'); ?>"></dd>
 
 						<dt><label for="editsettingsform[smtp][port]"><?php echo _('Port'); ?></label></dt>
 						<dd><input type="text" name="editsettingsform[smtp][port]" value="<?php echo htmlspecialchars($smtp['port'], ENT_QUOTES); ?>"></dd>

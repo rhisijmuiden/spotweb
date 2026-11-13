@@ -19,7 +19,8 @@ if ($result->isSubmitted()) {
     $nntp_nzb = $this->_settings->get('nntp_nzb');
     $nntp_hdr = $this->_settings->get('nntp_hdr');
     $nntp_post = $this->_settings->get('nntp_post');
-    $smtp = $this->_settings->get('smtp');
+    $smtp = Services_Mail_Sender::normalize(is_array($this->_settings->get('smtp')) ? $this->_settings->get('smtp') : []);
+    $passwordResetEnabled = (new Services_User_PasswordReset($this->_daoFactory, $this->_settings))->isEnabled();
 
     if (!isset($nntp_nzb['verifyname'])) {
         $nntp_nzb['verifyname'] = true;
@@ -78,6 +79,7 @@ if ($result->isSubmitted()) {
 			<li><a href="#editsettingstab-3"><span><?php echo _('Retrieval &amp; cleanup'); ?></span></a></li>
 			<li class="sw-admin-heading"><?php echo _('System'); ?></li>
 			<li><a href="#editsettingstab-8"><span><?php echo _('Activity'); ?></span></a></li>
+			<li><a href="#editsettingstab-10"><span><?php echo _('E-mail'); ?></span></a></li>
 			<li><a href="#editsettingstab-7"><span><?php echo _('API &amp; RSS'); ?></span></a></li>
 			<li><a href="#editsettingstab-4"><span><?php echo _('Performance &amp; cache'); ?></span></a></li>
 <?php } ?>
@@ -99,32 +101,6 @@ if ($result->isSubmitted()) {
 					<dd><input type="checkbox" name="editsettingsform[deny_robots]" <?php if ($this->_settings->get('deny_robots')) {
     echo 'checked="checked"';
 } ?>></dd>
-
-					<dt><label for="editsettingsform[systemfrommail]"><?php echo _('Sender email address'); ?></label></dt>
-					<dd><input type="text" name="editsettingsform[systemfrommail]" value="<?php echo htmlspecialchars($this->_settings->get('systemfrommail'), ENT_QUOTES); ?>"></dd>
-
-					<dt><label for="editsettingsform[sendwelcomemail]"><?php echo _('Always send welcome e-mail to new users'); ?></label></dt>
-					<dd><input type="checkbox" name="editsettingsform[sendwelcomemail]" <?php if ($this->_settings->get('sendwelcomemail')) {
-    echo 'checked="checked"';
-} ?>></dd>
-
-					<dt><label for="use_smtp"><?php echo _('Use SMTP (keep disabled to use PHP\'s internal mail function)'); ?></label></dt>
-					<dd><input type="checkbox" class="enabler" name="editsettingsform[smtp][use][switch]" id="use_smtp" <?php if (isset($smtp['use']) && $smtp['use']) {
-    echo 'checked="checked"';
-} ?>>
-					<fieldset id="content_use_smtp" class="serverSettings">
-						<dt><label for="editsettingsform[smtp][host]"><?php echo _('Hostname'); ?></label></dt>
-						<dd><input type="text" name="editsettingsform[smtp][host]" value="<?php echo htmlspecialchars($smtp['host'], ENT_QUOTES); ?>"></dd>
-
-						<dt><label for="editsettingsform[smtp][user]"><?php echo _('Username'); ?></label></dt>
-						<dd><input type="text" name="editsettingsform[smtp][user]" value="<?php echo htmlspecialchars($smtp['user'], ENT_QUOTES); ?>"></dd>
-
-						<dt><label for="editsettingsform[smtp][pass]"><?php echo _('Password'); ?></label></dt>
-						<dd><input type="password" name="editsettingsform[smtp][pass]" value="<?php echo htmlspecialchars($smtp['pass'], ENT_QUOTES); ?>"></dd>
-
-						<dt><label for="editsettingsform[smtp][port]"><?php echo _('Port'); ?></label></dt>
-						<dd><input type="text" name="editsettingsform[smtp][port]" value="<?php echo htmlspecialchars($smtp['port'], ENT_QUOTES); ?>"></dd>
-					</fieldset>
 
 					<dt><label for="editsettingsform[cookie_expires]"><?php echo _('Cookie expires after (in days)'); ?></label></dt>
 					<dd><input type="text" name="editsettingsform[cookie_expires]" value="<?php echo htmlspecialchars($this->_settings->get('cookie_expires'), ENT_QUOTES); ?>"></dd>
@@ -512,6 +488,110 @@ if ($result->isSubmitted()) {
 				</div>
 			</div>
 <?php } ?>
+		</div>
+
+<!-- E-mail -->
+		<div id="editsettingstab-10" class="ui-tabs-hide sw-mail">
+			<input type="hidden" name="editsettingsform[mail_form]" value="1">
+			<h3 class="sw-admin-section"><?php echo _('Sender'); ?></h3>
+			<p class="sw-hint"><?php echo _('Spotweb sends welcome e-mails, password reset links and notifications. Use an address of a domain your mail server may send for.'); ?></p>
+			<fieldset>
+				<dl>
+					<dt><label for="sw-mail-from"><?php echo _('Sender email address'); ?></label></dt>
+					<dd><input type="email" id="sw-mail-from" name="editsettingsform[systemfrommail]" value="<?php echo htmlspecialchars($this->_settings->get('systemfrommail'), ENT_QUOTES); ?>" required></dd>
+
+					<dt><label for="sw-mail-fromname"><?php echo _('Sender name'); ?></label></dt>
+					<dd><input type="text" id="sw-mail-fromname" name="editsettingsform[smtp][from_name]" maxlength="100" value="<?php echo htmlspecialchars($smtp['from_name'], ENT_QUOTES); ?>"></dd>
+				</dl>
+			</fieldset>
+
+			<h3 class="sw-admin-section sw-gap-top"><?php echo _('Mail server (SMTP)'); ?></h3>
+			<div class="sw-check-list sw-check-list--stack">
+				<label><input type="checkbox" class="enabler" id="use_smtp" name="editsettingsform[smtp][use]" <?php echo $smtp['use'] ? 'checked="checked"' : ''; ?>> <?php echo _('Send through my own SMTP server (recommended)'); ?></label>
+			</div>
+			<p class="sw-hint"><?php echo _('Turned off, Spotweb uses PHP\'s mail() function. That often ends up in spam or does not work at all.'); ?></p>
+			<fieldset id="content_use_smtp" class="sw-mail-smtp">
+				<dl>
+					<dt><label for="sw-smtp-host"><?php echo _('Hostname'); ?></label></dt>
+					<dd><input type="text" id="sw-smtp-host" name="editsettingsform[smtp][host]" placeholder="smtp.example.com" autocomplete="off" value="<?php echo htmlspecialchars($smtp['host'], ENT_QUOTES); ?>"></dd>
+
+					<dt><label for="sw-smtp-enc"><?php echo _('Encryption'); ?></label></dt>
+					<dd><select id="sw-smtp-enc" name="editsettingsform[smtp][encryption]">
+						<option value="starttls" data-port="587" <?php echo $smtp['encryption'] === 'starttls' ? 'selected' : ''; ?>><?php echo _('STARTTLS (port 587, recommended)'); ?></option>
+						<option value="smtps" data-port="465" <?php echo $smtp['encryption'] === 'smtps' ? 'selected' : ''; ?>><?php echo _('SSL/TLS (port 465)'); ?></option>
+						<option value="none" data-port="25" <?php echo $smtp['encryption'] === 'none' ? 'selected' : ''; ?>><?php echo _('None (only on a trusted network)'); ?></option>
+					</select></dd>
+
+					<dt><label for="sw-smtp-port"><?php echo _('Port'); ?></label></dt>
+					<dd><input type="number" id="sw-smtp-port" name="editsettingsform[smtp][port]" min="1" max="65535" value="<?php echo (int) $smtp['port']; ?>"></dd>
+
+					<dt><label for="sw-smtp-verify"><?php echo _('Check the server certificate'); ?></label></dt>
+					<dd><input type="checkbox" id="sw-smtp-verify" name="editsettingsform[smtp][verify_cert]" <?php echo $smtp['verify_cert'] ? 'checked="checked"' : ''; ?>>
+						<span class="sw-hint"><?php echo _('Only turn off for a server with a self-signed certificate.'); ?></span></dd>
+
+					<dt><label for="use_smtpauth"><?php echo _('Log in to the server'); ?></label></dt>
+					<dd><input type="checkbox" class="enabler" id="use_smtpauth" name="editsettingsform[smtp][auth]" <?php echo $smtp['auth'] ? 'checked="checked"' : ''; ?>></dd>
+					<fieldset id="content_use_smtpauth">
+						<dt><label for="sw-smtp-user"><?php echo _('Username'); ?></label></dt>
+						<dd><input type="text" id="sw-smtp-user" name="editsettingsform[smtp][user]" autocomplete="off" value="<?php echo htmlspecialchars($smtp['user'], ENT_QUOTES); ?>"></dd>
+
+						<dt><label for="sw-smtp-pass"><?php echo _('Password'); ?></label></dt>
+						<dd><input type="password" id="sw-smtp-pass" name="editsettingsform[smtp][pass]" autocomplete="new-password" value=""
+							placeholder="<?php echo ($smtp['pass'] !== '') ? _('Saved. Leave empty to keep it') : ''; ?>"></dd>
+					</fieldset>
+
+					<dt><label for="sw-smtp-timeout"><?php echo _('Timeout (seconds)'); ?></label></dt>
+					<dd><input type="number" id="sw-smtp-timeout" name="editsettingsform[smtp][timeout]" min="5" max="120" value="<?php echo (int) $smtp['timeout']; ?>"></dd>
+				</dl>
+			</fieldset>
+
+			<h3 class="sw-admin-section sw-gap-top"><?php echo _('Send a test e-mail'); ?></h3>
+			<p class="sw-hint"><?php echo _('Uses the settings on this page, also when you have not saved them yet.'); ?></p>
+			<div class="sw-panel sw-mail-test"
+				data-sw-mail-url="<?php echo htmlspecialchars($tplHelper->makeBaseUrl('path').'?page=adminmail', ENT_QUOTES); ?>"
+				data-sw-xsrf="<?php echo htmlspecialchars($tplHelper->generateXsrfCookie('adminmailform'), ENT_QUOTES); ?>"
+				data-sw-text-sending="<?php echo _('Sending…'); ?>"
+				data-sw-text-failed="<?php echo _('Could not reach Spotweb. Try again.'); ?>">
+				<div class="sw-mail-test-row">
+					<input type="email" class="sw-mail-test-to" aria-label="<?php echo _('Send the test e-mail to'); ?>" value="<?php echo htmlspecialchars($currentSession['user']['mail'], ENT_QUOTES); ?>">
+					<button type="button" class="sw-btn-primary" data-sw-mail-test><?php echo _('Send test e-mail'); ?></button>
+				</div>
+				<p class="sw-mail-test-result" role="status" hidden></p>
+				<details class="sw-mail-test-log" hidden>
+					<summary><?php echo _('Show the conversation with the mail server'); ?></summary>
+					<pre></pre>
+				</details>
+			</div>
+
+			<h3 class="sw-admin-section sw-gap-top"><?php echo _('Accounts'); ?></h3>
+			<div class="sw-check-list sw-check-list--stack">
+				<label><input type="checkbox" name="editsettingsform[sendwelcomemail]" <?php echo $this->_settings->get('sendwelcomemail') ? 'checked="checked"' : ''; ?>> <?php echo _('Always send welcome e-mail to new users'); ?></label>
+				<label><input type="checkbox" name="editsettingsform[password_reset_enabled]" <?php echo $passwordResetEnabled ? 'checked="checked"' : ''; ?>> <?php echo _('Let users reset a forgotten password by e-mail'); ?></label>
+			</div>
+			<p class="sw-hint"><?php echo _('With password reset on, the welcome e-mail contains a link to choose a password instead of the password itself.'); ?></p>
+
+			<h3 class="sw-admin-section sw-gap-top"><?php echo _('DKIM signing (optional)'); ?></h3>
+			<p class="sw-hint"><?php echo _('Signs every e-mail so receivers can check it really comes from your domain. Most mail servers already do this; only fill this in when yours does not. Publish the matching public key as a DNS TXT record at selector._domainkey.domain.'); ?></p>
+			<fieldset>
+				<dl>
+					<dt><label for="sw-dkim-domain"><?php echo _('Domain'); ?></label></dt>
+					<dd><input type="text" id="sw-dkim-domain" name="editsettingsform[smtp][dkim_domain]" placeholder="example.com" value="<?php echo htmlspecialchars($smtp['dkim_domain'], ENT_QUOTES); ?>"></dd>
+
+					<dt><label for="sw-dkim-selector"><?php echo _('Selector'); ?></label></dt>
+					<dd><input type="text" id="sw-dkim-selector" name="editsettingsform[smtp][dkim_selector]" placeholder="spotweb" value="<?php echo htmlspecialchars($smtp['dkim_selector'], ENT_QUOTES); ?>"></dd>
+
+					<dt><label for="sw-dkim-key"><?php echo _('Private key (PEM)'); ?></label></dt>
+					<dd><textarea id="sw-dkim-key" name="editsettingsform[smtp][dkim_key]" rows="4" spellcheck="false" autocomplete="off"
+						placeholder="<?php echo ($smtp['dkim_key'] !== '') ? _('Saved. Leave empty to keep it') : '-----BEGIN PRIVATE KEY-----'; ?>"></textarea></dd>
+
+					<dt><label for="sw-dkim-pass"><?php echo _('Key passphrase (if any)'); ?></label></dt>
+					<dd><input type="password" id="sw-dkim-pass" name="editsettingsform[smtp][dkim_pass]" autocomplete="new-password" value=""></dd>
+<?php if ($smtp['dkim_key'] !== '') { ?>
+					<dt><label for="sw-dkim-clear"><?php echo _('Remove DKIM'); ?></label></dt>
+					<dd><input type="checkbox" id="sw-dkim-clear" name="editsettingsform[smtp][clear_dkim]"></dd>
+<?php } ?>
+				</dl>
+			</fieldset>
 		</div>
 
 <!-- Retrieve now -->

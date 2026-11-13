@@ -53,6 +53,9 @@
 		<input type="password" name="loginform[password]" value=""><br>
 		<br>
         <input id="dologin" class="greyButton" type="submit" name="loginform[submitlogin]" value="<?php echo _('Login'); ?>"><br>
+<?php if ($settings->get('password_reset_enabled') !== false) { ?>
+        <p class="sw-forgot"><a href="?page=resetpassword" target="_top"><?php echo _('Forgot password?'); ?></a></p>
+<?php } ?>
    </form>
 </div>
 <?php

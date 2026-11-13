@@ -51,6 +51,37 @@ class Dao_Base_User implements Dao_User
 
     // userEmailExists
 
+    /*
+     * Id of the (not deleted) user with this e-mail address, or false
+     */
+    public function findUserIdForMail($mail)
+    {
+        $tmpResult = $this->_conn->singleQuery(
+            'SELECT id FROM users WHERE LOWER(mail) = LOWER(:mail) AND NOT deleted',
+            [
+                ':mail' => [$mail, PDO::PARAM_STR],
+            ]
+        );
+
+        return empty($tmpResult) ? false : (int) $tmpResult;
+    }
+
+    /*
+     * The stored password hash. Only used to sign password reset links,
+     * so a link stops working as soon as the password changes.
+     */
+    public function getUserPassHash($userid)
+    {
+        $tmpResult = $this->_conn->singleQuery(
+            'SELECT passhash FROM users WHERE id = :userid AND NOT deleted',
+            [
+                ':userid' => [$userid, PDO::PARAM_INT],
+            ]
+        );
+
+        return empty($tmpResult) ? false : (string) $tmpResult;
+    }
+
     /**
      * Retrieves a user from the database.
      *

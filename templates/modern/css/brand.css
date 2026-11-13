@@ -812,3 +812,23 @@ html[data-theme] div#toolbar .toolbarButton.dropdown ul ul li.sw-menu-sep {
   background: var(--sw-border) !important;
 }
 html[data-theme] div#toolbar .toolbarButton.dropdown ul ul li a.sw-menu-danger:hover { color: var(--sw-danger, #EF4444) !important; }
+
+/* ---------- admin: e-mail ---------- */
+body.modern-config .sw-mail-test-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+body.modern-config .sw-mail-test-row input.sw-mail-test-to { flex: 1 1 240px; min-width: 0; }
+body.modern-config .sw-mail-test-result {
+  margin: 14px 0 0; padding: 10px 12px; border-radius: 8px; font-size: 14px;
+  background: var(--sw-surface-2); border: 1px solid var(--sw-border); color: var(--sw-text);
+}
+body.modern-config .sw-mail-test-result.is-ok { background: var(--sw-success-soft); border-color: var(--sw-success); }
+body.modern-config .sw-mail-test-result.is-error { background: var(--sw-danger-soft); border-color: var(--sw-danger); }
+body.modern-config .sw-mail-test-log { margin-top: 12px; }
+body.modern-config .sw-mail-test-log summary { cursor: pointer; color: var(--sw-accent-text); font-size: 13px; font-weight: 600; }
+body.modern-config .sw-mail-test-log pre {
+  margin: 10px 0 0; max-height: 320px; overflow: auto; padding: 12px; border-radius: 8px;
+  background: var(--sw-surface-2); border: 1px solid var(--sw-border); color: var(--sw-text-2);
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; word-break: break-all;
+}
+body.modern-config .sw-mail textarea { width: 100%; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+body.modern-config .sw-mail dd .sw-hint { display: block; margin-top: 4px; }
+body.modern-config .sw-mail-smtp fieldset { margin: 0 !important; padding: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; }

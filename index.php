@@ -313,6 +313,29 @@ try {
             break;
             // adminretrieve
 
+        case 'adminmail':
+            $page = new SpotPage_adminmail(
+                $daoFactory,
+                $settings,
+                $currentSession,
+                ['adminmailform' => $req->getForm('adminmailform')]
+            );
+            $page->render();
+            break;
+            // adminmail
+
+        case 'resetpassword':
+            $page = new SpotPage_resetpassword(
+                $daoFactory,
+                $settings,
+                $currentSession,
+                ['resetpasswordform' => $req->getForm('resetpasswordform'),
+                    'token'          => $req->getDef('token', ''), ]
+            );
+            $page->render();
+            break;
+            // resetpassword
+
         case 'edituserprefs':
             $page = new SpotPage_edituserprefs(
                 $daoFactory,
