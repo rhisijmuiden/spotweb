@@ -36,8 +36,13 @@ class Services_Actions_CreateUser
 
             // Send a mail to the new user if the user asked for this
             $sendMail = isset($spotUser['sendmail']);
-            if ($sendMail || $this->_settings->get('sendwelcomemail')) {
-                $spotsNotifications->sendNewUserMail($spotUser);
+            $alwaysSend = (bool) $this->_settings->get('sendwelcomemail');
+            if ($sendMail || $alwaysSend) {
+                if ($spotsNotifications->sendNewUserMail($spotUser, $alwaysSend)) {
+                    $result->addInfo(sprintf(_('A welcome e-mail was sent to %s'), htmlspecialchars($spotUser['mail'], ENT_QUOTES)));
+                } else {
+                    $result->addWarning(_('The welcome e-mail could not be sent. Check Admin > E-mail.'));
+                } // else
             } // if
 
             // send a notification that a new user was added to the system
