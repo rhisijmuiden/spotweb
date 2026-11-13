@@ -22,4 +22,17 @@
   }
 
   window.addEventListener('resize', updateOffset);
+
+  // the bar changes height when buttons are added later or wrap on a phone
+  if (window.ResizeObserver) {
+    var watch = function () {
+      var toolbar = document.getElementById('toolbar');
+      if (toolbar) { new ResizeObserver(updateOffset).observe(toolbar); }
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', watch);
+    } else {
+      watch();
+    }
+  }
 })();

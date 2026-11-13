@@ -2,17 +2,18 @@
 
 require_once __DIR__.'/../../lib/services/Nntp/Services_Nntp_Encryption.php';
 
+// redirect before any output, otherwise the Location header cannot be sent
+if ($result->isSubmitted() && $result->isSuccess()) {
+    $tplHelper->redirect($http_referer);
+
+    return;
+} // if
+
 require __DIR__.'/includes/header.inc.php';
 require __DIR__.'/includes/form-messages.inc.php';
 
 if ($result->isSubmitted()) {
-    if ($result->isSuccess()) {
-        $tplHelper->redirect($http_referer);
-
-        return;
-    } else {
-        showResults($result, ['renderhtml' => 1]);
-    } // else
+    showResults($result, ['renderhtml' => 1]);
 } // if
 
     $nntp_nzb = $this->_settings->get('nntp_nzb');

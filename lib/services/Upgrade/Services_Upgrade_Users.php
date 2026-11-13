@@ -262,7 +262,7 @@ class Services_Upgrade_Users
             $this->setSettingIfNot($user['prefs'], 'perpage', 25);
             $this->setSettingIfNot($user['prefs'], 'date_formatting', 'human');
             $this->setSettingIfNot($user['prefs'], 'normal_template', 'modern');
-            $this->setSettingIfNot($user['prefs'], 'mobile_template', 'mobile');
+            $this->setSettingIfNot($user['prefs'], 'mobile_template', 'modern');
             $this->setSettingIfNot($user['prefs'], 'tablet_template', 'modern');
             $this->setSettingIfNot($user['prefs'], 'count_newspots', true);
             $this->setSettingIfNot($user['prefs'], 'mouseover_subcats', true);

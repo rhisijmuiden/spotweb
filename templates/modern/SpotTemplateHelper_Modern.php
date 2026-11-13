@@ -25,6 +25,7 @@ class SpotTemplateHelper_Modern extends SpotTemplateHelper
             $this->getThemeAssetPath('css/list.css'),
             $this->getThemeAssetPath('css/stats.css'),
             $this->getThemeAssetPath('css/detail-modern.css'),
+            $this->getThemeAssetPath('css/mobile.css'),
         ];
     }
 
@@ -40,6 +41,7 @@ class SpotTemplateHelper_Modern extends SpotTemplateHelper
             $this->getThemeAssetPath('js/infinite.js'),
             $this->getThemeAssetPath('js/table-enhance.js'),
             $this->getThemeAssetPath('js/filter-overlay.js'),
+            $this->getThemeAssetPath('js/mobile-nav.js'),
         ];
     }
 
