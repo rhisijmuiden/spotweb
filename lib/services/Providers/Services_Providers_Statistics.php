@@ -29,18 +29,22 @@ class Services_Providers_Statistics
     // ctor
 
     /*
-     * Create all statistics available
+     * Fill the statistics cache after a retrieve ("Prepare statistics during
+     * retrieve"), so the statistics page opens at once. Only the numbers are
+     * prepared; the page draws the charts in the browser.
      */
     public function createAllStatistics()
     {
         foreach ($this->getValidStatisticsLimits() as $limitValue => $limitName) {
-            // Reset timelimit
             set_time_limit(120);
 
             foreach ($this->getValidStatisticsGraphs() as $graphValue => $graphName) {
-                $this->renderStatImage($graphValue, $limitValue);
+                $this->getStatisticsData($graphValue, $limitValue);
             } // foreach graph
         } // foreach limit
+
+        $this->getSpotsPerDay(30);
+        $this->getOverview();
     }
 
     // createAllStatistics
@@ -217,7 +221,7 @@ class Services_Providers_Statistics
     /*
      * A function returning the statistics data we need
      */
-    private function getStatisticsData($statType, $dateLimit)
+    public function getStatisticsData($statType, $dateLimit)
     {
         /*
          * Check whether we can find the resource in the cache
@@ -261,4 +265,87 @@ class Services_Providers_Statistics
     }
 
     // getStatisticsData
+    /*
+     * Data for the statistics page: one call returns everything the page
+     * draws, from the statistics cache where possible. The cache is refreshed
+     * after every retrieve, like the old chart images.
+     */
+    public function getDashboard($dateLimit)
+    {
+        $limits = $this->getValidStatisticsLimits();
+        if (!isset($limits[$dateLimit])) {
+            $limitKeys = array_keys($limits);
+            $dateLimit = array_shift($limitKeys);
+        } // if
+
+        $graphs = $this->getValidStatisticsGraphs();
+        $charts = [];
+        foreach (array_keys($graphs) as $graph) {
+            $charts[$graph] = $this->getStatisticsData($graph, $dateLimit);
+        } // foreach
+
+        return [
+            'limit'    => $dateLimit,
+            'limits'   => $limits,
+            'graphs'   => $graphs,
+            'charts'   => $charts,
+            'perday'   => $this->getSpotsPerDay(30),
+            'overview' => $this->getOverview(),
+        ];
+    }
+
+    // getDashboard
+
+    /*
+     * Spots per day for the last $days days, oldest first. Uses one indexed
+     * range count per day, so it works the same on every database.
+     */
+    public function getSpotsPerDay($days)
+    {
+        $resourceid = 'spotsperday.'.(int) $days;
+        $rs = $this->_cacheDao->getCachedStats($resourceid);
+        if (($rs !== false) && ((int) $rs['stamp'] >= $this->_nntpUpdate)) {
+            return unserialize($rs['content']);
+        } // if
+
+        $result = [];
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $start = strtotime('today -'.$i.' days');
+            $end = strtotime('today -'.($i - 1).' days');
+            $result[] = ['stamp' => $start, 'amount' => $this->_spotDao->countSpotsBetween($start, $end)];
+        } // for
+
+        $this->_cacheDao->saveStatsCache($resourceid, $result);
+
+        return $result;
+    }
+
+    // getSpotsPerDay
+
+    /*
+     * Totals for the tiles at the top of the statistics page
+     */
+    public function getOverview()
+    {
+        $resourceid = 'overview';
+        $rs = $this->_cacheDao->getCachedStats($resourceid);
+        if (($rs !== false) && ((int) $rs['stamp'] >= $this->_nntpUpdate)) {
+            return unserialize($rs['content']);
+        } // if
+
+        $now = time();
+        $overview = [
+            'total'    => $this->_spotDao->countSpotsBetween(0, $now + 86400),
+            'day'      => $this->_spotDao->countSpotsBetween($now - 86400, $now + 86400),
+            'week'     => $this->_spotDao->countSpotsBetween($now - 7 * 86400, $now + 86400),
+            'oldest'   => (int) $this->_spotDao->getOldestSpotTimestamp(),
+            'newest'   => (int) $this->_spotDao->getNewestSpotTimestamp(),
+            'updated'  => (int) $this->_nntpUpdate,
+        ];
+        $this->_cacheDao->saveStatsCache($resourceid, $overview);
+
+        return $overview;
+    }
+
+    // getOverview
 } // Services_Providers_Statistics

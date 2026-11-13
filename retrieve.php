@@ -294,21 +294,17 @@ try {
 
         //# Statistics
         if ($settings->get('prepare_statistics') && $newSpotCount > 0) {
-            if (extension_loaded('gd') || extension_loaded('gd2')) {
-                $settings_nntp_hdr = $settings->get('nntp_hdr');
-                $svcPrv_Stats = new Services_Providers_Statistics(
-                    $daoFactory->getSpotDao(),
-                    $daoFactory->getCachedao(),
-                    $daoFactory->getUsenetStateDao()->getLastUpdate(Dao_UsenetState::State_Spots)
-                );
+            // only numbers are prepared (no images), so GD is not needed
+            $svcPrv_Stats = new Services_Providers_Statistics(
+                $daoFactory->getSpotDao(),
+                $daoFactory->getCachedao(),
+                $daoFactory->getUsenetStateDao()->getLastUpdate(Dao_UsenetState::State_Spots)
+            );
 
-                echo 'Starting to create statistics '.PHP_EOL;
-                $svcPrv_Stats->createAllStatistics();
-                echo 'Finished creating statistics '.PHP_EOL;
-                echo PHP_EOL;
-            } else {
-                echo 'GD extension not loaded, not creating statistics'.PHP_EOL;
-            } // else
+            echo 'Starting to create statistics '.PHP_EOL;
+            $svcPrv_Stats->createAllStatistics();
+            echo 'Finished creating statistics '.PHP_EOL;
+            echo PHP_EOL;
         } // if
 
         // Verstuur notificaties

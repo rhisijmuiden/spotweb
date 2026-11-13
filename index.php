@@ -479,7 +479,7 @@ try {
                 $daoFactory,
                 $settings,
                 $currentSession,
-                ['limit' => $req->getDef('limit', '')]
+                ['limit' => $req->getDef('limit', 'month')]
             );
             $page->render();
             break;

@@ -33,7 +33,15 @@ class SpotPage_statistics extends SpotPage_Abs
             $svcUserFilter->getIndexFilter($this->_currentSession['user']['userid'])
         );
 
+        $svcPrvStats = new Services_Providers_Statistics(
+            $this->_daoFactory->getSpotDao(),
+            $this->_daoFactory->getCacheDao(),
+            $this->_daoFactory->getUsenetStateDao()->getLastUpdate(Dao_UsenetState::State_Spots)
+        );
+        $dashboard = $svcPrvStats->getDashboard(isset($this->_params['limit']) ? (string) $this->_params['limit'] : '');
+
         $this->template('statistics', ['quicklinks' => $this->_settings->get('quicklinks'),
+            'dashboard'                             => $dashboard,
             'filters'                               => $svcUserFilter->getFilterList($this->_currentSession['user']['userid'], 'filter'),
             'parsedsearch'                          => $parsedSearch,
             'limit'                                 => $this->_params['limit'], ]);
