@@ -706,6 +706,23 @@ class Dao_Base_Spot implements Dao_Spot
     // countSpotsBetween
 
     /*
+     * Number of spots from one spotter (uses the spotterid index)
+     */
+    public function countSpotsBySpotterId($spotterId)
+    {
+        if (empty($spotterId)) {
+            return 0;
+        } // if
+
+        return (int) $this->_conn->singleQuery(
+            'SELECT COUNT(*) FROM spots WHERE spotterid = :spotterid',
+            [':spotterid' => [(string) $spotterId, PDO::PARAM_STR]]
+        );
+    }
+
+    // countSpotsBySpotterId
+
+    /*
      * Match set of spots
      */
     public function matchSpotMessageIds($hdrList)

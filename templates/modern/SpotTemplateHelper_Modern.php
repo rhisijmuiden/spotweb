@@ -42,6 +42,7 @@ class SpotTemplateHelper_Modern extends SpotTemplateHelper
             $this->getThemeAssetPath('js/table-enhance.js'),
             $this->getThemeAssetPath('js/filter-overlay.js'),
             $this->getThemeAssetPath('js/mobile-nav.js'),
+            $this->getThemeAssetPath('js/spot-detail.js'),
         ];
     }
 
