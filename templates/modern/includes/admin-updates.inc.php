@@ -51,6 +51,7 @@ $strings = [
     'failed'        => _('Something went wrong, try again.'),
     'retrydb'       => _('Run the database upgrade again'),
     'blocked_hint'  => _('Nothing was changed.'),
+    'files'         => _('%d files changed, %d added, %d removed'),
 ];
 $channelNames = ['production' => _('Production'), 'test' => _('Test')];
 $branchNames = Services_Updater_Config::branches();

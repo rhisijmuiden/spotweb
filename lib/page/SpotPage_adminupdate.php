@@ -71,11 +71,18 @@ class SpotPage_adminupdate extends SpotPage_Abs
         $root = (new Services_Updater_Installed())->root();
         $gitReason = (new Services_Updater_Git($root))->unavailableReason();
 
+        $check = (new Services_Updater_Check($conn))->cached();
+        $job = Services_Updater_Job::read($conn);
+        if ($check !== null && $job !== null && in_array($job['status'], ['done', 'requested'], true) && $check['checked'] <= $job['updated']) {
+            // checked before the last update: no longer true, check again
+            $check = null;
+        } // if
+
         return [
             'installed' => (new Services_Updater_Installed())->info(),
             'config'    => Services_Updater_Config::forDisplay($config),
-            'check'     => (new Services_Updater_Check($conn))->cached(),
-            'job'       => Services_Updater_Job::forDisplay(Services_Updater_Job::read($conn)),
+            'check'     => $check,
+            'job'       => Services_Updater_Job::forDisplay($job),
             'methods'   => [
                 'git'     => $gitReason,
                 'archive' => self::archiveReason($root),

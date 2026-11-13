@@ -150,6 +150,7 @@
 			el('last-fromto').textContent = short(job.from) + ' → ' + short(job.to) + (job.branch ? ' (' + job.branch + ')' : '');
 			var result = S['s_' + job.status] || job.status;
 			if (job.status === 'failed' && job.message) { result += ': ' + job.message; }
+			if (job.status === 'done' && job.result) { result += ' · ' + fmt(S.files, job.result.changed, job.result.added, job.result.removed); }
 			el('last-result').textContent = result;
 		}
 
