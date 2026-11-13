@@ -76,6 +76,11 @@ function openSpot(id,url) {
 		return false;
 	} // if
 	
+	// only real spot pages open in the overlay; anything else (a stray #hash) is ignored
+	if (typeof url !== 'string' || !/[?&]page=getspot|\/details\//.test(url)) {
+		return false;
+	}
+
 	if($("#overlay").is(":visible")) {
 		$("#overlay").addClass('notrans');
 	}
@@ -98,6 +103,11 @@ function openSpot(id,url) {
 	var scrollLocation = $(document).scrollTop();
 	$("#overlay").load(url + ' #details', function (a, b) {
 		$("#overlay").removeClass('loading notrans');
+		if ($("#overlay").children().size() == 0) {
+			// the spot could not be loaded: quietly go back to the list
+			closeDetails(scrollLocation);
+			return false;
+		}
 		if (window.swSplitView && window.swSplitView()) {
 			// wide screens: the spot opens next to the list, the list stays usable
 			$("body").addClass("sw-split");
@@ -106,13 +116,6 @@ function openSpot(id,url) {
 			$("body").addClass("spotinfo");
 		}
 		if (window.swDetailReady) { window.swDetailReady(); }
-
-		if($("#overlay").children().size() == 0) {
-			alert("<t>Error while loading this page, you will be returned automaticly to the mainview</t>" + a);
-			//closeDetails(scrollLocation);
-            parent.history.back();
-			return false;
-		}
 
 		$("a.closeDetails").click(function(){ 
 			$.address.value("");
