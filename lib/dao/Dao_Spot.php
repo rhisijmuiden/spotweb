@@ -42,6 +42,10 @@ interface Dao_Spot
 
     public function getSpotCountPerCategory($limit);
 
+    public function getNewestSpotTimestamp();
+
+    public function countSpotsBetween($from, $till);
+
     public function removeExtraSpots($messageId);
 
     public function addPostedSpot($userId, $spot, $fullXml);

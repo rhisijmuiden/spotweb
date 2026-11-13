@@ -682,6 +682,29 @@ class Dao_Base_Spot implements Dao_Spot
 
     // getOldestSpotTimestamp
 
+    public function getNewestSpotTimestamp()
+    {
+        return $this->_conn->singleQuery('SELECT MAX(stamp) FROM spots');
+    }
+
+    // getNewestSpotTimestamp
+
+    /*
+     * Number of spots with $from <= stamp < $till (uses the stamp index)
+     */
+    public function countSpotsBetween($from, $till)
+    {
+        return (int) $this->_conn->singleQuery(
+            'SELECT COUNT(*) FROM spots WHERE stamp >= :from AND stamp < :till',
+            [
+                ':from' => [(int) $from, PDO::PARAM_INT],
+                ':till' => [(int) $till, PDO::PARAM_INT],
+            ]
+        );
+    }
+
+    // countSpotsBetween
+
     /*
      * Match set of spots
      */
