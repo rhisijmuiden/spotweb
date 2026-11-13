@@ -25,6 +25,9 @@
 <?php if (($tplHelper->allowed(SpotSecurity::spotsec_perform_login, '')) && ($currentSession['user']['userid'] == $settings->get('nonauthenticated_userid'))) { ?>
 					<li><a href="<?php echo $tplHelper->makeLoginAction(); ?>" onclick="return openDialog('editdialogdiv', '<?php echo _('Login'); ?>', '?page=login&data[htmlheaderssent]=true', null, 'autoclose', function() { window.location.reload(); }, null); "><?php echo _('Login'); ?></a></li>
 <?php } ?>
+<?php if ($tplHelper->allowed(SpotSecurity::spotsec_edit_own_userprefs, '') && $currentSession['user']['userid'] != $settings->get('nonauthenticated_userid')) { ?>
+						<li><a href="<?php echo $tplHelper->makeEditUserPrefsUrl($currentSession['user']['userid']); ?>"><?php echo _('My account'); ?></a></li>
+<?php } ?>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_create_new_user, '')) { ?>
 						<li><a href="" onclick="return openDialog('editdialogdiv', '<?php echo _('Add user'); ?>', '?page=createuser', null, 'showresultsonly', null, null); "><?php echo _('Add user'); ?></a></li>
 <?php } ?>
@@ -32,15 +35,14 @@
 						<li><a href="<?php echo $tplHelper->makeEditUserUrl($currentSession['user']['userid'], 'edit'); ?>" onclick="return openDialog('editdialogdiv', '<?php echo _('Change user'); ?>', '?page=edituser&userid=<?php echo $currentSession['user']['userid'] ?>', null, 'autoclose',  function() { window.location.reload(); }, null);"><?php echo _('Change user'); ?></a></li>
 <?php } ?>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_perform_logout, '')) { ?>
-						<li><a href="#" onclick="userLogout()"><?php echo _('Log out'); ?></a></li>
+						<li class="sw-menu-sep" aria-hidden="true"></li>
+						<li><a href="#" class="sw-menu-danger" onclick="userLogout()"><?php echo _('Log out'); ?></a></li>
 <?php } ?>
 					</ul></li>
 					</li>
 				</ul></div>
 
 <?php if (
-            ($tplHelper->allowed(SpotSecurity::spotsec_edit_own_userprefs, ''))
-                ||
             ($tplHelper->allowed(SpotSecurity::spotsec_view_spotweb_updates, ''))
                 ||
             ($tplHelper->allowed(SpotSecurity::spotsec_edit_settings, ''))
@@ -52,17 +54,14 @@
             ($tplHelper->allowed(SpotSecurity::spotsec_list_all_users, ''))
          ) { ?>
 				<div class="toolbarButton config dropdown right"><ul>
-					<li><p><a><?php echo _('Config'); ?></a></p>
+					<li><p><a><?php echo _('Admin'); ?></a></p>
 					<ul>
-	<?php if ($tplHelper->allowed(SpotSecurity::spotsec_edit_own_userprefs, '')) { ?>
-						<li><a href="<?php echo $tplHelper->makeEditUserPrefsUrl($currentSession['user']['userid']); ?>"><?php echo _('My account'); ?></a></li>
-	<?php } ?>
 	<?php if (
             ($tplHelper->allowed(SpotSecurity::spotsec_view_spotweb_updates, ''))
                 ||
             ($tplHelper->allowed(SpotSecurity::spotsec_edit_settings, ''))
     ) { ?>
-						<li><a href="?page=editsettings"><?php echo _('Admin'); ?></a></li>
+						<li><a href="?page=editsettings"><?php echo _('Settings'); ?></a></li>
 	<?php } ?>
 	<?php if (
             ($tplHelper->allowed(SpotSecurity::spotsec_edit_other_users, ''))
