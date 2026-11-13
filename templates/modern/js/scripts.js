@@ -508,6 +508,7 @@ function initializeSettingsPage() {
     initDatePicker();
     // read-only sections (Activity) have nothing to save, so hide the buttons there
     initAdminRetrieve();
+    initAdminMailTest();
     $("#editsettingstab").tabs({
         show: function (event, ui) {
             $("#editsettingstab").toggleClass("sw-nosave", $(ui.panel).is("[data-sw-nosave]"));
@@ -1673,4 +1674,58 @@ function initAdminRetrieve() {
 	});
 	try { render(JSON.parse($panel.attr('data-sw-state'))); } catch (e) {}
 	poll();
+}
+
+/*
+ * Admin > E-mail: send a test mail with the values in the form,
+ * suggest the usual port for the encryption type
+ */
+function initAdminMailTest() {
+	var $panel = $('.sw-mail-test');
+	if (!$panel.length) { return; }
+	var $form = $panel.closest('form');
+	var $result = $panel.find('.sw-mail-test-result');
+	var $log = $panel.find('.sw-mail-test-log');
+	var $btn = $panel.find('[data-sw-mail-test]');
+
+	$('#sw-smtp-enc').on('change', function () {
+		var $port = $('#sw-smtp-port');
+		var known = ['25', '465', '587', ''];
+		if (known.indexOf($port.val()) !== -1) {
+			$port.val($(this).find(':selected').attr('data-port'));
+		}
+	});
+
+	$btn.on('click', function () {
+		var data = {
+			'adminmailform[xsrfid]': $panel.attr('data-sw-xsrf'),
+			'adminmailform[submittest]': '1',
+			'adminmailform[to]': $panel.find('.sw-mail-test-to').val(),
+			'adminmailform[from]': $form.find('[name="editsettingsform[systemfrommail]"]').val()
+		};
+		$form.find('[name^="editsettingsform[smtp]"]').each(function () {
+			var name = this.name.replace(/^editsettingsform\[smtp\]/, 'adminmailform[smtp]');
+			if (this.type === 'checkbox') {
+				if (this.checked) { data[name] = 'on'; }
+			} else {
+				data[name] = $(this).val();
+			}
+		});
+		$btn.prop('disabled', true);
+		$result.prop('hidden', false).removeClass('is-ok is-error').text($panel.attr('data-sw-text-sending'));
+		$log.prop('hidden', true);
+		$.ajax({ url: $panel.attr('data-sw-mail-url'), type: 'POST', data: data, dataType: 'json' })
+			.done(function (answer) {
+				$result.addClass(answer.ok ? 'is-ok' : 'is-error').text(answer.message || '');
+				if (answer.log && answer.log.length) {
+					$log.find('pre').text(answer.log.join('\n'));
+					$log.prop('hidden', false).prop('open', !answer.ok);
+				}
+			})
+			.fail(function (xhr) {
+				var msg = (xhr.responseJSON && xhr.responseJSON.message) || $panel.attr('data-sw-text-failed');
+				$result.addClass('is-error').text(msg);
+			})
+			.always(function () { $btn.prop('disabled', false); });
+	});
 }

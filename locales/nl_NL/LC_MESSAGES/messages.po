@@ -1281,7 +1281,6 @@ msgstr "SHA1 hash berekenen niet gelukt:"
 msgid "No (verified) comments found."
 msgstr "Geen (geverifieerde) comments gevonden."
 
-
 #: SpotPage_createuser.php
 msgid "'%s' already exists"
 msgstr "'%s' bestaat al"
@@ -2811,3 +2810,379 @@ msgstr "De versienummers van de update konden niet worden gelezen."
 
 msgid "This version has an older database layout (%s %s, installed %s). Spotweb cannot go back to an older layout, so wait until this branch has caught up."
 msgstr "Deze versie heeft een oudere databaseopbouw (%s %s, geïnstalleerd %s). Spotweb kan niet terug naar een oudere opbouw; wacht tot deze branch is bijgewerkt."
+
+msgid "Speed"
+msgstr "Snelheid"
+
+msgid "API and RSS answers are kept for a short time, so apps that ask the same question again get the answer at once. A new spot always gives a fresh answer. 0 switches this off."
+msgstr "Antwoorden van de API en RSS worden even bewaard, zodat apps die dezelfde vraag nog eens stellen meteen antwoord krijgen. Een nieuwe spot geeft altijd een vers antwoord. 0 zet dit uit."
+
+msgid "Keep answers for (seconds)"
+msgstr "Antwoorden bewaren (seconden)"
+
+msgid "The API cache time must be a whole number of seconds between 0 and %d"
+msgstr "De bewaartijd voor de API moet een heel aantal seconden tussen 0 en %d zijn"
+
+msgid "A welcome e-mail was sent to %s"
+msgstr "Er is een welkomstmail gestuurd naar %s"
+
+msgid "The welcome e-mail could not be sent. Check Admin > E-mail."
+msgstr "De welkomstmail kon niet worden verstuurd. Controleer Admin > E-mail."
+
+msgid "Enter a valid sender e-mail address"
+msgstr "Vul een geldig afzenderadres in"
+
+msgid "Username:"
+msgstr "Gebruikersnaam:"
+
+msgid "Password:"
+msgstr "Wachtwoord:"
+
+msgid "Forgot password?"
+msgstr "Wachtwoord vergeten?"
+
+msgid "E-mail"
+msgstr "E-mail"
+
+msgid ""
+"Spotweb sends welcome e-mails, password reset links and notifications. Use "
+"an address of a domain your mail server may send for."
+msgstr ""
+"Spotweb verstuurt welkomstmails, links om je wachtwoord te herstellen en "
+"meldingen. Gebruik een adres van een domein waarvoor je mailserver mag "
+"versturen."
+
+msgid "Sender name"
+msgstr "Naam afzender"
+
+msgid "Mail server (SMTP)"
+msgstr "Mailserver (SMTP)"
+
+msgid "Send through my own SMTP server (recommended)"
+msgstr "Versturen via mijn eigen SMTP-server (aanbevolen)"
+
+msgid ""
+"Turned off, Spotweb uses PHP's mail() function. That often ends up in spam "
+"or does not work at all."
+msgstr ""
+"Staat dit uit, dan gebruikt Spotweb de mail()-functie van PHP. Die mail komt"
+" vaak in de spam terecht of werkt helemaal niet."
+
+msgid "STARTTLS (port 587, recommended)"
+msgstr "STARTTLS (poort 587, aanbevolen)"
+
+msgid "SSL/TLS (port 465)"
+msgstr "SSL/TLS (poort 465)"
+
+msgid "None (only on a trusted network)"
+msgstr "Geen (alleen op een vertrouwd netwerk)"
+
+msgid "Check the server certificate"
+msgstr "Certificaat van de server controleren"
+
+msgid "Only turn off for a server with a self-signed certificate."
+msgstr ""
+"Zet dit alleen uit voor een server met een zelfondertekend certificaat."
+
+msgid "Log in to the server"
+msgstr "Inloggen op de server"
+
+msgid "Saved. Leave empty to keep it"
+msgstr "Opgeslagen. Laat leeg om te bewaren"
+
+msgid "Timeout (seconds)"
+msgstr "Time-out (seconden)"
+
+msgid "Send a test e-mail"
+msgstr "Testmail versturen"
+
+msgid "Uses the settings on this page, also when you have not saved them yet."
+msgstr ""
+"Gebruikt de instellingen op deze pagina, ook als je ze nog niet hebt "
+"opgeslagen."
+
+msgid "Sending…"
+msgstr "Bezig met versturen…"
+
+msgid "Could not reach Spotweb. Try again."
+msgstr "Spotweb is niet bereikbaar. Probeer het opnieuw."
+
+msgid "Send the test e-mail to"
+msgstr "Testmail sturen naar"
+
+msgid "Send test e-mail"
+msgstr "Testmail versturen"
+
+msgid "Show the conversation with the mail server"
+msgstr "Toon het gesprek met de mailserver"
+
+msgid "Accounts"
+msgstr "Accounts"
+
+msgid "Let users reset a forgotten password by e-mail"
+msgstr "Gebruikers mogen een vergeten wachtwoord via e-mail herstellen"
+
+msgid ""
+"With password reset on, the welcome e-mail contains a link to choose a "
+"password instead of the password itself."
+msgstr ""
+"Met wachtwoordherstel aan bevat de welkomstmail een link om zelf een "
+"wachtwoord te kiezen, in plaats van het wachtwoord zelf."
+
+msgid "DKIM signing (optional)"
+msgstr "DKIM-ondertekening (optioneel)"
+
+msgid ""
+"Signs every e-mail so receivers can check it really comes from your domain. "
+"Most mail servers already do this; only fill this in when yours does not. "
+"Publish the matching public key as a DNS TXT record at "
+"selector._domainkey.domain."
+msgstr ""
+"Ondertekent elke e-mail, zodat ontvangers kunnen controleren dat die echt "
+"van jouw domein komt. De meeste mailservers doen dit al; vul dit alleen in "
+"als die van jou dat niet doet. Publiceer de bijbehorende publieke sleutel "
+"als DNS TXT-record op selector._domainkey.domein."
+
+msgid "Domain"
+msgstr "Domein"
+
+msgid "Selector"
+msgstr "Selector"
+
+msgid "Private key (PEM)"
+msgstr "Privésleutel (PEM)"
+
+msgid "Key passphrase (if any)"
+msgstr "Wachtwoordzin van de sleutel (indien van toepassing)"
+
+msgid "Remove DKIM"
+msgstr "DKIM verwijderen"
+
+msgid "Use SMTP (keep disabled to use PHP's internal mail function)"
+msgstr ""
+"SMTP gebruiken (laat uit om de interne mail-functie van PHP te gebruiken)"
+
+msgid "Leave empty to keep the current password"
+msgstr "Laat leeg om het huidige wachtwoord te bewaren"
+
+msgid "Your session expired. Reload the page and try again."
+msgstr "Je sessie is verlopen. Herlaad de pagina en probeer het opnieuw."
+
+msgid "PHP mail() function"
+msgstr "PHP mail()-functie"
+
+msgid ""
+"This is a test e-mail from Spotweb. When you read this, the e-mail settings "
+"work."
+msgstr ""
+"Dit is een testmail van Spotweb. Lees je dit, dan werken de "
+"e-mailinstellingen."
+
+msgid "Sent via: %s"
+msgstr "Verstuurd via: %s"
+
+msgid "Sent by: %s"
+msgstr "Verstuurd door: %s"
+
+msgid "Time: %s"
+msgstr "Tijd: %s"
+
+msgid "Spotweb test e-mail"
+msgstr "Spotweb-testmail"
+
+msgid ""
+"Test e-mail sent to %s in %.1f seconds. Check the inbox (and the spam "
+"folder)."
+msgstr ""
+"Testmail verstuurd naar %s in %.1f seconden. Kijk in de inbox (en in de "
+"spammap)."
+
+msgid "Choose a valid SMTP encryption"
+msgstr "Kies een geldige SMTP-versleuteling"
+
+msgid "SMTP Port must be integer between 1 and 65535"
+msgstr "De SMTP-poort moet een geheel getal tussen 1 en 65535 zijn"
+
+msgid "The SMTP timeout must be a number of seconds"
+msgstr "De SMTP-time-out moet een aantal seconden zijn"
+
+msgid "The sender name may not contain line breaks, quotes or \"<\" and \">\""
+msgstr ""
+"De naam van de afzender mag geen regeleinden, aanhalingstekens of \"<\" en "
+"\">\" bevatten"
+
+msgid "SMTP Hostname cannot be empty if SMTP is to be used"
+msgstr "Vul de hostnaam van de SMTP-server in als je SMTP gebruikt"
+
+msgid "Enter the SMTP username and password, or turn off authentication"
+msgstr "Vul de SMTP-gebruikersnaam en het wachtwoord in, of zet inloggen uit"
+
+msgid "Enter the DKIM domain, for example example.com"
+msgstr "Vul het DKIM-domein in, bijvoorbeeld example.com"
+
+msgid "Enter the DKIM selector, for example spotweb"
+msgstr "Vul de DKIM-selector in, bijvoorbeeld spotweb"
+
+msgid ""
+"The DKIM private key is not a valid PEM key (or the passphrase is wrong)"
+msgstr ""
+"De DKIM-privésleutel is geen geldige PEM-sleutel (of de wachtwoordzin klopt "
+"niet)"
+
+msgid "\"%s\" is not a valid e-mail address"
+msgstr "\"%s\" is geen geldig e-mailadres"
+
+msgid "Set a valid sender e-mail address in Admin > E-mail first"
+msgstr "Stel eerst een geldig afzenderadres in onder Admin > E-mail"
+
+msgid ""
+"Check the host name, the port and whether this server may make outgoing "
+"connections on that port."
+msgstr ""
+"Controleer de hostnaam, de poort en of deze server uitgaande verbindingen op"
+" die poort mag maken."
+
+msgid "The server refused the username or password."
+msgstr "De server weigert de gebruikersnaam of het wachtwoord."
+
+msgid ""
+"The secure connection failed. Check the encryption type and port (STARTTLS "
+"usually 587, SSL/TLS 465), or the certificate."
+msgstr ""
+"De beveiligde verbinding is mislukt. Controleer de versleuteling en de poort"
+" (STARTTLS meestal 587, SSL/TLS 465), of het certificaat."
+
+msgid "PHP's mail() function does not work on this server. Turn on SMTP."
+msgstr "De mail()-functie van PHP werkt niet op deze server. Zet SMTP aan."
+
+msgid "Open link"
+msgstr "Link openen"
+
+msgid "Reset your Spotweb password"
+msgstr "Je Spotweb-wachtwoord herstellen"
+
+msgid "Hello %s,"
+msgstr "Hallo %s,"
+
+msgid ""
+"Someone (hopefully you) asked to reset the password of the account \"%s\" on"
+" %s."
+msgstr ""
+"Iemand (hopelijk jij) heeft gevraagd om het wachtwoord van het account "
+"\"%s\" op %s te herstellen."
+
+msgid ""
+"Choose a new password with the link below. It works once, for 60 minutes."
+msgstr ""
+"Kies een nieuw wachtwoord met de link hieronder. De link werkt één keer, 60 "
+"minuten lang."
+
+msgid ""
+"Did not ask for this? Then ignore this e-mail; your password stays the same."
+msgstr ""
+"Niet zelf aangevraagd? Negeer deze e-mail dan; je wachtwoord blijft "
+"hetzelfde."
+
+msgid "Your account on %s"
+msgstr "Je account op %s"
+
+msgid "An account has been created for you on %s."
+msgstr "Er is een account voor je aangemaakt op %s."
+
+msgid "Your username: %s"
+msgstr "Je gebruikersnaam: %s"
+
+msgid "Choose your password with the link below. It works for 48 hours."
+msgstr "Kies je wachtwoord met de link hieronder. De link werkt 48 uur."
+
+msgid ""
+"Link expired? Use \"Forgot password?\" on the login screen to get a new one."
+msgstr ""
+"Link verlopen? Gebruik \"Wachtwoord vergeten?\" op het inlogscherm voor een "
+"nieuwe."
+
+msgid "This link is invalid, expired or already used. Request a new one."
+msgstr "Deze link is ongeldig, verlopen of al gebruikt. Vraag een nieuwe aan."
+
+msgid "Use at least %d characters"
+msgstr "Gebruik minstens %d tekens"
+
+msgid "Forgot your password?"
+msgstr "Wachtwoord vergeten?"
+
+msgid "Check your e-mail"
+msgstr "Kijk in je e-mail"
+
+msgid "Choose a new password"
+msgstr "Kies een nieuw wachtwoord"
+
+msgid "Password changed"
+msgstr "Wachtwoord gewijzigd"
+
+msgid "This link no longer works"
+msgstr "Deze link werkt niet meer"
+
+msgid "Password reset is turned off"
+msgstr "Wachtwoordherstel staat uit"
+
+msgid ""
+"Enter your username or e-mail address. We will send you a link to choose a "
+"new password."
+msgstr ""
+"Vul je gebruikersnaam of e-mailadres in. We sturen je een link om een nieuw "
+"wachtwoord te kiezen."
+
+msgid "Username or e-mail address"
+msgstr "Gebruikersnaam of e-mailadres"
+
+msgid "Send reset link"
+msgstr "Herstellink versturen"
+
+msgid ""
+"If an account with that username or e-mail address exists, we have sent a "
+"link to its e-mail address. The link works for 60 minutes."
+msgstr ""
+"Als er een account met die gebruikersnaam of dat e-mailadres bestaat, hebben"
+" we een link naar het bijbehorende e-mailadres gestuurd. De link werkt 60 "
+"minuten."
+
+msgid "No e-mail? Check your spam folder, or try again in a few minutes."
+msgstr ""
+"Geen e-mail ontvangen? Kijk in je spammap, of probeer het over een paar "
+"minuten opnieuw."
+
+msgid "For the account %s."
+msgstr "Voor het account %s."
+
+msgid "Repeat new password"
+msgstr "Herhaal nieuw wachtwoord"
+
+msgid "Save password"
+msgstr "Wachtwoord opslaan"
+
+msgid ""
+"Your password has been changed. You have been signed out everywhere; log in "
+"with your new password."
+msgstr ""
+"Je wachtwoord is gewijzigd. Je bent overal uitgelogd; log in met je nieuwe "
+"wachtwoord."
+
+msgid ""
+"The link is expired, already used, or not complete. Request a new one below."
+msgstr ""
+"De link is verlopen, al gebruikt of niet volledig. Vraag hieronder een "
+"nieuwe aan."
+
+msgid "Request a new link"
+msgstr "Nieuwe link aanvragen"
+
+msgid ""
+"The administrator turned off password reset by e-mail. Ask the administrator"
+" for a new password."
+msgstr ""
+"De beheerder heeft wachtwoordherstel via e-mail uitgezet. Vraag de beheerder"
+" om een nieuw wachtwoord."
+
+msgid "Back to Spotweb"
+msgstr "Terug naar Spotweb"
+

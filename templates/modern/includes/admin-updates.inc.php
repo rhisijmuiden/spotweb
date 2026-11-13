@@ -56,7 +56,7 @@ $strings = [
 $channelNames = ['production' => _('Production'), 'test' => _('Test')];
 $branchNames = Services_Updater_Config::branches();
 ?>
-		<div id="editsettingstab-10" class="ui-tabs-hide sw-updates" data-sw-nosave="1"
+		<div id="editsettingstab-11" class="ui-tabs-hide sw-updates" data-sw-nosave="1"
 			data-sw-url="<?php echo htmlspecialchars($base.'?page=adminupdate', ENT_QUOTES); ?>"
 			data-sw-xsrf="<?php echo htmlspecialchars($tplHelper->generateXsrfCookie('adminupdateform'), ENT_QUOTES); ?>"
 			data-sw-repo="<?php echo htmlspecialchars($cfg['repo'], ENT_QUOTES); ?>"

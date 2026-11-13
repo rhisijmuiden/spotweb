@@ -206,6 +206,15 @@ class Dao_Mysql_Spot extends Dao_Base_Spot
         } // if
 
         /*
+         * The same goes for a category which is known to have very few spots:
+         * reading just that category (idx_spots_6) and sorting it is much
+         * faster than walking the date index through the whole database.
+         */
+        if ($this->_avoidDateIndexWalk && (strpos($criteriaFilter, 'MATCH(') === false)) {
+            $indexHint = ' IGNORE INDEX FOR ORDER BY (idx_spots_3) ';
+        } // if
+
+        /*
          * Run the query with a limit always increased by one. this allows us to
          * check whether any more results are available
          */

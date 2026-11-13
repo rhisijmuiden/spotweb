@@ -763,6 +763,12 @@ abstract class SpotStruct_abs
         $this->validateIndex('idx_spots_3', '', 'spots', ['reversestamp']);
         $this->validateIndex('idx_spots_4', '', 'spots', ['subcata', 'subcatb', 'subcatc', 'subcatd', 'subcatz']);
         $this->validateIndex('idx_spots_5', '', 'spots', ['spotterid']);
+        /*
+         * Newest spots of a category (API, RSS and the spot list per category).
+         * Without it the database walks the date index through all spots to
+         * find the few newest ones of a small category.
+         */
+        $this->validateIndex('idx_spots_6', '', 'spots', ['category', 'subcatz', 'reversestamp']);
         $this->validateFts('idx_fts_spots', 'spots', [1 => 'poster',
             2                                           => 'title',
             3                                           => 'tag', ]);

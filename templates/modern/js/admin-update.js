@@ -6,7 +6,7 @@
 	'use strict';
 
 	function init() {
-		var tab = document.getElementById('editsettingstab-10');
+		var tab = document.getElementById('editsettingstab-11');
 		if (!tab || tab.getAttribute('data-sw-ready')) { return; }
 		tab.setAttribute('data-sw-ready', '1');
 

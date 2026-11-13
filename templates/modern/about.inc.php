@@ -26,7 +26,7 @@ if ($isAdmin) {
 	<p class="sw-about-update"><?php echo _('An update is available'); ?></p>
 <?php } ?>
 <?php if ($isAdmin) { ?>
-	<p><a href="<?php echo $tplHelper->makeBaseUrl('path'); ?>?page=editsettings#editsettingstab-10"><?php echo _('Check for updates'); ?> →</a></p>
+	<p><a href="<?php echo $tplHelper->makeBaseUrl('path'); ?>?page=editsettings#editsettingstab-11"><?php echo _('Check for updates'); ?> →</a></p>
 <?php } ?>
 	<p class="sw-hint">Spotweb · <a href="https://github.com/<?php echo htmlspecialchars(Services_Updater_Config::DEFAULT_REPO); ?>" target="_blank" rel="noopener">GitHub</a></p>
 </div>
