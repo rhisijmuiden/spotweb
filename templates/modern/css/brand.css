@@ -783,3 +783,32 @@ body.modern-config button.sw-btn-secondary {
 }
 body.modern-config button.sw-btn-secondary:hover { border-color: var(--sw-accent); }
 body.modern-config button.sw-btn-secondary:disabled { opacity: .45; cursor: default; border-color: var(--sw-border-strong); }
+
+/* ---------- toolbar menus (user, admin) ---------- */
+html[data-theme] div#toolbar .toolbarButton.config p a::before { color: currentColor !important; }
+html[data-theme] div#toolbar .toolbarButton.dropdown ul ul {
+  min-width: 200px;
+  margin-top: 6px;
+}
+html[data-theme] div#toolbar .toolbarButton.dropdown ul ul li {
+  border: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: normal !important;
+}
+html[data-theme] div#toolbar .toolbarButton.dropdown ul ul li a {
+  display: flex !important;
+  align-items: center;
+  padding: 9px 12px !important;
+  font-size: 13.5px;
+  font-weight: 500;
+  border: 0 !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+html[data-theme] div#toolbar .toolbarButton.dropdown ul ul li.sw-menu-sep {
+  height: 1px;
+  margin: 6px 4px !important;
+  background: var(--sw-border) !important;
+}
+html[data-theme] div#toolbar .toolbarButton.dropdown ul ul li a.sw-menu-danger:hover { color: var(--sw-danger, #EF4444) !important; }
