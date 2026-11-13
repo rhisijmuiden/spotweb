@@ -24,3 +24,5 @@ logs/
 bin/.rnd
 spotweb
 data/spotweb-test.sqlite
+.spotweb-release.json
+.phpunit.result.cache

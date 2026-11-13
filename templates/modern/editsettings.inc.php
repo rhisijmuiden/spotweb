@@ -80,6 +80,7 @@ if ($result->isSubmitted()) {
 			<li><a href="#editsettingstab-8"><span><?php echo _('Activity'); ?></span></a></li>
 			<li><a href="#editsettingstab-7"><span><?php echo _('API &amp; RSS'); ?></span></a></li>
 			<li><a href="#editsettingstab-4"><span><?php echo _('Performance &amp; cache'); ?></span></a></li>
+			<li><a href="#editsettingstab-10"><span><?php echo _('About &amp; updates'); ?><?php if (!empty($updater['check']) && in_array($updater['check']['state'], ['behind', 'unknown'], true)) { ?> <i class="sw-nav-dot" title="<?php echo _('An update is available'); ?>"></i><?php } ?></span></a></li>
 <?php } ?>
 		</ul>
 		<div class="sw-admin-links">
@@ -639,6 +640,9 @@ foreach (Services_Admin_Themes::getViews() as $viewId => $viewName) { ?>
 			</fieldset>
 		</div>
 <!-- Einde Custom Stylesheet -->
+
+<!-- About & updates -->
+<?php require __DIR__.'/includes/admin-updates.inc.php'; ?>
 
 <?php } ?>
 

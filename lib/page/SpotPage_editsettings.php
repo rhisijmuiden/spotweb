@@ -100,7 +100,15 @@ class SpotPage_editsettings extends SpotPage_Abs
             $lastRetrieve = 0;
         } // catch
 
+        // Admin > About & updates
+        try {
+            $updater = SpotPage_adminupdate::overview($this->_daoFactory->getConnection());
+        } catch (Exception $x) {
+            $updater = null;
+        } // catch
+
         $this->template('editsettings', ['editsettingsform' => $this->_settings,
+            'updater'                                       => $updater,
             'activity'                                      => $activity,
             'retrievestate'                                 => $retrieveState,
             'lastretrieve'                                  => $lastRetrieve,

@@ -34,6 +34,7 @@
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_edit_own_user, '')) { ?>
 						<li><a href="<?php echo $tplHelper->makeEditUserUrl($currentSession['user']['userid'], 'edit'); ?>" onclick="return openDialog('editdialogdiv', '<?php echo _('Change user'); ?>', '?page=edituser&userid=<?php echo $currentSession['user']['userid'] ?>', null, 'autoclose',  function() { window.location.reload(); }, null);"><?php echo _('Change user'); ?></a></li>
 <?php } ?>
+						<li><a href="#" onclick="return openDialog('editdialogdiv', '<?php echo _('About Spotweb'); ?>', '?page=render&amp;tplname=about', null, 'showresultsonly', null, null);"><?php echo _('About Spotweb'); ?></a></li>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_perform_logout, '')) { ?>
 						<li class="sw-menu-sep" aria-hidden="true"></li>
 						<li><a href="#" class="sw-menu-danger" onclick="userLogout()"><?php echo _('Log out'); ?></a></li>
@@ -71,6 +72,9 @@
             ($tplHelper->allowed(SpotSecurity::spotsec_list_all_users, ''))
          ) { ?>
 					<li><a href="?page=render&amp;tplname=usermanagement"><?php echo _('User &amp; group management'); ?></a></li>
+	<?php } ?>
+	<?php if ($tplHelper->allowed(SpotSecurity::spotsec_edit_settings, '')) { ?>
+						<li><a href="?page=editsettings#editsettingstab-10"><?php echo _('About &amp; updates'); ?></a></li>
 	<?php } ?>
 					</ul></li>
 					</li>
