@@ -2393,3 +2393,12 @@ msgstr "Bijgewerkt na elke ophaalronde. Laatste ophaalronde: %s"
 
 msgid "average"
 msgstr "gemiddeld"
+
+msgid "Trust"
+msgstr "Vertrouwen"
+
+msgid "Block"
+msgstr "Blokkeren"
+
+msgid "Filter"
+msgstr "Filter"

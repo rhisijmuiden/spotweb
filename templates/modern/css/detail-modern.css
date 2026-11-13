@@ -1,0 +1,463 @@
+/*
+ * Spot detail (spotinfo.inc.php), in the same calm style as the list view.
+ *
+ * Loaded after brand.css and list.css, so it wins over the older layers
+ * (style.css, detail.css). Only uses the theme tokens from brand.css, so
+ * every theme gets the same layout.
+ */
+
+div.details {
+  --sw-cat: var(--sw-accent);
+  color: var(--sw-text);
+  font-size: 14px;
+}
+div.details.spotcat0 { --sw-cat: #3B82F6; }
+div.details.spotcat1 { --sw-cat: #F59E0B; }
+div.details.spotcat2 { --sw-cat: #10B981; }
+div.details.spotcat3 { --sw-cat: #EC4899; }
+
+div.details table.spotdetails,
+div.details div.description,
+div.details div.comments {
+  max-width: 1240px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box;
+}
+
+/* ---------- header: back, category, title, then one calm action group ---------- */
+
+div.details table.spotheader {
+  display: block !important;
+  position: sticky !important;
+  top: var(--sw-header-offset, 0px) !important;
+  left: auto !important;
+  right: auto !important;
+  z-index: 6 !important;
+  max-width: 1240px;
+  margin: 0 auto 20px !important;
+  padding: 12px 0 !important;
+  box-sizing: border-box;
+  background: var(--sw-bg, var(--sw-surface)) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  /* paint the page background left and right of the bar, so scrolled content never shows beside it */
+  box-shadow: 0 0 0 100vmax var(--sw-bg, var(--sw-surface)), 0 1px 0 100vmax var(--sw-border) !important;
+  clip-path: inset(0 -100vmax -1px);
+}
+/* the header starts right below the toolbar, so sticking never covers the content */
+div#overlay div.details { padding-top: var(--sw-header-offset, 0px) !important; }
+/* the stand-alone spot page has no toolbar */
+div.details.external { padding-top: 8px !important; }
+div.details.external table.spotheader { top: 0 !important; }
+
+/* the overlay: plain page background instead of the dimmed list */
+div#overlay:not(.loading) { background: var(--sw-bg, var(--sw-surface)) !important; backdrop-filter: none !important; }
+div.details table.spotheader tbody,
+div.details table.spotheader tr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+div.details table.spotheader th {
+  display: flex !important;
+  align-items: center;
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  color: var(--sw-text) !important;
+}
+div.details table.spotheader th:empty { display: none !important; }
+
+/* back */
+div.details a.closeDetails {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0 !important;
+  border-radius: 9px;
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border) !important;
+  color: var(--sw-muted) !important;
+  cursor: pointer;
+  text-shadow: none !important;
+}
+div.details a.closeDetails:hover { color: var(--sw-text) !important; border-color: var(--sw-border-strong, var(--sw-border)) !important; }
+
+/* category pill, same colours as the list */
+div.details table.spotheader th.category span {
+  display: inline-block !important;
+  padding: 0 9px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--sw-cat) 15%, transparent) !important;
+  color: color-mix(in srgb, var(--sw-cat) 70%, var(--sw-text)) !important;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 24px !important;
+  white-space: nowrap;
+}
+
+/* title: takes the room, may wrap */
+div.details table.spotheader th.title {
+  flex: 1 1 auto;
+  display: block !important;
+  margin: 0 8px 0 4px;
+  font-family: var(--sw-font-display, inherit);
+  font-size: 17px !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -.005em;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+}
+
+/* rating as a small amber star + number */
+div.details span.sw-rating {
+  color: #F59E0B;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+/* square icon buttons: spam, search, watch */
+div.details table.spotheader th.spamreport a.spamreport-button,
+div.details table.spotheader th.search a,
+div.details table.spotheader th.watch a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  float: none !important;
+  border-radius: 9px;
+  background: none !important;
+  border: 1px solid var(--sw-border) !important;
+  color: var(--sw-muted) !important;
+  cursor: pointer;
+  text-decoration: none !important;
+  box-sizing: border-box;
+}
+div.details table.spotheader th.spamreport a.spamreport-button:hover,
+div.details table.spotheader th.search a:hover,
+div.details table.spotheader th.watch a:hover {
+  color: var(--sw-text) !important;
+  background: var(--sw-surface-2) !important;
+  border-color: var(--sw-border-strong, var(--sw-border)) !important;
+}
+/* search: a magnifier drawn with CSS */
+div.details table.spotheader th.search a::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  margin: -3px 0 0 -3px;
+  border: 1.8px solid currentColor;
+  border-radius: 50%;
+}
+div.details table.spotheader th.search a::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 1.8px;
+  left: 19px;
+  top: 20px;
+  background: currentColor;
+  transform: rotate(45deg);
+  border-radius: 1px;
+}
+/* spam: a small flag, red when reported */
+div.details table.spotheader th.spamreport a.spamreport-button::before {
+  content: '\2691';
+  font-size: 15px;
+  line-height: 1;
+}
+div.details table.spotheader th.spamreport a.spamreport-button.success { color: var(--sw-danger, #EF4444) !important; border-color: color-mix(in srgb, var(--sw-danger, #EF4444) 45%, transparent) !important; }
+div.details table.spotheader th.spamreport a.spamreport-button.loading { background: url(../img/loading.gif) no-repeat center center !important; }
+div.details table.spotheader th.spamreport a.spamreport-button.loading::before { visibility: hidden; }
+/* watchlist star, like the list */
+div.details table.spotheader th.watch a::before { font-size: 17px; line-height: 1; }
+div.details table.spotheader th.watch a.add::before { content: '\2606'; }
+div.details table.spotheader th.watch a.remove::before { content: '\2605'; color: #FBBF24; }
+div.details table.spotheader th.watch a.remove { border-color: color-mix(in srgb, #FBBF24 45%, transparent) !important; }
+
+/* SAB: outlined pill, NZB: the one solid button */
+div.details table.spotheader th.sabnzbd a.sabnzbd-button,
+div.details table.spotheader th.nzb a.nzb {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: auto !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  border-radius: 9px !important;
+  box-sizing: border-box;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  letter-spacing: .02em;
+  line-height: 34px !important;
+  text-decoration: none !important;
+  text-indent: 0 !important;
+  white-space: nowrap;
+  cursor: pointer;
+  filter: none !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+div.details table.spotheader th.sabnzbd a.sabnzbd-button {
+  background: none !important;
+  border: 1px solid var(--sw-border-strong, var(--sw-border)) !important;
+  color: var(--sw-text-2, var(--sw-text)) !important;
+  font-size: 0 !important;                 /* hide the stray space; label comes from ::before */
+}
+div.details table.spotheader th.sabnzbd a.sabnzbd-button::before { content: 'SAB'; font-size: 13px; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button:hover { background: var(--sw-surface-2) !important; color: var(--sw-text) !important; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button.succes { color: var(--sw-success, #34D399) !important; border-color: color-mix(in srgb, var(--sw-success, #34D399) 55%, transparent) !important; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button.succes::before { content: 'SAB \2713'; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button.failure { color: var(--sw-danger, #EF4444) !important; border-color: color-mix(in srgb, var(--sw-danger, #EF4444) 55%, transparent) !important; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button.loading { background: url(../img/loading.gif) no-repeat center center !important; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button.loading::before { visibility: hidden; }
+div.details table.spotheader th.sabnzbd a.sabnzbd-button.unconfigured { opacity: .6 !important; }
+
+div.details table.spotheader th.nzb a.nzb {
+  background: var(--sw-accent) !important;
+  border: 1px solid var(--sw-accent) !important;
+  color: var(--sw-on-accent, #fff) !important;
+}
+div.details table.spotheader th.nzb a.nzb::before { content: none !important; }
+div.details table.spotheader th.nzb a.nzb::after { content: '\2193'; margin-left: 6px; font-weight: 600; }
+div.details table.spotheader th.nzb a.nzb:hover { background: var(--sw-accent-hover, var(--sw-accent)) !important; }
+div.details table.spotheader th.nzb a.nzb.downloaded::after { content: '\2713'; }
+
+/* a little air between the icon group and the two download buttons */
+div.details table.spotheader th.sabnzbd { margin-left: 6px; }
+
+/* ---------- body: image + facts ---------- */
+
+div.details table.spotdetails { width: 100%; border-collapse: collapse !important; }
+div.details table.spotdetails > tbody > tr > td,
+div.details table.spotdetails > tr > td { padding: 0 !important; vertical-align: top; background: none !important; }
+div.details table.spotdetails td.img { padding-right: 24px !important; }
+div.details table.spotdetails td.img img.spotinfoimage {
+  display: block;
+  max-width: 260px;
+  height: auto;
+  border-radius: var(--sw-radius-sm, 8px);
+  border: 1px solid var(--sw-border);
+  background: var(--sw-surface-2);
+}
+div.details table.spotdetails td.img a.postimage { cursor: zoom-in; }
+
+/* warning / whitelisted notes: soft banners instead of solid red/green */
+div.details div.warning,
+div.details div.announce {
+  margin: 0 0 12px !important;
+  padding: 9px 12px !important;
+  border-radius: var(--sw-radius-sm, 8px) !important;
+  font-weight: 600 !important;
+  font-size: 13px;
+  line-height: 1.5 !important;
+  text-align: left !important;
+}
+div.details div.warning {
+  background: color-mix(in srgb, var(--sw-danger, #EF4444) 12%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--sw-danger, #EF4444) 35%, transparent) !important;
+  color: color-mix(in srgb, var(--sw-danger, #EF4444) 75%, var(--sw-text)) !important;
+}
+div.details div.announce {
+  background: color-mix(in srgb, var(--sw-success, #10B981) 12%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--sw-success, #10B981) 35%, transparent) !important;
+  color: color-mix(in srgb, var(--sw-success, #10B981) 75%, var(--sw-text)) !important;
+}
+
+/* facts: label | value rows with a hairline, no coloured blocks */
+div.details table.spotinfo {
+  width: 100%;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  background: var(--sw-surface);
+  border: 1px solid var(--sw-border);
+  border-radius: var(--sw-radius, 12px);
+  overflow: hidden;
+}
+div.details table.spotinfo tr + tr th,
+div.details table.spotinfo tr + tr td { border-top: 1px solid var(--sw-border) !important; }
+div.details table.spotinfo th,
+div.details table.spotinfo td {
+  height: auto !important;
+  padding: 9px 16px !important;
+  line-height: 20px !important;
+  border: 0;
+  border-radius: 0 !important;
+  background: none !important;
+  vertical-align: middle;
+  font-size: 13.5px;
+}
+div.details table.spotinfo th {
+  width: 150px !important;
+  text-align: left !important;
+  color: var(--sw-muted) !important;
+  font-weight: 500 !important;
+  white-space: nowrap;
+}
+div.details table.spotinfo td { color: var(--sw-text) !important; overflow-wrap: anywhere; }
+div.details table.spotinfo td * { color: inherit; }
+div.details table.spotinfo a {
+  color: var(--sw-text) !important;
+  text-decoration: none !important;
+}
+div.details table.spotinfo a:hover { color: var(--sw-accent-text, var(--sw-accent)) !important; }
+
+/* sender: name, id chip, then small text buttons */
+div.details span.sw-sender { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+div.details span.sw-sender a.sw-poster { font-weight: 600; }
+div.details table.spotinfo a.sw-spotterid {
+  padding: 0 7px;
+  border-radius: 5px;
+  background: var(--sw-surface-2);
+  color: var(--sw-muted) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 20px;
+}
+div.details table.spotinfo a.delete,
+div.details table.spotinfo a.whitelist,
+div.details table.spotinfo a.addspotterasfilter,
+div.details table.spotinfo a.addtagasfilter {
+  display: inline-block !important;
+  width: auto !important;
+  height: 22px !important;
+  min-width: 0 !important;
+  padding: 0 8px !important;
+  border-radius: 6px;
+  background: none !important;
+  border: 1px solid var(--sw-border) !important;
+  color: var(--sw-muted) !important;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px !important;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+div.details table.spotinfo a.whitelist:hover { color: var(--sw-success, #10B981) !important; border-color: color-mix(in srgb, var(--sw-success, #10B981) 55%, transparent) !important; }
+div.details table.spotinfo a.delete:hover { color: var(--sw-danger, #EF4444) !important; border-color: color-mix(in srgb, var(--sw-danger, #EF4444) 55%, transparent) !important; }
+div.details table.spotinfo a.addspotterasfilter:hover,
+div.details table.spotinfo a.addtagasfilter:hover { color: var(--sw-text) !important; background: var(--sw-surface-2) !important; }
+div.details table.spotinfo a.addtagasfilter { margin-left: 8px; }
+
+div.details span.sw-spamcount {
+  display: inline-block;
+  padding: 0 8px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--sw-danger, #EF4444) 14%, transparent);
+  color: var(--sw-danger, #EF4444);
+  font-weight: 650;
+  font-size: 12px;
+}
+
+/* ---------- description and comments ---------- */
+
+div.details div.description,
+div.details div.comments { padding: 24px 0 0 !important; }
+
+div.details div.description h4,
+div.details div.comments h4 {
+  position: static !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px !important;
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: var(--sw-text) !important;
+  text-shadow: none !important;
+  font-size: 14.5px !important;
+  font-weight: 650;
+  line-height: 1.4 !important;
+}
+div.details div.comments h4 span.commentcount {
+  position: static !important;
+  padding: 0 7px !important;
+  border-radius: 999px !important;
+  background: var(--sw-surface-2) !important;
+  color: var(--sw-muted) !important;
+  font-size: 12px !important;
+  font-weight: 600;
+  line-height: 20px !important;
+}
+
+div.details div.description pre {
+  margin: 0 !important;
+  padding: 16px 18px !important;
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: var(--sw-radius, 12px) !important;
+  color: var(--sw-text-2, var(--sw-text)) !important;
+  font-family: var(--sw-font, inherit) !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+div.details div.description pre a { color: var(--sw-accent-text, var(--sw-accent)) !important; }
+div.details div.description pre img { max-width: 100%; height: auto; }
+
+div.details div.comments ul { display: flex; flex-direction: column; gap: 8px; }
+div.details div.comments li {
+  margin: 0 !important;
+  min-height: 0 !important;
+  padding: 12px 16px !important;
+  background: var(--sw-surface) !important;
+  border: 1px solid var(--sw-border) !important;
+  border-radius: var(--sw-radius-sm, 8px) !important;
+  color: var(--sw-text-2, var(--sw-text)) !important;
+  line-height: 1.55 !important;
+  font-size: 13.5px;
+}
+div.details div.comments li * { color: inherit; }
+div.details div.comments li strong { color: var(--sw-muted); font-weight: 500; font-size: 12.5px; }
+div.details div.comments li span.user { color: var(--sw-text) !important; font-weight: 650; text-shadow: none !important; }
+div.details div.comments li.poster span.user {
+  padding: 1px 6px !important;
+  background: color-mix(in srgb, var(--sw-cat) 15%, transparent) !important;
+  color: color-mix(in srgb, var(--sw-cat) 70%, var(--sw-text)) !important;
+}
+div.details div.comments a.spotterid { color: var(--sw-muted) !important; text-decoration: none; }
+div.details div.comments li a.delete { background: none !important; width: auto !important; height: auto !important; }
+div.details div.comments li a.delete::before { content: '\2715'; color: var(--sw-muted); font-size: 11px; cursor: pointer; }
+div.details div.comments li a.delete:hover::before { color: var(--sw-danger, #EF4444); }
+div.details div.comments li.nocomments { text-align: center; color: var(--sw-muted) !important; padding: 18px !important; }
+div.details div.comments li.addComment { padding: 0 !important; text-align: left !important; }
+div.details div.comments li.addComment a.togglePostComment { padding: 10px 16px; color: var(--sw-text) !important; font-weight: 600; }
+div.details div.comments li.addComment div { background: transparent !important; }
+div.details div.comments blockquote { border: 0 !important; border-left: 3px solid var(--sw-border-strong, var(--sw-border)) !important; background: var(--sw-surface-2) !important; margin: 6px 0; padding: 6px 10px; border-radius: 0 6px 6px 0; }
+
+/* the old category tints on comments are no longer needed */
+div.details[class*="spotcat"] div.comments li.even { background: var(--sw-surface) !important; }
+
+@media (max-width: 760px) {
+  div.details table.spotheader { position: static !important; }
+  div#overlay div.details { padding: var(--sw-header-offset, 0px) 12px 0 !important; }
+  div.details table.spotheader tr { flex-wrap: wrap; }
+  div.details table.spotdetails, div.details table.spotdetails > tbody, div.details table.spotdetails > tbody > tr { display: block; width: 100%; }
+  div.details table.spotinfo { table-layout: fixed; }
+  div.details table.spotheader th.title { flex-basis: calc(100% - 140px); }
+  div.details table.spotdetails td.img { display: block; padding: 0 0 16px !important; }
+  div.details table.spotdetails td.info { display: block; }
+  div.details table.spotinfo th { width: 110px !important; }
+}
