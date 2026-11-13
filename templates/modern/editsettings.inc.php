@@ -660,6 +660,12 @@ if ($result->isSubmitted()) {
 					<label><span><?php echo _('NZB downloads via the API per day'); ?></span><input type="number" min="0" step="1" name="editsettingsform[api_download_limit]" value="<?php echo (int) $this->_settings->get('api_download_limit'); ?>"></label>
 				</div>
 
+				<h3 class="sw-admin-section"><?php echo _('Speed'); ?></h3>
+				<p class="sw-hint"><?php echo _('API and RSS answers are kept for a short time, so apps that ask the same question again get the answer at once. A new spot always gives a fresh answer. 0 switches this off.'); ?></p>
+				<div class="sw-limit-grid">
+					<label><span><?php echo _('Keep answers for (seconds)'); ?></span><input type="number" min="0" max="<?php echo Services_Providers_ResponseCache::MAX_TTL; ?>" step="1" name="editsettingsform[api_cache_ttl]" value="<?php echo Services_Providers_ResponseCache::ttlFromSettings($this->_settings); ?>"></label>
+				</div>
+
 				<h3 class="sw-admin-section"><?php echo _('RSS feed'); ?></h3>
 				<div class="sw-check-list sw-check-list--stack">
 					<label><input type="checkbox" name="editsettingsform[rss_enabled]" <?php if ($this->_settings->isEnabled('rss_enabled')) { echo 'checked="checked"'; } ?>> <?php echo _('Enable the RSS feed, with a download link to the NZB in every item'); ?></label>

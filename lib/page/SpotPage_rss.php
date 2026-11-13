@@ -29,10 +29,53 @@ class SpotPage_rss extends SpotPage_Abs
             return;
         } // if
 
-        $nzbhandling = $this->_currentSession['user']['prefs']['nzbhandling'];
-
         // Don't allow the RSS feed to be cached
         $this->sendExpireHeaders(true);
+
+        /*
+         * Feed readers and download tools fetch the same feed over and over,
+         * so the feed is kept in the response cache until a new spot arrives
+         */
+        $cache = new Services_Providers_ResponseCache(
+            $this->_daoFactory->getCachePath(),
+            Services_Providers_ResponseCache::ttlFromSettings($this->_settings)
+        );
+        $user = $this->_currentSession['user'];
+        $key = $cache->makeKey([
+            'rss',
+            SPOTWEB_VERSION,
+            (int) $user['userid'],
+            $this->_params,
+            $user['prefs']['perpage'] ?? null,
+            $user['prefs']['nzbhandling'] ?? null,
+            $this->_tplHelper->makeBaseUrl('full'),
+            $cache->isEnabled() ? Services_Providers_ResponseCache::spotGeneration($this->_daoFactory->getConnection()) : 0,
+        ]);
+
+        $response = $cache->remember($key, function () {
+            return [
+                'headers' => ['Content-Type: application/rss+xml; charset=utf-8'],
+                'body'    => $this->buildFeed(),
+            ];
+        });
+
+        if (!headers_sent()) {
+            foreach ($response['headers'] as $header) {
+                header($header);
+            } // foreach
+            header('X-Spotweb-Cache: '.$response['cache']);
+        } // if
+        echo $response['body'];
+    }
+
+    // render()
+
+    /**
+     * Builds the RSS feed and returns it as a string.
+     */
+    private function buildFeed()
+    {
+        $nzbhandling = $this->_currentSession['user']['prefs']['nzbhandling'];
 
         /*
          * Transform the query parameters to a list of filters, fields,
@@ -55,7 +98,7 @@ class SpotPage_rss extends SpotPage_Abs
          */
         $pageNr = intval($this->_params['page']);
         $svcProvSpotList = new Services_Providers_SpotList($this->_daoFactory->getSpotDao());
-        $spotsTmp = $svcProvSpotList->fetchSpotList(
+        $spotsTmp = $svcProvSpotList->fetchNewestSpotList(
             $this->_currentSession['user']['userid'],
             $pageNr,
             $this->_currentSession['user']['prefs']['perpage'],
@@ -144,10 +187,8 @@ class SpotPage_rss extends SpotPage_Abs
             } // catch
         } // foreach
 
-        // Output XML
-        $this->sendContentTypeHeader('rss');
-        echo $doc->saveXML();
+        return $doc->saveXML();
     }
 
-    // render()
+    // buildFeed()
 } // class SpotPage_rss

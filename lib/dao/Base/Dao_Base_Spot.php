@@ -5,6 +5,12 @@ class Dao_Base_Spot implements Dao_Spot
     protected $_conn;
 
     /*
+     * Set by getSpots() when the search asks the database not to walk the
+     * date index for sorting (see Services_Providers_SpotList::fetchNewestSpotList())
+     */
+    protected $_avoidDateIndexWalk = false;
+
+    /*
      * constructs a new Dao_Base_Spot object,
      * connection object is given
      */
@@ -23,6 +29,7 @@ class Dao_Base_Spot implements Dao_Spot
     {
         SpotTiming::start(__CLASS__.'::'.__FUNCTION__);
         (int) $offset = $pageNr * (int) $limit;
+        $this->_avoidDateIndexWalk = !empty($parsedSearch['avoidDateIndexWalk']);
 
         /*
          * there are the basic search criteria (category, title, etc)

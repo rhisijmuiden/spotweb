@@ -26,7 +26,7 @@ class ServicesSettingsBaseTest extends TestCase
 
     public function testSchemaVersionIsBumpedForInnoDbConversion()
     {
-        $this->assertSame('0.73', SPOTDB_SCHEMA_VERSION);
+        $this->assertSame('0.74', SPOTDB_SCHEMA_VERSION);
     }
 
     public function testSchemaVersionGateRequiresCurrentSchema()
