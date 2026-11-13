@@ -2402,3 +2402,87 @@ msgstr "Blokkeren"
 
 msgid "Filter"
 msgstr "Filter"
+
+msgid "Add filter for this spotter"
+msgstr "Filter toevoegen voor deze spotter"
+
+msgid "Add filter for this tag"
+msgstr "Filter toevoegen voor deze tag"
+
+msgid "All details"
+msgstr "Alle details"
+
+msgid "All spots"
+msgstr "Alle spots"
+
+msgid "Back"
+msgstr "Terug"
+
+msgid "Blocked sender"
+msgstr "Geblokkeerde afzender"
+
+msgid "Configure NZB handling before sending this spot to a download client"
+msgstr "Stel eerst de NZB-afhandeling in voordat je deze spot naar een downloadprogramma stuurt"
+
+msgid "Marked as possible spam"
+msgstr "Gemarkeerd als mogelijke spam"
+
+msgid "Message-ID"
+msgstr "Message-ID"
+
+msgid "Next spot (j)"
+msgstr "Volgende spot (j)"
+
+msgid "Not verified"
+msgstr "Niet geverifieerd"
+
+msgid "Previous spot (k)"
+msgstr "Vorige spot (k)"
+
+msgid "Report spam"
+msgstr "Spam melden"
+
+msgid "Reported"
+msgstr "Gemeld"
+
+msgid "Send to SABnzbd"
+msgstr "Naar SABnzbd sturen"
+
+msgid "Set up SABnzbd"
+msgstr "SABnzbd instellen"
+
+msgid "Spot %1$s of %2$s · j / k to browse"
+msgstr "Spot %1$s van %2$s · j / k om te bladeren"
+
+msgid "Spot edited"
+msgstr "Spot bewerkt"
+
+msgid "Trusted sender"
+msgstr "Vertrouwde afzender"
+
+msgid "Verified sender"
+msgstr "Geverifieerde afzender"
+
+msgid "Watch"
+msgstr "Volgen"
+
+msgid "Watching"
+msgstr "Volgend"
+
+msgid "Whitelist this sender"
+msgstr "Deze afzender vertrouwen"
+
+msgid "%d spam report"
+msgid_plural "%d spam reports"
+msgstr[0] "%d spammelding"
+msgstr[1] "%d spammeldingen"
+
+msgid "This spot thas %d star"
+msgid_plural "This spot has %d stars"
+msgstr[0] "Deze spot heeft %d ster"
+msgstr[1] "Deze spot heeft %d sterren"
+
+msgid "%s spot"
+msgid_plural "%s spots"
+msgstr[0] "%s spot"
+msgstr[1] "%s spots"

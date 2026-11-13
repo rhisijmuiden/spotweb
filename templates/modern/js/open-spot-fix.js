@@ -10,6 +10,7 @@
       if (!target) {
         return false;
       }
+      if (window.swShowTab) { window.swShowTab('comments'); }
       try {
         target.scrollIntoView({ block: 'start', behavior: 'auto' });
       } catch (e) {

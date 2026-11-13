@@ -97,9 +97,15 @@ function openSpot(id,url) {
 
 	var scrollLocation = $(document).scrollTop();
 	$("#overlay").load(url + ' #details', function (a, b) {
-		$("div.container").removeClass("visible").addClass("hidden");
 		$("#overlay").removeClass('loading notrans');
-		$("body").addClass("spotinfo");
+		if (window.swSplitView && window.swSplitView()) {
+			// wide screens: the spot opens next to the list, the list stays usable
+			$("body").addClass("sw-split");
+		} else {
+			$("div.container").removeClass("visible").addClass("hidden");
+			$("body").addClass("spotinfo");
+		}
+		if (window.swDetailReady) { window.swDetailReady(); }
 
 		if($("#overlay").children().size() == 0) {
 			alert("<t>Error while loading this page, you will be returned automaticly to the mainview</t>" + a);
@@ -110,7 +116,11 @@ function openSpot(id,url) {
 
 		$("a.closeDetails").click(function(){ 
 			$.address.value("");
-			if ($('table.spots tr.active').offset().top > $(window).height())scrollLocation = $('table.spots tr.active').offset().top - 50;
+			if ($("body").hasClass("sw-split")) {
+				scrollLocation = $(document).scrollTop();
+			} else if ($('table.spots tr.active').offset().top > $(window).height()) {
+				scrollLocation = $('table.spots tr.active').offset().top - 50;
+			}
 			closeDetails(scrollLocation); 
 		});
 
@@ -153,6 +163,7 @@ function openNewWindow() {
 
 // En maak de overlay onzichtbaar
 function closeOverlay() {
+	$("body").removeClass("sw-split");
 	$("div.container").removeClass("hidden").addClass("visible");
 	$("#overlay").hide();
 	$("#details").remove();
@@ -213,7 +224,7 @@ function loadComments(messageid,perpage,pagenr) {
         if (count == 0 && pagenr == 0) {
 			$("#commentslist").append("<li class='nocomments'><t>No (verified) comments found.</t></li>");
 		} else {
-			$("span.commentcount").html('# '+$("#commentslist").children().not(".addComment").size());
+			$("span.commentcount").html($("#commentslist").children().not(".addComment").size());
 		}
 
 		html = $(html);
@@ -433,7 +444,7 @@ function attachKeyBindings() {
 	$document.bind('keydown', 'i', toggleImageSize);
 	$document.bind('keydown', 's', function(){if($("#overlay").is(':visible') || $('#details').hasClass("external")) {$("#details a.sabnzbd-button").click()} else {$("tr.active a.sabnzbd-button").click()}});
 	$document.bind('keydown', 'n', function(){if($("#overlay").is(':visible') || $('#details').hasClass("external")) {location.href = $("#details a.nzb").attr('href')} else if($("th.nzb").is(":visible")) {location.href = $("tr.active a.nzb").attr('href')}});
-	$document.bind('keydown', 'w', function(){if($("#overlay").is(':visible') || $('#details').hasClass("external")) {$("#details th.watch a:visible").click()} else if($("div.spots").hasClass("watchlist")) {location.href = $("tr.active td.watch a").attr('href')} else {$("tr.active td.watch a:visible").click()}});
+	$document.bind('keydown', 'w', function(){if($("#overlay").is(':visible') || $('#details').hasClass("external")) {$("#details .watch a:visible").click()} else if($("div.spots").hasClass("watchlist")) {location.href = $("tr.active td.watch a").attr('href')} else {$("tr.active td.watch a:visible").click()}});
 	$document.bind('keydown', 't', function(){openNewWindow()});
 	$document.bind('keydown', 'h', function(){location.href = '?search[tree]=&search[unfiltered]=true'});
 	$document.bind('keydown', 'm', function(){downloadMultiNZB(spotweb_nzbhandler_type)});
@@ -447,6 +458,19 @@ function spotNav(direction) {
 	var prev = current.prevUntil('tr.header').first();
 	var next = current.next().first();
 
+	if ($("body").hasClass("sw-split")) {
+		var target = (direction == 'prev') ? prev : next;
+		if (target.size() == 1) {
+			current.removeClass('active');
+			target.addClass('active');
+			var top = target.offset().top - $(document).scrollTop();
+			if (top < 120 || top > $(window).height() - 60) {
+				$(document).scrollTop(target.offset().top - 160);
+			}
+			target.find('.title a.spotlink').click();
+		}
+		return;
+	}
 	if (direction == 'prev' && prev.size() == 1) {
 		current.removeClass('active');
 		prev.addClass('active');

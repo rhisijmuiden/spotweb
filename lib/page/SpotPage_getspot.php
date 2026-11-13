@@ -26,6 +26,9 @@ class SpotPage_getspot extends SpotPage_Abs
         $this->_pageTitle = 'spot: '.$fullSpot['title'];
 
         //- display stuff -#
+        // how many spots this sender has, shown next to the name
+        $fullSpot['spottercount'] = $this->_daoFactory->getSpotDao()->countSpotsBySpotterId($fullSpot['spotterid'] ?? '');
+
         $this->template('spotinfo', ['spot' => $fullSpot]);
     }
 

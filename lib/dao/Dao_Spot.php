@@ -46,6 +46,8 @@ interface Dao_Spot
 
     public function countSpotsBetween($from, $till);
 
+    public function countSpotsBySpotterId($spotterId);
+
     public function removeExtraSpots($messageId);
 
     public function addPostedSpot($userId, $spot, $fullXml);
