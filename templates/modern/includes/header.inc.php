@@ -30,6 +30,9 @@
 		  names: <?php echo json_encode($swThemeNames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
 		  label: <?php echo json_encode(_('Theme'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
 		  siteLabel: <?php echo json_encode(_('Site default'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
+		  view: <?php echo json_encode(Services_Admin_Themes::getSiteView($settings)); ?>,
+		  viewLocked: <?php echo Services_Admin_Themes::isViewLocked($settings) ? 'true' : 'false'; ?>,
+		  viewLabels: <?php echo json_encode(['view' => _('View'), 'cards' => _('Cards'), 'table' => _('Table')], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>,
 		  getPref: function () {
 		    var p = null;
 		    try { p = localStorage.getItem('spotweb_theme'); } catch (e) {}

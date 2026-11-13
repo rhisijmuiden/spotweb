@@ -5,8 +5,8 @@
   function isTableView(){
     var grid = qs('.cardsGrid');
     var table = qs('table.spots');
-    var u = new URL(location.href);
-    return !!table && u.searchParams.get('view') === 'table';
+    // the table view renders table.spots without the cards grid (also when the admin locked it)
+    return !!table && !grid;
   }
 
   function nextPage(){ var el = qs('#nextPage'); return el ? parseInt(el.value, 10) : -1; }

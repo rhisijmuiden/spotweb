@@ -609,6 +609,26 @@ foreach (Services_Admin_Themes::getThemes() as $themeId => $theme) { ?>
 <?php } ?>
 				</div>
 
+				<h3 class="sw-admin-section"><?php echo _('Spot list view'); ?></h3>
+				<p class="sw-hint"><?php echo _('How the list of spots is shown by default. Visitors can pick another view in the toolbar, unless you lock it.'); ?></p>
+				<div class="sw-theme-grid sw-view-grid">
+<?php $siteView = Services_Admin_Themes::getSiteView($this->_settings);
+$viewHints = ['cards' => _('Posters with title and details, easy to browse'), 'table' => _('A compact list with one row per spot')];
+foreach (Services_Admin_Themes::getViews() as $viewId => $viewName) { ?>
+					<label class="sw-choice sw-theme-choice">
+						<input type="radio" name="editsettingsform[site_view]" value="<?php echo $viewId; ?>" <?php if ($siteView === $viewId) { echo 'checked="checked"'; } ?>>
+						<span>
+							<strong><?php echo htmlspecialchars($viewName, ENT_QUOTES); ?></strong>
+							<span><?php echo htmlspecialchars($viewHints[$viewId], ENT_QUOTES); ?></span>
+						</span>
+					</label>
+<?php } ?>
+				</div>
+				<dl>
+					<dt><label for="site_view_locked"><?php echo _('Lock this view for everyone'); ?></label></dt>
+					<dd><input type="checkbox" id="site_view_locked" name="editsettingsform[site_view_locked]" <?php if (Services_Admin_Themes::isViewLocked($this->_settings)) { echo 'checked="checked"'; } ?>></dd>
+				</dl>
+
 				<h3 class="sw-admin-section"><?php echo _('Custom CSS'); ?></h3>
 				<dt>
 					<label for="editsettingsform[customcss]"><?php echo _('Use custom CSS?'); ?></label>
