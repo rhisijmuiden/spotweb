@@ -91,6 +91,68 @@ class Bootstrap
 
     // boot
 
+    /*
+     * Where the database settings live, first match wins:
+     *
+     *  1. the file named in the SPOTWEB_DBSETTINGS environment variable;
+     *  2. spotweb-config/dbsettings.inc.php NEXT TO the Spotweb folder, so
+     *     outside the webroot and untouched by a git pull or by replacing
+     *     the code folder;
+     *  3. dbsettings.inc.php in the Spotweb folder (the classic place).
+     *
+     * Returns null when none exists.
+     */
+    public static function dbSettingsFile()
+    {
+        $candidates = [];
+        $env = getenv('SPOTWEB_DBSETTINGS');
+        if (is_string($env) && $env !== '') {
+            $candidates[] = $env;
+        } // if
+        $candidates[] = dirname(__DIR__, 2).'/spotweb-config/dbsettings.inc.php';
+        $candidates[] = dirname(__DIR__).'/dbsettings.inc.php';
+
+        foreach ($candidates as $file) {
+            if (@is_file($file) && @is_readable($file)) {
+                return $file;
+            } // if
+        } // foreach
+
+        return null;
+    }
+
+    /*
+     * The database settings as an array, from the first settings file found,
+     * or else from SPOTWEB_DB_* environment variables (handy for Docker).
+     * Returns null when nothing is configured.
+     */
+    public static function loadDbSettings()
+    {
+        $file = self::dbSettingsFile();
+        if ($file !== null) {
+            $dbsettings = null;
+            require $file;
+
+            return is_array($dbsettings) ? $dbsettings : null;
+        } // if
+
+        $engine = getenv('SPOTWEB_DB_ENGINE');
+        if (!is_string($engine) || $engine === '') {
+            return null;
+        } // if
+
+        $dbsettings = ['engine' => $engine, 'host' => '', 'dbname' => '', 'user' => '', 'pass' => ''];
+        foreach (['host' => 'SPOTWEB_DB_HOST', 'port' => 'SPOTWEB_DB_PORT', 'dbname' => 'SPOTWEB_DB_NAME',
+            'user' => 'SPOTWEB_DB_USER', 'pass' => 'SPOTWEB_DB_PASS', 'schema' => 'SPOTWEB_DB_SCHEMA', ] as $key => $var) {
+            $value = getenv($var);
+            if (is_string($value) && $value !== '') {
+                $dbsettings[$key] = $value;
+            } // if
+        } // foreach
+
+        return $dbsettings;
+    }
+
     /**
      * Returns the DAO factory used by all of
      * Spotweb.
@@ -103,11 +165,10 @@ class Bootstrap
     {
         SpotTiming::start(__CLASS__.'::'.__FUNCTION__);
 
-        if (!file_exists(__DIR__.'/../dbsettings.inc.php')) {
+        $dbsettings = self::loadDbSettings();
+        if ($dbsettings === null) {
             throw new DatabaseConnectionException("No database settings have been entered, please use the 'install.php' wizard to install and configure Spotweb.".PHP_EOL.'If you are upgrading from an earlier version of Spotweb, please consult https://github.com/spotweb/spotweb/wiki/Frequently-asked-questions/ first');
-        } else {
-            require __DIR__.'/../dbsettings.inc.php';
-        }
+        } // if
 
         /*
          * Store the DB settings so we can retrieve them later, if so desired,

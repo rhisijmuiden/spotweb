@@ -131,10 +131,10 @@ table.spots tbody td.poster a { overflow: hidden; text-overflow: ellipsis; displ
 table.spots tbody tr:hover td.genre a:hover,
 table.spots tbody tr:hover td.poster a:hover { color: var(--sw-text) !important; }
 
-table.spots td.genre, table.spots th.genre { width: 130px; min-width: 130px; max-width: 130px; }
-table.spots td.poster, table.spots th.poster { width: 150px !important; min-width: 150px !important; max-width: 150px; }
+table.spots td.genre, table.spots th.genre { width: 115px; min-width: 115px; max-width: 115px; }
+table.spots td.poster, table.spots th.poster { width: 130px !important; min-width: 130px !important; max-width: 130px; }
 table.spots td.poster a { width: auto !important; min-width: 0 !important; }
-table.spots td.date, table.spots th.date { width: 150px; min-width: 150px; }
+table.spots td.date, table.spots th.date { width: 135px; min-width: 120px; }
 table.spots td.filesize, table.spots th.filesize { width: 90px; min-width: 90px; text-align: right !important; }
 
 /* ---------- category ---------- */
@@ -177,11 +177,36 @@ table.spots td.sabnzbd, table.spots th.sabnzbd {
   text-align: center !important;
 }
 table.spots tbody td.editspot a,
-table.spots tbody td.multinzb input,
-table.spots tbody td.sabnzbd a {
+table.spots tbody td.multinzb input {
   opacity: 0;
   transition: opacity .12s ease;
 }
+/* send to SABnzbd / download client: always visible, as a small pill next to NZB */
+table.spots td.sabnzbd, table.spots th.sabnzbd { width: 48px !important; min-width: 48px !important; }
+table.spots tbody td.sabnzbd a.sabnzbd-button {
+  display: inline-block !important;
+  width: auto !important;
+  height: 20px !important;
+  margin: 0 !important;
+  padding: 0 7px;
+  border-radius: 5px;
+  background: none !important;
+  box-shadow: inset 0 0 0 1px var(--sw-border-strong, var(--sw-border));
+  color: var(--sw-muted) !important;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 20px !important;
+  cursor: pointer;
+  opacity: 1 !important;
+}
+table.spots tbody td.sabnzbd a.sabnzbd-button::before { content: 'SAB'; }
+table.spots tbody td.sabnzbd a.sabnzbd-button:hover { color: var(--sw-on-accent, #fff) !important; background: var(--sw-accent) !important; box-shadow: none; }
+table.spots tbody td.sabnzbd a.sabnzbd-button.succes { color: var(--sw-success, #34D399) !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sw-success, #34D399) 55%, transparent); }
+table.spots tbody td.sabnzbd a.sabnzbd-button.succes::before { content: 'SAB \2713'; }
+table.spots tbody td.sabnzbd a.sabnzbd-button.failure { color: #EF4444 !important; box-shadow: inset 0 0 0 1px color-mix(in srgb, #EF4444 55%, transparent); }
+table.spots tbody td.sabnzbd a.sabnzbd-button.loading { background: url(../img/loading.gif) no-repeat center center !important; color: transparent !important; }
+table.spots tbody td.sabnzbd a.sabnzbd-button.unconfigured { opacity: .55 !important; filter: none !important; }
+table.spots th.sabnzbd a { opacity: .8; }
 table.spots tbody tr:hover td.editspot a,
 table.spots tbody tr:hover td.multinzb input,
 table.spots tbody tr:hover td.sabnzbd a,
