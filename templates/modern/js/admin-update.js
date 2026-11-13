@@ -148,7 +148,8 @@
 			el('last-by').textContent = job.by || '–';
 			el('last-when').textContent = when(job.started);
 			el('last-fromto').textContent = short(job.from) + ' → ' + short(job.to) + (job.branch ? ' (' + job.branch + ')' : '');
-			var result = S['s_' + job.status] || job.status;
+			var busy = ['running', 'files_done', 'database'].indexOf(job.status) >= 0;
+			var result = busy ? S.s_running : (S['s_' + job.status] || job.status);
 			if (job.status === 'failed' && job.message) { result += ': ' + job.message; }
 			if (job.status === 'done' && job.result) { result += ' · ' + fmt(S.files, job.result.changed, job.result.added, job.result.removed); }
 			el('last-result').textContent = result;
