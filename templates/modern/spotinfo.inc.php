@@ -53,15 +53,13 @@
 			<table class="spotheader">
 				<tbody>
 					<tr>
-						<th class="back"> <a class="closeDetails" title="<?php echo _('Back to mainview (ESC / U)'); ?>">&lt;&lt;</a> </th>
+						<th class="back"> <a class="closeDetails" title="<?php echo _('Back to mainview (ESC / U)'); ?>" aria-label="<?php echo _('Back to mainview (ESC / U)'); ?>"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a> </th>
 						<th class="category"><span><?php echo $spot['formatname']; ?></span></th>
 						<th class="title"><?php echo $spot['title']; ?></th>
 						<th class="rating">
 <?php
-    if ($spot['rating'] == 0) {
-        echo '<span class="rating" title="'._('This spot has no rating yet').'"><span style="width:0px;"></span></span>';
-    } elseif ($spot['rating'] > 0) {
-        echo '<span class="rating" title="'.sprintf(ngettext('This spot thas %d star', 'This spot has %d stars', $spot['rating']), $spot['rating']).'"><span style="width:'.$spot['rating'] * 4 .'px;"></span></span>';
+    if ($spot['rating'] > 0) {
+        echo '<span class="sw-rating" title="'.sprintf(ngettext('This spot thas %d star', 'This spot has %d stars', $spot['rating']), $spot['rating']).'">&#9733; '.(int) $spot['rating'].'</span>';
     }
 ?>
 						</th>
@@ -69,22 +67,14 @@
     if ($currentSession['user']['userid'] > 2) {
         if (!$tplHelper->isReportPlaced($spot['messageid'])) {
             ?>
-						<th class="spamreport"><a onclick="openDialog('editdialogdiv', '<?php echo _('Report spam'); ?>', '?page=render&tplname=reportspot&data[messageid]=<?php echo urlencode($spot['messageid']); ?>', postReportForm, 'autoclose', null, null);" class="spamreport-button" title="<?php echo _('Report this spot as spam'); ?>"></a> </th>
+						<th class="spamreport"><a onclick="openDialog('editdialogdiv', '<?php echo _('Report spam'); ?>', '?page=render&tplname=reportspot&data[messageid]=<?php echo urlencode($spot['messageid']); ?>', postReportForm, 'autoclose', null, null);" class="spamreport-button" title="<?php echo _('Report this spot as spam'); ?>" aria-label="<?php echo _('Report this spot as spam'); ?>"></a> </th>
 <?php
         } else { ?>
-						<th class="spamreport"><a onclick="return false;" class="spamreport-button success" title="<?php echo _('You already reported this spot as spam'); ?>"></a> </th>
+						<th class="spamreport"><a onclick="return false;" class="spamreport-button success" title="<?php echo _('You already reported this spot as spam'); ?>" aria-label="<?php echo _('You already reported this spot as spam'); ?>"></a> </th>
 <?php 	}
     }
 } ?>
-						<th class="nzb">
-<?php if ($show_nzb_button) { ?>
-							<a class="nzb<?php if ($spot['hasbeendownloaded']) {
-    echo ' downloaded';
-} ?>" href="<?php echo $tplHelper->makeNzbUrl($spot); ?>" title="<?php echo _('Download NZB'); if ($spot['hasbeendownloaded']) {
-    echo _('(this spot has already been downloaded)');
-} echo ' (n)'; ?>"></a>
-<?php } ?>				</th>
-						<th class="search"><a href="<?php echo $spot['searchurl']; ?>" title="<?php echo _('Find NZB'); ?>" rel="nofollow"></a></th>
+						<th class="search"><a href="<?php echo $spot['searchurl']; ?>" title="<?php echo _('Find NZB'); ?>" aria-label="<?php echo _('Find NZB'); ?>" rel="nofollow"></a></th>
 <?php if ($show_watchlist_button) {
     echo "<th class='watch'>";
     echo "<a class='remove watchremove_".$spot['id']."' onclick=\"toggleWatchSpot('".$spot['messageid']."','remove',".$spot['id'].')"';
@@ -107,6 +97,14 @@
 <?php } else { ?>
 						<th class="sabnzbd"><a href="<?php echo $nzbHandlerPrefsUrl; ?>" onclick="return promptNzbHandlerSetup(event, this.href)" class="sabnzbd-button unconfigured" title="<?php echo $configureNzbHandlerTitle; ?>" aria-label="<?php echo $configureNzbHandlerTitle; ?>"> </a></th>
 <?php } } ?>
+						<th class="nzb">
+<?php if ($show_nzb_button) { ?>
+							<a class="nzb<?php if ($spot['hasbeendownloaded']) {
+    echo ' downloaded';
+} ?>" href="<?php echo $tplHelper->makeNzbUrl($spot); ?>" title="<?php echo _('Download NZB'); if ($spot['hasbeendownloaded']) {
+    echo ' '._('(this spot has already been downloaded)');
+} echo ' (n)'; ?>"><?php echo _('NZB'); ?></a>
+<?php } ?>				</th>
 					</tr>
 				</tbody>
 			</table>
@@ -158,22 +156,20 @@
 <?php if ($hasWebsite) { ?>
 								<tr><th> <?php echo _('Website'); ?> </th> <td> <a href='<?php echo $spot['website']; ?>' rel="nofollow"><?php echo $spot['website']; ?></a> </td> </tr>
 <?php } ?>
-								<tr> <th> <?php echo _('Sender'); ?> </th> <td> <a href="<?php echo $tplHelper->makePosterUrl($spot); ?>" title='<?php echo sprintf(_('Find spots from %s'), $spot['poster']); ?>'><?php echo $spot['poster']; ?></a>
-								<?php if (!empty($spot['spotterid'])) { ?> (<a href="<?php echo $tplHelper->makeSpotterIdUrl($spot); ?>" title='<?php echo sprintf(_('Find spots from %s'), $spot['spotterid']); ?>'><?php echo $spot['spotterid']; ?></a>)<?php } ?>
-								<?php if ($allow_blackList) { ?> <a class="delete blacklistuserlink_<?php echo htmlspecialchars($spot['spotterid']); ?>" title="<?php echo _('Blacklist this sender'); ?>" onclick="blacklistSpotterId('<?php echo htmlspecialchars($spot['spotterid']); ?>');">&nbsp;&nbsp;&nbsp;</a><?php } ?>
-								<?php if ($allow_whiteList) { ?> <a class="whitelist blacklistuserlink_<?php echo htmlspecialchars($spot['spotterid']); ?>" title="<?php echo _('Whitelist this sender'); ?>" onclick="whitelistSpotterId('<?php echo htmlspecialchars($spot['spotterid']); ?>');">&nbsp;&nbsp;&nbsp;</a><?php } ?>
-								<?php if ((!empty($spot['spotterid'])) && ($tplHelper->allowed(SpotSecurity::spotsec_keep_own_filters, ''))) { ?> <a href="" class="addspotterasfilter" title="<?php echo _('Add filter for this spotter'); ?>" onclick="addSpotFilter('<?php echo $tplHelper->generateXsrfCookie('editfilterform'); ?>', 'SpotterID', '<?php echo urlencode($spot['spotterid']); ?>', 'Zoek spots van &quot;<?php echo urlencode($spot['poster']); ?>&quot;', 'addspotterasfilter'); return false; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> <?php } ?> 
-								</td> </tr>
+								<tr class="sender"> <th> <?php echo _('Sender'); ?> </th> <td> <span class="sw-sender"><a class="sw-poster" href="<?php echo $tplHelper->makePosterUrl($spot); ?>" title='<?php echo sprintf(_('Find spots from %s'), $spot['poster']); ?>'><?php echo $spot['poster']; ?></a>
+								<?php if (!empty($spot['spotterid'])) { ?><a class="sw-spotterid" href="<?php echo $tplHelper->makeSpotterIdUrl($spot); ?>" title='<?php echo sprintf(_('Find spots from %s'), $spot['spotterid']); ?>'><?php echo $spot['spotterid']; ?></a><?php } ?>
+								<?php if ($allow_whiteList) { ?><a class="whitelist blacklistuserlink_<?php echo htmlspecialchars($spot['spotterid']); ?>" title="<?php echo _('Whitelist this sender'); ?>" onclick="whitelistSpotterId('<?php echo htmlspecialchars($spot['spotterid']); ?>');"><?php echo _('Trust'); ?></a><?php } ?>
+								<?php if ($allow_blackList) { ?><a class="delete blacklistuserlink_<?php echo htmlspecialchars($spot['spotterid']); ?>" title="<?php echo _('Blacklist this sender'); ?>" onclick="blacklistSpotterId('<?php echo htmlspecialchars($spot['spotterid']); ?>');"><?php echo _('Block'); ?></a><?php } ?>
+								<?php if ((!empty($spot['spotterid'])) && ($tplHelper->allowed(SpotSecurity::spotsec_keep_own_filters, ''))) { ?><a href="" class="addspotterasfilter" title="<?php echo _('Add filter for this spotter'); ?>" onclick="addSpotFilter('<?php echo $tplHelper->generateXsrfCookie('editfilterform'); ?>', 'SpotterID', '<?php echo urlencode($spot['spotterid']); ?>', 'Zoek spots van &quot;<?php echo urlencode($spot['poster']); ?>&quot;', 'addspotterasfilter'); return false; ">+ <?php echo _('Filter'); ?></a><?php } ?>
+								</span></td> </tr>
 <?php if ($hasTag) { ?>
 								<tr> <th> <?php echo _('Tag'); ?> </th> <td> <a href="<?php echo $tplHelper->makeTagUrl($spot); ?>" title='<?php echo sprintf(_('Search spots with the tag: %s'), $spot['tag']); ?>'><?php echo $spot['tag']; ?></a> 
-								<?php if ((!empty($spot['tag'])) && ($tplHelper->allowed(SpotSecurity::spotsec_keep_own_filters, ''))) { ?> <a href="#" class="addtagasfilter" title="<?php echo _('Add filter for this tag'); ?>" onclick="addSpotFilter('<?php echo $tplHelper->generateXsrfCookie('editfilterform'); ?>', 'Tag', '<?php echo urlencode($spot['tag']); ?>', 'Zoek op tag &quot;<?php echo urlencode($spot['tag']); ?>&quot;', 'addtagasfilter'); return false; ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> <?php } ?> 
+								<?php if ((!empty($spot['tag'])) && ($tplHelper->allowed(SpotSecurity::spotsec_keep_own_filters, ''))) { ?> <a href="#" class="addtagasfilter" title="<?php echo _('Add filter for this tag'); ?>" onclick="addSpotFilter('<?php echo $tplHelper->generateXsrfCookie('editfilterform'); ?>', 'Tag', '<?php echo urlencode($spot['tag']); ?>', 'Zoek op tag &quot;<?php echo urlencode($spot['tag']); ?>&quot;', 'addtagasfilter'); return false; ">+ <?php echo _('Filter'); ?></a> <?php } ?> 
 								</td> </tr>
 <?php } ?>
-								<tr> <th> <?php echo _('Searchengine'); ?></th> <td> <a href='<?php echo $spot['searchurl']; ?>'><?php echo _('Search'); ?></a> </td> </tr>
-<?php if ($show_nzb_button) { ?>		
-								<tr> <th> <?php echo _('NZB'); ?></th> <td> <a href='<?php echo $tplHelper->makeNzbUrl($spot); ?>' title='<?php echo _('Download NZB (n)'); ?>'><?php echo _('NZB'); ?></a> </td> </tr>
+<?php if ($spot['reportcount'] > 0) { ?>
+								<tr class="spamcount"> <th> <?php echo _('Number of spamreports'); ?> </th> <td> <span class="sw-spamcount"><?php echo (int) $spot['reportcount']; ?></span> </td> </tr>
 <?php } ?>
-								<tr> <th> <?php echo _('Number of spamreports'); ?> </th> <td> <?php echo $spot['reportcount']; ?> </td> </tr>
 <?php if ($show_spot_edit && $spot['editstamp']) { ?>
 								<tr> <th> <?php echo _('Spot edited'); ?> </th> <td title='<?php echo $tplHelper->formatDate($spot['editstamp'], 'force_spotlist'); ?>'> <?php echo $tplHelper->formatDate($spot['editstamp'], 'spotdetail'); ?> <?php if ($show_editor) {
     echo '('.$spot['editor'].')';
