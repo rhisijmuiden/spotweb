@@ -17,7 +17,9 @@ class ServicesSettingsBaseTest extends TestCase
         $container = new ReflectionClass(Services_Settings_Container::class);
         foreach (['_instance' => null, '_settings' => [], '_sources' => []] as $propertyName => $value) {
             $property = $container->getProperty($propertyName);
-            $property->setAccessible(true);
+            if (PHP_VERSION_ID < 80100) {
+                $property->setAccessible(true);
+            }
             $property->setValue(null, $value);
         }
     }

@@ -73,6 +73,9 @@ class Services_Format_Parsing
      */
     public function parseFull($xmlStr)
     {
+        // a spot without stored XML arrives as null; PHP 8.1+ deprecates null in string functions
+        $xmlStr = (string) $xmlStr;
+
         // Create a template array so we always have the full fields to prevent ugly notices
         $tpl_spot = ['category' => '', 'website' => '', 'image' => '', 'sabnzbdurl' => '', 'messageid' => '', 'searchurl' => '', 'description' => '',
             'sub'               => '', 'filesize' => '', 'poster' => '', 'tag' => '', 'nzb' => [], 'title' => '',

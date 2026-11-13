@@ -1,0 +1,248 @@
+/*
+ * Spot list, table view: compact and calm.
+ *
+ * Loaded after brand.css, so it wins over the older layers (style.css,
+ * table.css, layout.css). Only uses the theme tokens from brand.css, so
+ * every theme gets the same layout.
+ */
+
+/* ---------- frame ---------- */
+
+div.spots table.spots {
+  overflow: visible !important;      /* overflow:hidden broke the sticky header */
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- header ---------- */
+
+table.spots tr.head { z-index: 5 !important; }
+table.spots tr.head th {
+  position: relative;
+  height: 34px !important;
+  line-height: 34px !important;
+  padding: 0 10px !important;
+  font-size: 11px !important;
+  white-space: nowrap;
+  background: var(--sw-surface-2) !important;
+  box-shadow: inset 0 -1px 0 var(--sw-border);
+  border-bottom: 0 !important;
+}
+table.spots tr.head th:first-child { border-top-left-radius: var(--sw-radius); }
+table.spots tr.head th:last-child { border-top-right-radius: var(--sw-radius); }
+table.spots tr.head th a { color: inherit !important; }
+table.spots tr.head th.category { text-align: left; }
+
+/* sort arrows: small, quiet, only clearer on hover */
+table.spots th span.sortby {
+  float: right;
+  display: inline-flex !important;
+  gap: 1px;
+  height: 18px !important;
+  margin: 8px 0 0 6px !important;
+  background: none !important;
+  opacity: .35;
+  transition: opacity .15s ease;
+}
+table.spots th:hover span.sortby { opacity: 1; }
+table.spots th span.sortby a {
+  width: 14px !important;
+  height: 18px !important;
+  background: none !important;
+  border-radius: 4px;
+  position: relative;
+}
+table.spots th span.sortby a::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 6px;
+  border: 4px solid transparent;
+}
+table.spots th span.sortby a.up::before { border-bottom: 5px solid var(--sw-muted); top: 2px; }
+table.spots th span.sortby a.down::before { border-top: 5px solid var(--sw-muted); top: 7px; }
+table.spots th span.sortby a:hover { background: var(--sw-surface-3) !important; }
+table.spots th span.sortby a.up:hover::before { border-bottom-color: var(--sw-accent-text, var(--sw-accent)); }
+table.spots th span.sortby a.down:hover::before { border-top-color: var(--sw-accent-text, var(--sw-accent)); }
+
+/* ---------- rows ---------- */
+
+table.spots tbody tr td {
+  height: 36px;
+  padding: 0 10px !important;
+  vertical-align: middle !important;
+  line-height: 20px !important;
+  background: transparent !important;
+  border-bottom: 1px solid var(--sw-border) !important;
+  border-radius: 0 !important;
+  color: var(--sw-text-2, var(--sw-text)) !important;
+  white-space: nowrap;
+}
+table.spots tbody tr:last-child td { border-bottom: 0 !important; }
+table.spots tbody tr:hover td { background: var(--sw-surface-2) !important; }
+
+/* every cell's content on one line, centred vertically */
+table.spots tbody td a,
+table.spots tbody td span,
+table.spots tbody td label {
+  height: auto !important;
+  line-height: 20px !important;
+}
+table.spots tbody td a { color: inherit !important; text-decoration: none; }
+
+/* title: the one thing that should stand out */
+table.spots tbody td.title {
+  width: 100%;
+  max-width: 0;                       /* lets the title shrink and ellipsize */
+}
+table.spots tbody td.title a.spotlink {
+  display: block !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--sw-text) !important;
+  font-weight: 500;
+}
+table.spots tbody tr.seenspot td.title a.spotlink { color: var(--sw-text-2, var(--sw-muted)) !important; font-weight: 400; }
+table.spots tbody td.title.new a.spotlink { font-weight: 650; }
+table.spots tbody td.title.new a.spotlink::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 8px 2px 0;
+  border-radius: 50%;
+  background: var(--sw-accent);
+  vertical-align: middle;
+}
+table.spots tbody tr.downloadedspot td.title a.spotlink::after {
+  content: '\2193';
+  margin-left: 8px;
+  font-size: 12px;
+  color: var(--sw-success, #34D399);
+}
+
+/* secondary columns: muted */
+table.spots tbody td.genre,
+table.spots tbody td.poster,
+table.spots tbody td.date,
+table.spots tbody td.filesize { color: var(--sw-muted) !important; font-size: 13px; }
+table.spots tbody td.genre a,
+table.spots tbody td.poster a { overflow: hidden; text-overflow: ellipsis; display: block !important; }
+table.spots tbody tr:hover td.genre a:hover,
+table.spots tbody tr:hover td.poster a:hover { color: var(--sw-text) !important; }
+
+table.spots td.genre, table.spots th.genre { width: 130px; min-width: 130px; max-width: 130px; }
+table.spots td.poster, table.spots th.poster { width: 150px !important; min-width: 150px !important; max-width: 150px; }
+table.spots td.poster a { width: auto !important; min-width: 0 !important; }
+table.spots td.date, table.spots th.date { width: 150px; min-width: 150px; }
+table.spots td.filesize, table.spots th.filesize { width: 90px; min-width: 90px; text-align: right !important; }
+
+/* ---------- category ---------- */
+
+table.spots tbody tr { --sw-cat: var(--sw-accent); }
+table.spots tbody tr.spotcat0 { --sw-cat: #3B82F6; }   /* image */
+table.spots tbody tr.spotcat1 { --sw-cat: #F59E0B; }   /* sound */
+table.spots tbody tr.spotcat2 { --sw-cat: #10B981; }   /* games */
+table.spots tbody tr.spotcat3 { --sw-cat: #EC4899; }   /* apps */
+
+table.spots td.category, table.spots th.category { width: 78px !important; min-width: 78px !important; }
+table.spots tbody td.category { padding-right: 0 !important; text-align: left !important; }
+table.spots tbody td.category a {
+  display: inline-block !important;
+  width: 68px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--sw-cat) 15%, transparent) !important;
+  color: color-mix(in srgb, var(--sw-cat) 70%, var(--sw-text)) !important;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 20px !important;
+  text-align: center;
+  letter-spacing: .01em;
+}
+table.spots tbody tr:hover td.category a { background: color-mix(in srgb, var(--sw-cat) 24%, transparent) !important; }
+
+/* ---------- small icon columns: quiet until the row is hovered ---------- */
+
+table.spots td.editspot, table.spots th.editspot,
+table.spots td.watch, table.spots th.watch,
+table.spots td.multinzb, table.spots th.multinzb,
+table.spots td.sabnzbd, table.spots th.sabnzbd {
+  width: 28px !important;
+  min-width: 28px !important;
+  padding: 0 4px !important;
+  text-align: center !important;
+}
+table.spots tbody td.editspot a,
+table.spots tbody td.multinzb input,
+table.spots tbody td.sabnzbd a {
+  opacity: 0;
+  transition: opacity .12s ease;
+}
+table.spots tbody tr:hover td.editspot a,
+table.spots tbody tr:hover td.multinzb input,
+table.spots tbody tr:hover td.sabnzbd a,
+table.spots tbody td.multinzb input:checked,
+table.spots tbody td.sabnzbd a.succes,
+table.spots tbody td.sabnzbd a.loading { opacity: 1; }
+table.spots tbody td.multinzb input { margin: 0; vertical-align: middle; }
+table.spots tbody td.editspot a { display: inline-block !important; }
+
+/* watchlist star: muted outline, amber when on the list */
+table.spots tr td.watch a { background: none !important; display: inline-flex; width: 18px; height: 20px !important; align-items: center; justify-content: center; }
+table.spots td.watch a::before { font-size: 15px !important; }
+table.spots td.watch a.add::before { content: '\2606' !important; color: var(--sw-muted) !important; opacity: .45; }
+table.spots tbody tr:hover td.watch a.add::before { opacity: 1; }
+table.spots td.watch a.add:hover::before { color: #FBBF24 !important; }
+table.spots td.watch a.remove::before { content: '\2605' !important; color: #FBBF24 !important; }
+
+/* comments: only show a number when there is one */
+table.spots td.comments, table.spots th.comments { width: 40px !important; min-width: 40px !important; text-align: center !important; background-image: none !important; }
+table.spots tbody td.comments a { color: var(--sw-muted) !important; font-weight: 600 !important; font-size: 12px; }
+
+/* NZB link: a small accent pill */
+table.spots td.nzb, table.spots th.nzb { width: 52px !important; min-width: 52px !important; text-align: center !important; }
+table.spots tbody td.nzb a.nzb {
+  display: inline-block !important;
+  padding: 0 7px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sw-accent-text, var(--sw-accent)) !important;
+  background: color-mix(in srgb, var(--sw-accent) 12%, transparent);
+}
+table.spots tbody td.nzb a.nzb:hover { background: var(--sw-accent) !important; color: var(--sw-on-accent, #fff) !important; }
+
+/* moderation / own-spot marks next to the sender */
+table.spots tr td span.markGreen,
+table.spots tr td span.markSpot {
+  float: none !important;
+  display: inline-block !important;
+  margin: 0 6px 0 0 !important;
+  padding: 0 4px !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  font-size: 10px;
+  line-height: 16px !important;
+  vertical-align: 1px;
+}
+table.spots tr td span.markGreen { background: color-mix(in srgb, #10B981 18%, transparent) !important; color: #10B981 !important; }
+table.spots tr td span.markSpot { background: color-mix(in srgb, #EF4444 18%, transparent) !important; color: #EF4444 !important; }
+
+/* rating and spam markers sit inline after the title */
+table.spots tr td span.rating,
+table.spots tr td span.reportedSpam { margin-top: 1px !important; }
+
+/* ---------- sidebar: calm the old colourful icons ---------- */
+
+#filter span.spoticon {
+  filter: grayscale(1);
+  opacity: .65;
+  transition: filter .15s ease, opacity .15s ease;
+}
+#filter a:hover span.spoticon,
+#filter li.selected span.spoticon,
+#filter a.selected span.spoticon { filter: none; opacity: 1; }

@@ -91,7 +91,6 @@ class Services_Image_Util
         $bg = imagecreatefromgif($imageFile);
         list($width, $height, $type, $attr) = getimagesize($imageFile);
         imagecopymerge($img, $bg, 256 - ($width / 2), 160 - ($height / 2), 0, 0, $width, $height, 30);
-        imagedestroy($bg);
 
         return ['resource' => $img, 'font' => $ttfFont, 'fontColor' => $fontColor];
     }

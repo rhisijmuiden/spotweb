@@ -68,8 +68,11 @@
 		<link rel='stylesheet' type='text/css' href='?page=statics&amp;type=css&amp;mod=<?php echo $tplHelper->getStaticModTime('css'); ?>'>
 		<link rel='shortcut icon' href='?page=statics&amp;type=ico&amp;mod=<?php echo $tplHelper->getStaticModTime('ico'); ?>'>
 <?php } ?>
-<?php foreach ($tplHelper->getThemeHeaderCssFiles() as $cssFile) { ?>
-		<link rel='stylesheet' type='text/css' href='<?php echo htmlspecialchars($cssFile, ENT_QUOTES, 'UTF-8'); ?>'>
+<?php foreach ($tplHelper->getThemeHeaderCssFiles() as $cssFile) {
+    // a version per file, so browsers and Cloudflare pick up a changed stylesheet after an update
+    $cssMtime = @filemtime(__DIR__.'/../../../'.ltrim(parse_url($cssFile, PHP_URL_PATH), '/'));
+    $cssHref = $cssMtime ? $cssFile.((strpos($cssFile, '?') === false) ? '?' : '&').'v='.$cssMtime : $cssFile; ?>
+		<link rel='stylesheet' type='text/css' href='<?php echo htmlspecialchars($cssHref, ENT_QUOTES, 'UTF-8'); ?>'>
 <?php } ?>
 		<style type="text/css" media="screen,handheld,projection">
 			<?php echo $settings->get('customcss'); ?>
@@ -80,8 +83,10 @@
 		</style>
 <?php } ?>
 		<!-- Modern JS (loaded separately to avoid statics concatenation issues) -->
-<?php foreach ($tplHelper->getThemeHeaderJsFiles() as $jsFile) { ?>
-		<script src="<?php echo htmlspecialchars($jsFile, ENT_QUOTES, 'UTF-8'); ?>" type="text/javascript" defer></script>
+<?php foreach ($tplHelper->getThemeHeaderJsFiles() as $jsFile) {
+    $jsMtime = @filemtime(__DIR__.'/../../../'.ltrim(parse_url($jsFile, PHP_URL_PATH), '/'));
+    $jsSrc = $jsMtime ? $jsFile.((strpos($jsFile, '?') === false) ? '?' : '&').'v='.$jsMtime : $jsFile; ?>
+		<script src="<?php echo htmlspecialchars($jsSrc, ENT_QUOTES, 'UTF-8'); ?>" type="text/javascript" defer></script>
 <?php } ?>
 <?php
     $pageName = strtolower((string) ($_GET['page'] ?? 'index'));

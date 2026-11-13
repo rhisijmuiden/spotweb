@@ -63,7 +63,6 @@ class Services_Image_Error
         ob_start();
         imagejpeg($img['resource']);
         $imageString = ob_get_clean();
-        imagedestroy($img['resource']);
 
         $dimensions = $this->_svcImageUtil->getImageDimensions($imageString);
 

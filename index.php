@@ -541,34 +541,41 @@ try {
 } // PermissionDeniedException
 
 catch (InvalidOwnSettingsSettingException $x) {
+    spotwebSendErrorHeaders(500);
     echo 'There is an error in your ownsettings.php<br><br>'.PHP_EOL;
     echo nl2br($x->getMessage());
 } // InvalidOwnSettingsSettingException
 
 catch (OwnsettingsCreatedOutputException $x) {
+    spotwebSendErrorHeaders(500);
     echo 'ownsettings.php or dbsettings.inc.php created output. Please make sure theese files do not contain a PHP closing tag ( ?> ) and no information before the PHP opening tag ( <?php )<br><br>'.PHP_EOL;
     echo nl2br($x->getMessage()).PHP_EOL;
 } // OwnsettingsCreatedOutputException
 
 catch (SchemaNotUpgradedException $x) {
+    spotwebSendErrorHeaders(503);
     echo "Database schema has been changed. Please run 'bin/upgrade-db.php' from an console window".PHP_EOL;
 } // SchemaNotUpgradedException
 
 catch (SecurityNotUpgradedException $x) {
+    spotwebSendErrorHeaders(503);
     echo "Spotweb contains updated security settings. Please run 'bin/upgrade-db.php' from a console window".PHP_EOL;
 } // SecurityNotUpgradedException
 
 catch (SettingsNotUpgradedException $x) {
+    spotwebSendErrorHeaders(503);
     echo "Spotweb contains updated global settings settings. Please run 'bin/upgrade-db.php' from a console window".PHP_EOL;
 } // SecurityNotUpgradedException
 
 catch (DatabaseConnectionException $x) {
+    spotwebSendErrorHeaders(503);
     echo 'Unable to connect to database:  <br>'.PHP_EOL;
     echo nl2br($x->getMessage()).PHP_EOL.'<br>'.PHP_EOL;
     echo '<br><br>Please make sure your database server is up and running and your connection parameters are set<br>'.PHP_EOL;
 } // DatabaseConnectionException
 
 catch (Exception $x) {
+    spotwebSendErrorHeaders(500);
     echo 'SpotWeb v'.SPOTWEB_VERSION.' on PHP v'.PHP_VERSION.' crashed'.PHP_EOL;
     if ((isset($settings) && is_object($settings) && $settings->get('enable_stacktrace')) || (!isset($settings))) {
         var_dump($x);
@@ -577,3 +584,22 @@ catch (Exception $x) {
 
     error_log('SpotWeb Exception occured: '.$x->getMessage());
 } // catch
+
+/*
+ * Error and maintenance pages must never be cached: a page cache in front
+ * of Spotweb (nginx fastcgi_cache, Cloudflare) would otherwise keep serving
+ * e.g. "Database schema has been changed" after the upgrade has finished.
+ */
+function spotwebSendErrorHeaders($status)
+{
+    if (headers_sent()) {
+        return;
+    } // if
+
+    http_response_code($status);
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    if ($status === 503) {
+        header('Retry-After: 60');
+    } // if
+}

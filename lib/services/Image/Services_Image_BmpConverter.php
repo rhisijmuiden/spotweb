@@ -54,7 +54,6 @@ class Services_Image_BmpConverter
             ob_start();
             imagejpeg($tmpImg);
             $imageString = ob_get_clean();
-            imagedestroy($tmpImg);
         } // if
 
         return $imageString;

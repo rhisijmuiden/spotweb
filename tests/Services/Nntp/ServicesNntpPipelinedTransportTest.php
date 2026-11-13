@@ -461,7 +461,9 @@ class ServicesNntpPipelinedTransportTest extends TestCase
         ], 1);
 
         $method = new ReflectionMethod('Services_Nntp_PipelinedTransport', 'sanitizeLogContext');
-        $method->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $method->setAccessible(true);
+        }
         $context = $method->invoke($transport, [
             'operation' => 'auth',
             'user'      => 'secret-user',
@@ -522,7 +524,9 @@ class ServicesNntpPipelinedTransportTest extends TestCase
     {
         $reflection = new ReflectionClass('SpotDebug');
         $property = $reflection->getProperty('_debugLogDao');
-        $property->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $property->setAccessible(true);
+        }
         $previous = $property->getValue();
         $collector = new ServicesNntpPipelinedTransportLogCollector();
         $property->setValue(null, $collector);
