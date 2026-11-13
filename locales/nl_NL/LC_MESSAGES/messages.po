@@ -1281,7 +1281,6 @@ msgstr "SHA1 hash berekenen niet gelukt:"
 msgid "No (verified) comments found."
 msgstr "Geen (geverifieerde) comments gevonden."
 
-
 #: SpotPage_createuser.php
 msgid "'%s' already exists"
 msgstr "'%s' bestaat al"
@@ -2511,6 +2510,307 @@ msgstr "Een compacte lijst met één regel per spot"
 msgid "Lock this view for everyone"
 msgstr "Deze weergave voor iedereen vastzetten"
 
+#: Admin > About & updates
+msgid "About &amp; updates"
+msgstr "Over &amp; updates"
+
+msgid "About Spotweb"
+msgstr "Over Spotweb"
+
+msgid "Version"
+msgstr "Versie"
+
+msgid "Channel"
+msgstr "Kanaal"
+
+msgid "Build"
+msgstr "Build"
+
+msgid "PHP"
+msgstr "PHP"
+
+msgid "branch unknown"
+msgstr "branch onbekend"
+
+msgid "Database layout %s"
+msgstr "Databaseopbouw %s"
+
+msgid "Database layout"
+msgstr "Databaseopbouw"
+
+msgid "Updates"
+msgstr "Updates"
+
+msgid "Not checked yet"
+msgstr "Nog niet gecontroleerd"
+
+msgid "Check for updates"
+msgstr "Controleren op updates"
+
+msgid "Update now"
+msgstr "Nu bijwerken"
+
+msgid "Run the database upgrade again"
+msgstr "Database-upgrade opnieuw uitvoeren"
+
+msgid "Update channel"
+msgstr "Updatekanaal"
+
+msgid "Choose which version this installation follows. Switching takes effect with the next update."
+msgstr "Kies welke versie deze installatie volgt. Wisselen gebeurt bij de volgende update."
+
+msgid "Production"
+msgstr "Productie"
+
+msgid "Test"
+msgstr "Test"
+
+msgid "Tested versions. Recommended for everyday use."
+msgstr "Geteste versies. Aanbevolen voor dagelijks gebruik."
+
+msgid "The newest changes first. Can contain bugs."
+msgstr "De nieuwste wijzigingen als eerste. Kan fouten bevatten."
+
+msgid "How updates are installed"
+msgstr "Hoe updates worden geïnstalleerd"
+
+msgid "Method"
+msgstr "Methode"
+
+msgid "Download from GitHub"
+msgstr "Downloaden van GitHub"
+
+msgid "git"
+msgstr "git"
+
+msgid "Hosting panel deploy webhook"
+msgstr "Deploy-webhook van het hostingpaneel"
+
+msgid "uses %s on this server"
+msgstr "gebruikt %s op deze server"
+
+msgid "no method works on this server"
+msgstr "geen enkele methode werkt op deze server"
+
+msgid "available; replaces the changed files and keeps a backup of the previous ones"
+msgstr "beschikbaar; vervangt de gewijzigde bestanden en bewaart een back-up van de vorige"
+
+msgid "available"
+msgstr "beschikbaar"
+
+msgid "asks your hosting panel to deploy; the panel must use the same branch"
+msgstr "vraagt je hostingpaneel om te deployen; het paneel moet dezelfde branch gebruiken"
+
+msgid "Deploy webhook address"
+msgstr "Adres van de deploy-webhook"
+
+msgid "GitHub token (optional)"
+msgstr "GitHub-token (optioneel)"
+
+msgid "A token is saved; type to replace it"
+msgstr "Er is een token opgeslagen; typ om het te vervangen"
+
+msgid "Only needed for a private repository or when GitHub limits the number of checks."
+msgstr "Alleen nodig voor een privé-repository of als GitHub het aantal controles beperkt."
+
+msgid "Remove the saved token"
+msgstr "Opgeslagen token verwijderen"
+
+msgid "Save"
+msgstr "Opslaan"
+
+msgid "Saved"
+msgstr "Opgeslagen"
+
+msgid "Last update"
+msgstr "Laatste update"
+
+msgid "Started by"
+msgstr "Gestart door"
+
+msgid "From → to"
+msgstr "Van → naar"
+
+msgid "Result"
+msgstr "Resultaat"
+
+msgid "Spotweb is up to date"
+msgstr "Spotweb is up-to-date"
+
+msgid "An update is available"
+msgstr "Er is een update beschikbaar"
+
+msgid "Ready to switch channel"
+msgstr "Klaar om van kanaal te wisselen"
+
+msgid "The installed build is unknown"
+msgstr "De geïnstalleerde build is onbekend"
+
+msgid "This channel has no branch on GitHub yet"
+msgstr "Dit kanaal heeft nog geen branch op GitHub"
+
+msgid "Could not check for updates"
+msgstr "Controleren op updates is mislukt"
+
+msgid "This update cannot be installed"
+msgstr "Deze update kan niet worden geïnstalleerd"
+
+msgid "%d new changes on %s"
+msgstr "%d nieuwe wijzigingen op %s"
+
+msgid "Installs the newest version of %s"
+msgstr "Installeert de nieuwste versie van %s"
+
+msgid "Installing the newest version of %s makes it known again"
+msgstr "Door de nieuwste versie van %s te installeren is die weer bekend"
+
+msgid "Newest version of %s"
+msgstr "Nieuwste versie van %s"
+
+msgid "Your hosting panel already installed the newest version of %s"
+msgstr "Je hostingpaneel heeft de nieuwste versie van %s al geïnstalleerd"
+
+msgid "Create the branch %s in the repository to use this channel"
+msgstr "Maak de branch %s aan in de repository om dit kanaal te gebruiken"
+
+msgid "Last checked: %s"
+msgstr "Laatst gecontroleerd: %s"
+
+msgid "%d min ago"
+msgstr "%d min geleden"
+
+msgid "%d hours ago"
+msgstr "%d uur geleden"
+
+msgid "and %d more"
+msgstr "en nog %d"
+
+msgid "Preparing"
+msgstr "Voorbereiden"
+
+msgid "Fetching with git"
+msgstr "Ophalen met git"
+
+msgid "Downloading"
+msgstr "Downloaden"
+
+msgid "Unpacking"
+msgstr "Uitpakken"
+
+msgid "Comparing files"
+msgstr "Bestanden vergelijken"
+
+msgid "Backing up the current files"
+msgstr "Back-up maken van de huidige bestanden"
+
+msgid "Installing the new files"
+msgstr "Nieuwe bestanden installeren"
+
+msgid "Putting the previous files back"
+msgstr "Vorige bestanden terugzetten"
+
+msgid "Asking your hosting panel to deploy"
+msgstr "Hostingpaneel vragen om te deployen"
+
+msgid "Upgrading the database"
+msgstr "Database bijwerken"
+
+msgid "Updating…"
+msgstr "Bijwerken…"
+
+msgid "Update installed"
+msgstr "Update geïnstalleerd"
+
+msgid "The update failed"
+msgstr "De update is mislukt"
+
+msgid "The update stopped responding"
+msgstr "De update reageert niet meer"
+
+msgid "Deploy requested"
+msgstr "Deploy aangevraagd"
+
+msgid "Your hosting panel installs the update. Check again in a minute."
+msgstr "Je hostingpaneel installeert de update. Controleer over een minuut opnieuw."
+
+msgid "Reloading the page…"
+msgstr "Pagina wordt opnieuw geladen…"
+
+msgid "Install the update now? Spotweb is unavailable for a short while."
+msgstr "De update nu installeren? Spotweb is even niet bereikbaar."
+
+msgid "Switch this installation to %s now? Spotweb is unavailable for a short while."
+msgstr "Deze installatie nu overzetten naar %s? Spotweb is even niet bereikbaar."
+
+msgid "Something went wrong, try again."
+msgstr "Er ging iets mis, probeer het opnieuw."
+
+msgid "Nothing was changed."
+msgstr "Er is niets gewijzigd."
+
+msgid "%d files changed, %d added, %d removed"
+msgstr "%d bestanden gewijzigd, %d toegevoegd, %d verwijderd"
+
+msgid "An update is already running."
+msgstr "Er loopt al een update."
+
+msgid "Spotweb is already up to date."
+msgstr "Spotweb is al up-to-date."
+
+msgid "There is nothing to install."
+msgstr "Er is niets te installeren."
+
+msgid "This server cannot update Spotweb by itself. Update it with git or your hosting panel, see docs/upgrading.md."
+msgstr "Deze server kan Spotweb niet zelf bijwerken. Werk het bij met git of je hostingpaneel, zie docs/upgrading.md."
+
+msgid "PHP needs the zip and curl extensions for this."
+msgstr "PHP heeft hiervoor de extensies zip en curl nodig."
+
+msgid "The webserver may not write to the Spotweb folder."
+msgstr "De webserver mag niet schrijven in de Spotweb-map."
+
+msgid "PHP may not start programs on this server (proc_open is disabled)."
+msgstr "PHP mag op deze server geen programma's starten (proc_open is uitgeschakeld)."
+
+msgid "This installation is not a git checkout."
+msgstr "Deze installatie is geen git-checkout."
+
+msgid "git is not installed or cannot be run."
+msgstr "git is niet geïnstalleerd of kan niet worden uitgevoerd."
+
+msgid "The installation has local changes to tracked files, so git will not update it. Commit or undo them first."
+msgstr "De installatie heeft lokale wijzigingen in bestanden, daarom werkt git hem niet bij. Commit of herstel die eerst."
+
+msgid "Unknown update channel"
+msgstr "Onbekend updatekanaal"
+
+msgid "Unknown update method"
+msgstr "Onbekende updatemethode"
+
+msgid "The deploy webhook must be an https:// address"
+msgstr "De deploy-webhook moet een https://-adres zijn"
+
+msgid "That does not look like a GitHub token"
+msgstr "Dat lijkt geen GitHub-token"
+
+msgid "Enter the deploy webhook address to update through your hosting panel"
+msgstr "Vul het adres van de deploy-webhook in om via je hostingpaneel bij te werken"
+
+msgid "The deploy webhook answered with %s"
+msgstr "De deploy-webhook antwoordde met %s"
+
+msgid "Database upgrade failed"
+msgstr "Database-upgrade mislukt"
+
+msgid "The update does not look like Spotweb (lib/Bootstrap.php is missing)."
+msgstr "De update lijkt geen Spotweb (lib/Bootstrap.php ontbreekt)."
+
+msgid "Could not read the version numbers of the update."
+msgstr "De versienummers van de update konden niet worden gelezen."
+
+msgid "This version has an older database layout (%s %s, installed %s). Spotweb cannot go back to an older layout, so wait until this branch has caught up."
+msgstr "Deze versie heeft een oudere databaseopbouw (%s %s, geïnstalleerd %s). Spotweb kan niet terug naar een oudere opbouw; wacht tot deze branch is bijgewerkt."
+
 msgid "Speed"
 msgstr "Snelheid"
 
@@ -2885,3 +3185,4 @@ msgstr ""
 
 msgid "Back to Spotweb"
 msgstr "Terug naar Spotweb"
+

@@ -1,0 +1,59 @@
+/* ---------- admin: about & updates ---------- */
+body.modern-config .sw-about-kpis .sw-kpi strong { font-size: 22px; margin: 0; overflow-wrap: anywhere; }
+body.modern-config .sw-about-kpis .sw-kpi small { font-size: 12px; }
+body.modern-config .sw-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important; }
+body.modern-config .sw-about-kpis a { color: var(--sw-accent-text) !important; text-decoration: none !important; }
+body.modern-config .sw-update-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+body.modern-config .sw-update-panel .sw-progress { margin-top: 4px; }
+body.modern-config .sw-update-panel[data-status="running"] .sw-progress i {
+  background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,.25) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200px 100%; background-repeat: no-repeat; animation: sw-shimmer 1.6s linear infinite;
+}
+body.modern-config .sw-update-panel[data-status="done"] .sw-progress i { background: var(--sw-success); }
+body.modern-config .sw-update-panel[data-status="failed"] .sw-progress i { background: var(--sw-danger); }
+body.modern-config .sw-update-panel[data-status="available"] .sw-retrieve-title::before {
+  content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--sw-accent); margin-right: 8px; vertical-align: middle; box-shadow: 0 0 0 4px var(--sw-accent-soft);
+}
+body.modern-config .sw-update-panel[data-status="done"] .sw-retrieve-title { color: var(--sw-success); }
+body.modern-config .sw-update-phase { margin-top: 10px !important; }
+body.modern-config .sw-update-checked { margin-top: 12px !important; font-size: 12px !important; color: var(--sw-muted) !important; }
+body.modern-config .sw-update-retry { margin: 12px 0 0; }
+body.modern-config ol.sw-changes {
+  list-style: none; margin: 16px 0 0; padding: 0; border-top: 1px solid var(--sw-border);
+  max-height: 320px; overflow-y: auto;
+}
+body.modern-config ol.sw-changes li {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: baseline;
+  padding: 9px 2px; border-bottom: 1px solid var(--sw-border); font-size: 14px; color: var(--sw-text);
+}
+body.modern-config ol.sw-changes li a { font-size: 12.5px; color: var(--sw-accent-text) !important; text-decoration: none !important; }
+body.modern-config ol.sw-changes li small { font-size: 12px; color: var(--sw-muted); white-space: nowrap; }
+body.modern-config ol.sw-changes li.sw-changes-more { display: block; color: var(--sw-text-2); font-size: 13px; }
+body.modern-config .sw-channel-grid { margin: 12px 0 24px; }
+body.modern-config .sw-channel-grid code.sw-code { margin-left: 6px; font-weight: 400; }
+body.modern-config details.sw-update-advanced summary {
+  cursor: pointer; font-weight: 600; color: var(--sw-text); list-style-position: inside;
+}
+body.modern-config .sw-update-form { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; max-width: 560px; }
+body.modern-config .sw-update-form label { font-size: 13px !important; font-weight: 600 !important; color: var(--sw-text) !important; margin-top: 8px; }
+body.modern-config .sw-update-form input, body.modern-config .sw-update-form select { width: 100%; box-sizing: border-box; }
+body.modern-config .sw-update-form label.sw-inline-check { display: inline-flex; gap: 6px; align-items: center; font-weight: 400 !important; margin: 0 0 0 8px; }
+body.modern-config .sw-update-form label.sw-inline-check input { width: auto; }
+body.modern-config ul.sw-method-notes { margin: 4px 0 4px; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+body.modern-config .sw-nav-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--sw-accent);
+  margin-left: 6px; vertical-align: middle;
+}
+@media (max-width: 760px) {
+  body.modern-config ol.sw-changes li { grid-template-columns: auto 1fr; }
+  body.modern-config ol.sw-changes li small { grid-column: 2; }
+}
+
+/* about dialog (user menu) */
+.sw-about-dialog { font-size: 14px; line-height: 1.5; min-width: 260px; }
+.sw-about-dialog dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0 0 12px; }
+.sw-about-dialog dt { color: var(--sw-text-2, #888); }
+.sw-about-dialog dd { margin: 0; font-variant-numeric: tabular-nums; }
+.sw-about-dialog .sw-about-update { padding: 10px 12px; border-radius: 10px; background: var(--sw-accent-soft, #eee); color: var(--sw-accent-text, inherit); margin: 0 0 12px; }
+.sw-about-dialog a { color: var(--sw-accent-text, inherit); }

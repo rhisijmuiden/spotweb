@@ -23,6 +23,16 @@ if (!isset($_GET['page']) && !isset($_POST['page'])) {
     } // elseif
 } // if
 
+/*
+ * Admin > About & updates follows a running update with a job key. That has
+ * to keep working while the database upgrade is pending, so it is answered
+ * before Spotweb boots.
+ */
+if (($_GET['page'] ?? '') === 'adminupdate' && isset($_GET['job'])) {
+    Services_Updater_Endpoint::handleJobRequest((string) $_GET['job'], (string) ($_GET['action'] ?? 'status'));
+    exit;
+} // if
+
 //- main() -#
 try {
     SpotTranslation::initialize('en_US');
@@ -313,6 +323,17 @@ try {
             break;
             // adminretrieve
 
+        case 'adminupdate':
+            $page = new SpotPage_adminupdate(
+                $daoFactory,
+                $settings,
+                $currentSession,
+                ['adminupdateform' => $req->getForm('adminupdateform')]
+            );
+            $page->render();
+            break;
+            // adminupdate
+
         case 'adminmail':
             $page = new SpotPage_adminmail(
                 $daoFactory,
@@ -576,18 +597,27 @@ catch (OwnsettingsCreatedOutputException $x) {
 } // OwnsettingsCreatedOutputException
 
 catch (SchemaNotUpgradedException $x) {
-    spotwebSendErrorHeaders(503);
-    echo "Database schema has been changed. Please run 'bin/upgrade-db.php' from an console window".PHP_EOL;
+    // an update started from Admin finishes its database step here
+    if (!Services_Updater_Endpoint::finishFromErrorPage()) {
+        spotwebSendErrorHeaders(503);
+        echo "Database schema has been changed. Please run 'bin/upgrade-db.php' from an console window".PHP_EOL;
+    } // if
 } // SchemaNotUpgradedException
 
 catch (SecurityNotUpgradedException $x) {
-    spotwebSendErrorHeaders(503);
-    echo "Spotweb contains updated security settings. Please run 'bin/upgrade-db.php' from a console window".PHP_EOL;
+    // an update started from Admin finishes its database step here
+    if (!Services_Updater_Endpoint::finishFromErrorPage()) {
+        spotwebSendErrorHeaders(503);
+        echo "Spotweb contains updated security settings. Please run 'bin/upgrade-db.php' from a console window".PHP_EOL;
+    } // if
 } // SecurityNotUpgradedException
 
 catch (SettingsNotUpgradedException $x) {
-    spotwebSendErrorHeaders(503);
-    echo "Spotweb contains updated global settings settings. Please run 'bin/upgrade-db.php' from a console window".PHP_EOL;
+    // an update started from Admin finishes its database step here
+    if (!Services_Updater_Endpoint::finishFromErrorPage()) {
+        spotwebSendErrorHeaders(503);
+        echo "Spotweb contains updated global settings settings. Please run 'bin/upgrade-db.php' from a console window".PHP_EOL;
+    } // if
 } // SecurityNotUpgradedException
 
 catch (DatabaseConnectionException $x) {

@@ -20,6 +20,49 @@ You can upgrade an existing Spotweb installation in place. Your database
 
 ## Upgrade
 
+### From the admin centre
+
+Open **Admin → About & updates** (also in the *Admin* menu at the top). It
+shows the installed version, the build (git commit) and the channel, and
+checks GitHub for newer versions.
+
+* **Check for updates** compares your build with the newest commit of your
+  channel and lists the changes.
+* **Update now** installs it and then upgrades the database by itself; the
+  page follows the progress and reloads when it is done. Spotweb is
+  unavailable for a short while. Your settings files, `cache/` and the
+  database are kept.
+
+**Channels.** *Production* follows the `main` branch (tested versions), *Test*
+follows `develop` (newest changes, can contain bugs). Picking the other
+channel and pressing *Update now* switches the installation. Spotweb refuses
+to switch to a version with an older database layout, because a database
+cannot be taken back; wait until that branch has caught up.
+
+**How the files are replaced** (*How updates are installed*):
+
+| Method | When it works | What it does |
+|---|---|---|
+| Automatic | always | git when possible, otherwise *Download from GitHub* |
+| Download from GitHub | PHP has the `zip` and `curl` extensions and may write to the Spotweb folder | downloads the zip of the new commit, checks that every file can be written, keeps a backup of the replaced files in `cache/updater/backup/` and puts them back if anything fails |
+| git | PHP may run programs (`proc_open`) and the folder is a clean git checkout | `git fetch`, `git checkout <branch>`, `git merge --ff-only` |
+| Hosting panel deploy webhook | your hosting panel has a deploy URL | asks the panel to deploy; set the panel to the same branch |
+
+Many hosting setups disable `exec`/`proc_open`; then *Automatic* uses the
+download. A GitHub token is only needed for a private fork or when GitHub's
+limit of 60 requests per hour per server is reached.
+
+If the database step is interrupted (for example by a webserver timeout),
+the next page view finishes it, or use *Run the database upgrade again*. Running
+`php bin/upgrade-db.php` from a shell always works as well.
+
+A fork can point the updater elsewhere in `ownsettings.php`:
+
+```php
+$settings['updater_repo'] = 'you/spotweb';
+$settings['updater_branches'] = ['production' => 'main', 'test' => 'develop'];
+```
+
 ### Installed with git
 
 ```sh
