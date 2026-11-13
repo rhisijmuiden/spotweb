@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>SpotWeb - <?php echo $pagetitle?></title>
 		<meta name="generator" content="SpotWeb v<?php echo SPOTWEB_VERSION; ?>">
 <?php if ($settings->get('deny_robots')) {

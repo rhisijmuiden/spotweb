@@ -1,0 +1,149 @@
+/*
+ * Phones (up to 760px): compact top bar, sidebar as a slide-in menu,
+ * spot list with only the columns that matter. Loaded last.
+ */
+
+.sw-navtoggle, .sw-navshade { display: none; }
+
+@media (max-width: 760px) {
+  /* ---------- top bar: menu + search on one row, buttons on a second ---------- */
+  html[data-theme] div#toolbar {
+    display: flex !important;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    height: auto !important;
+    padding: 8px 10px !important;
+    box-sizing: border-box;
+  }
+  html[data-theme] div#toolbar > * { float: none !important; margin: 0 !important; }
+  html[data-theme] div#toolbar > div.notifications:empty,
+  html[data-theme] div#toolbar span.scroll,
+  html[data-theme] div#toolbar .sidebarPanel { display: none !important; }
+
+  .sw-navtoggle {
+    order: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid var(--sw-border);
+    background: var(--sw-surface-2);
+    color: var(--sw-text);
+    cursor: pointer;
+  }
+  html[data-theme] div#toolbar form#filterform {
+    order: 2;
+    flex: 1 1 calc(100% - 46px);
+    width: auto !important;
+    min-width: 0;
+    margin: 0 !important;
+  }
+  html[data-theme] div#toolbar .toolbarButton {
+    order: 3;
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+  }
+  html[data-theme] div#toolbar .toolbarButton > ul,
+  html[data-theme] div#toolbar .toolbarButton > ul > li { margin: 0 !important; padding: 0 !important; width: 100%; }
+  html[data-theme] div#toolbar .toolbarButton p {
+    margin: 0 !important;
+    height: 32px !important;
+    line-height: 30px !important;
+    padding: 0 8px !important;
+    font-size: 12.5px !important;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex !important;
+    justify-content: center;
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+    position: static !important;
+  }
+  html[data-theme] div#toolbar .toolbarButton p { align-items: center; }
+  html[data-theme] div#toolbar .toolbarButton p a {
+    display: block !important;
+    line-height: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: static !important;
+  }
+  html[data-theme] div#toolbar .toolbarButton ul ul { max-width: calc(100vw - 20px); }
+  html[data-theme] div#toolbar .toolbarButton.logininfo ul ul,
+  html[data-theme] div#toolbar .toolbarButton.config ul ul { left: auto !important; right: 0 !important; }
+
+  /* ---------- sidebar: slides in from the left ---------- */
+  div#container div#filter,
+  body.fixed div#container div#filter {
+    position: fixed !important;
+    top: var(--sw-toolbar-offset, 56px) !important;
+    bottom: 0;
+    left: 0;
+    z-index: 1100 !important;
+    width: min(86vw, 320px) !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--sw-surface) !important;
+    border-right: 1px solid var(--sw-border);
+    transform: translateX(-102%);
+    transition: transform .2s ease;
+    box-shadow: none;
+  }
+  body.sw-nav-open div#container div#filter { transform: none; box-shadow: var(--sw-shadow-lg); }
+  .sw-navshade {
+    position: fixed;
+    inset: var(--sw-toolbar-offset, 56px) 0 0 0;
+    z-index: 1050;
+    background: rgba(0, 0, 0, .45);
+  }
+  body.sw-nav-open .sw-navshade { display: block; }
+  body.sw-nav-open { overflow: hidden; }
+
+  /* ---------- content uses the full width ---------- */
+  div.spots,
+  body.fixed div.spots { margin-left: 0 !important; padding: 0 8px 12px !important; min-width: 0 !important; width: auto !important; }
+  #container, div.container { min-width: 0 !important; }
+  body.fixed table.spots tr.head { left: 8px; right: 8px; }
+
+  /* ---------- spot list: category, title, NZB, SAB ---------- */
+  table.spots th.editspot, table.spots td.editspot,
+  table.spots th.watch, table.spots td.watch,
+  table.spots th.multinzb, table.spots td.multinzb,
+  table.spots th.comments, table.spots td.comments,
+  table.spots th.genre, table.spots td.genre,
+  table.spots th.poster, table.spots td.poster,
+  table.spots th.date, table.spots td.date,
+  table.spots th.filesize, table.spots td.filesize { display: none !important; }
+  table.spots td.category, table.spots th.category { width: 64px !important; min-width: 64px !important; box-sizing: border-box; }
+  table.spots td.nzb, table.spots th.nzb { width: 46px !important; min-width: 46px !important; padding: 0 4px !important; }
+  table.spots td.sabnzbd, table.spots th.sabnzbd { width: 46px !important; min-width: 46px !important; padding: 0 4px 0 0 !important; }
+  table.spots tbody td.category { padding: 0 0 0 8px !important; }
+  table.spots tbody td.category a { width: 56px; }
+  table.spots th.sabnzbd > * { display: none !important; }
+  table.spots tbody tr td { height: 44px; }        /* easier to tap */
+  table.spots tr.head th:first-child { border-top-left-radius: var(--sw-radius); }
+
+  /* spot page and statistics: never wider than the screen */
+  div.details, div#details { min-width: 0 !important; width: auto !important; }
+  div.details table.spotinfo { width: 100% !important; }
+  .sw-segmented { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .sw-stats-head h1 { font-size: 22px; }
+
+  /* dialogs fit the screen */
+  .ui-dialog { max-width: calc(100vw - 16px) !important; left: 8px !important; }
+}
