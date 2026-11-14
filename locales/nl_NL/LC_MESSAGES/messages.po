@@ -3186,3 +3186,316 @@ msgstr ""
 msgid "Back to Spotweb"
 msgstr "Terug naar Spotweb"
 
+
+#: Radarr & Sonarr
+msgid ""
+"Spotweb has not fetched this library yet. That happens in the background; "
+"reload the page in a moment."
+msgstr ""
+"Spotweb heeft deze bibliotheek nog niet opgehaald. Dat gebeurt op de "
+"achtergrond; laad de pagina zo opnieuw."
+
+msgid "Radarr &amp; Sonarr"
+msgstr "Radarr &amp; Sonarr"
+
+msgid "Let users connect their own Radarr and Sonarr"
+msgstr "Gebruikers hun eigen Radarr en Sonarr laten koppelen"
+
+msgid ""
+"Each user enters the address and API key of their own Radarr and Sonarr "
+"under My account. Spotweb then shows on movie and series spots whether the "
+"title is already in their library, and adds missing titles when they "
+"download. Spotweb itself connects to those addresses, so they must be "
+"reachable from this server."
+msgstr ""
+"Elke gebruiker vult onder Mijn account het adres en de API-sleutel van zijn "
+"eigen Radarr en Sonarr in. Spotweb laat dan bij film- en seriespots zien of "
+"de titel al in de bibliotheek staat, en voegt ontbrekende titels toe bij het"
+" downloaden. Spotweb maakt zelf verbinding met die adressen, dus ze moeten "
+"bereikbaar zijn vanaf deze server."
+
+msgid "Connecting…"
+msgstr "Verbinden…"
+
+msgid "Fetching the library…"
+msgstr "Bibliotheek ophalen…"
+
+msgid ""
+"Connect your own Radarr and Sonarr. Movie and series spots then show whether"
+" the title is already in your library, and when you download one that is "
+"missing, Spotweb adds it first. The download itself still goes to SABnzbd, "
+"in the category Radarr or Sonarr watches, so they import it as soon as it is"
+" done."
+msgstr ""
+"Koppel je eigen Radarr en Sonarr. Film- en seriespots laten dan zien of de "
+"titel al in je bibliotheek staat, en als je er een downloadt die ontbreekt, "
+"voegt Spotweb hem eerst toe. De download zelf gaat nog steeds naar SABnzbd, "
+"in de categorie die Radarr of Sonarr in de gaten houdt, zodat ze hem meteen "
+"verwerken als hij klaar is."
+
+msgid ""
+"Spotweb connects to these addresses itself, so they must be reachable from "
+"the Spotweb server (not just from your browser)."
+msgstr ""
+"Spotweb maakt zelf verbinding met deze adressen, dus ze moeten bereikbaar "
+"zijn vanaf de Spotweb-server (niet alleen vanuit je browser)."
+
+msgid "On"
+msgstr "Aan"
+
+msgid "Address"
+msgstr "Adres"
+
+msgid "Saved (%s). Leave empty to keep it"
+msgstr "Opgeslagen (%s). Laat leeg om te behouden"
+
+msgid "In %s under Settings > General"
+msgstr "In %s onder Settings > General"
+
+msgid "Remove the saved key"
+msgstr "Opgeslagen sleutel verwijderen"
+
+msgid "Test connection"
+msgstr "Verbinding testen"
+
+msgid "Root folder for new titles"
+msgstr "Hoofdmap voor nieuwe titels"
+
+msgid "First one in the list"
+msgstr "Eerste in de lijst"
+
+msgid "Quality profile"
+msgstr "Kwaliteitsprofiel"
+
+msgid "Profile %d"
+msgstr "Profiel %d"
+
+msgid "Press \"Test connection\" to load the folders and profiles."
+msgstr "Klik op \"Verbinding testen\" om de mappen en profielen te laden."
+
+msgid "Language profile"
+msgstr "Taalprofiel"
+
+msgid "SABnzbd category"
+msgstr "SABnzbd-categorie"
+
+msgid ""
+"The category %s uses for SABnzbd (Settings > Download Clients). Downloads of"
+" %s go to SABnzbd in this category."
+msgstr ""
+"De categorie die %s voor SABnzbd gebruikt (Settings > Download Clients). "
+"Downloads van %s gaan in deze categorie naar SABnzbd."
+
+msgid "movies"
+msgstr "films"
+
+msgid "series"
+msgstr "series"
+
+msgid "New series"
+msgstr "Nieuwe series"
+
+msgid ""
+"Spotweb adds a new series with only the current season monitored (plus the "
+"season of the spot when that is an older one)."
+msgstr ""
+"Spotweb voegt een nieuwe serie toe waarbij alleen het lopende seizoen "
+"gevolgd wordt (plus het seizoen van de spot als dat een ouder seizoen is)."
+
+msgid "The library has not been fetched yet."
+msgstr "De bibliotheek is nog niet opgehaald."
+
+msgid "%d movie"
+msgid_plural "%d movies"
+msgstr[0] "%d film"
+msgstr[1] "%d films"
+
+msgid "%d series"
+msgid_plural "%d series"
+msgstr[0] "%d serie"
+msgstr[1] "%d series"
+
+msgid "fetched %s"
+msgstr "opgehaald %s"
+
+msgid "Fetch now"
+msgstr "Nu ophalen"
+
+msgid "Fetch the libraries every"
+msgstr "Bibliotheken ophalen elke"
+
+msgid "%d minutes"
+msgstr "%d minuten"
+
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d uur"
+msgstr[1] "%d uur"
+
+msgid ""
+"Spot lists use this copy, so they stay fast. Titles Spotweb adds show up at "
+"once."
+msgstr ""
+"Spotlijsten gebruiken deze kopie, zodat ze snel blijven. Titels die Spotweb "
+"toevoegt verschijnen meteen."
+
+msgid "Add to %s"
+msgstr "Toevoegen aan %s"
+
+msgid "Open in %s"
+msgstr "Openen in %s"
+
+msgid "The administrator has switched off Radarr and Sonarr for this site."
+msgstr "De beheerder heeft Radarr en Sonarr voor deze site uitgezet."
+
+msgid "You do not have permission to use Radarr and Sonarr here."
+msgstr "Je hebt hier geen rechten om Radarr en Sonarr te gebruiken."
+
+msgid "Enter the address, for example http://192.168.1.20:7878"
+msgstr "Vul het adres in, bijvoorbeeld http://192.168.1.20:7878"
+
+msgid "This address is %s, not %s."
+msgstr "Dit adres is %s, niet %s."
+
+msgid "Connected to %s %s."
+msgstr "Verbonden met %s %s."
+
+msgid "Set up Radarr or Sonarr under My account first."
+msgstr "Stel eerst Radarr of Sonarr in onder Mijn account."
+
+msgid "%s: %d movie"
+msgid_plural "%s: %d movies"
+msgstr[0] "%s: %d film"
+msgstr[1] "%s: %d films"
+
+msgid "%s: %d series"
+msgid_plural "%s: %d series"
+msgstr[0] "%s: %d serie"
+msgstr[1] "%s: %d series"
+
+msgid "This spot could not be found."
+msgstr "Deze spot is niet gevonden."
+
+msgid "Nothing found with this title."
+msgstr "Niets gevonden met deze titel."
+
+msgid "Added %s to %s."
+msgstr "%s toegevoegd aan %s."
+
+msgid "%s is already in %s."
+msgstr "%s staat al in %s."
+
+msgid "Enter the address and API key first."
+msgstr "Vul eerst het adres en de API-sleutel in."
+
+msgid ""
+"Spotweb cannot reach %s at %s (%s). The address must be reachable from the "
+"Spotweb server."
+msgstr ""
+"Spotweb kan %s niet bereiken op %s (%s). Het adres moet bereikbaar zijn "
+"vanaf de Spotweb-server."
+
+msgid ""
+"%s refused the API key. Copy it again from %s under Settings > General."
+msgstr ""
+"%s weigert de API-sleutel. Kopieer hem opnieuw uit %s onder Settings > "
+"General."
+
+msgid "%s answered with an error (HTTP %d)%s"
+msgstr "%s gaf een foutmelding (HTTP %d)%s"
+
+msgid ""
+"The answer from %s at %s is not what Spotweb expected. Check that the "
+"address points to %s itself."
+msgstr ""
+"Het antwoord van %s op %s is niet wat Spotweb verwacht. Controleer of het "
+"adres naar %s zelf wijst."
+
+msgid "The %s address is not a valid URL"
+msgstr "Het adres van %s is geen geldige URL"
+
+msgid "Enter the address and API key of %s, or switch it off"
+msgstr "Vul het adres en de API-sleutel van %s in, of zet het uit"
+
+msgid "Not in %s"
+msgstr "Niet in %s"
+
+msgid "This title is not in your %s library yet. Downloading it adds it."
+msgstr ""
+"Deze titel staat nog niet in je %s-bibliotheek. Downloaden voegt hem toe."
+
+msgid "S%d"
+msgstr "S%d"
+
+msgid "%s on disk"
+msgstr "%s aanwezig"
+
+msgid "Season %d is complete in %s."
+msgstr "Seizoen %d is compleet in %s."
+
+msgid "%s not monitored"
+msgstr "%s niet gevolgd"
+
+msgid "The series is in %s, but season %d is not monitored."
+msgstr "De serie staat in %s, maar seizoen %d wordt niet gevolgd."
+
+msgid "%s: %d missing"
+msgid_plural "%s: %d missing"
+msgstr[0] "%s: %d ontbreekt"
+msgstr[1] "%s: %d ontbreken"
+
+msgid "%d episode of season %d is still missing in %s."
+msgid_plural "%d episodes of season %d are still missing in %s."
+msgstr[0] "%d aflevering van seizoen %d ontbreekt nog in %s."
+msgstr[1] "%d afleveringen van seizoen %d ontbreken nog in %s."
+
+msgid "on disk"
+msgstr "aanwezig"
+
+msgid "complete"
+msgstr "compleet"
+
+msgid "In %s and already downloaded."
+msgstr "In %s en al gedownload."
+
+msgid "%d missing"
+msgid_plural "%d missing"
+msgstr[0] "%d ontbreekt"
+msgstr[1] "%d ontbreken"
+
+msgid "missing"
+msgstr "ontbreekt"
+
+msgid "In %s and monitored, but not downloaded yet."
+msgstr "In %s en gevolgd, maar nog niet gedownload."
+
+msgid "not monitored"
+msgstr "niet gevolgd"
+
+msgid "In %s, but not monitored."
+msgstr "In %s, maar niet gevolgd."
+
+msgid ""
+"Not sure which title this is, so it was not added to %s. Use \"Add to %s\" "
+"on the spot to pick it."
+msgstr ""
+"Niet zeker welke titel dit is, dus hij is niet aan %s toegevoegd. Gebruik "
+"\"Toevoegen aan %s\" op de spot om hem te kiezen."
+
+msgid "Radarr and Sonarr are only used for movie and series spots."
+msgstr "Radarr en Sonarr worden alleen gebruikt voor film- en seriespots."
+
+msgid "That title is no longer in the search results. Search again."
+msgstr "Die titel staat niet meer in de zoekresultaten. Zoek opnieuw."
+
+msgid ""
+"%s has no root folder yet. Add one in %s under Settings > Media Management."
+msgstr ""
+"%s heeft nog geen hoofdmap. Voeg er een toe in %s onder Settings > Media "
+"Management."
+
+msgid "%s has no quality profile."
+msgstr "%s heeft geen kwaliteitsprofiel."
+
+msgid "%s did not confirm that it added the title."
+msgstr "%s heeft niet bevestigd dat de titel is toegevoegd."

@@ -62,6 +62,10 @@ if (!$dialogembedded) { ?>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_download_integration, '')) { ?>
 			<li><a href="#edituserpreftab-2"><span><?php echo _('NZB handling'); ?></span></a></li>
 <?php } ?>
+<?php $showArrTab = !$dialogembedded && Services_Arr_Config::siteEnabled($settings) && Services_Arr_Config::userMayUse(['user' => $spotuser, 'security' => $currentSession['security']]);
+if ($showArrTab) { ?>
+			<li><a href="#edituserpreftab-9"><span><?php echo _('Radarr &amp; Sonarr'); ?></span></a></li>
+<?php } ?>
 <?php if ($tplHelper->allowed(SpotSecurity::spotsec_keep_own_filters, '')) { ?>
 	<?php if (!$dialogembedded) { ?>
 			<li><a href="?page=render&tplname=listfilters" title="<?php echo _('Filters'); ?>"><span><?php echo _('Filters'); ?></span></a></li>
@@ -511,6 +515,120 @@ if (!$dialogembedded) { ?>
 						<dd><input type="input" name="edituserprefsform[nzbhandling][nzbvortex][apikey]" value="<?php echo htmlspecialchars($edituserprefsform['nzbhandling']['nzbvortex']['apikey']); ?>"></dd>
 					</fieldset>
 <?php } ?>
+				</dl>
+			</fieldset>
+		</div>
+<?php } ?>
+
+<?php if ($showArrTab) {
+    $arrConfig = Services_Arr_Config::forPrefs($edituserprefsform);
+    $arrSync = $tplHelper->getArrSyncInfo($spotuser['userid']); ?>
+		<div id="edituserpreftab-9" class="ui-tabs-hide sw-arr-prefs"
+			data-sw-arr-url="<?php echo htmlspecialchars($tplHelper->makeBaseUrl('path').'?page=arr', ENT_QUOTES); ?>"
+			data-sw-xsrf="<?php echo htmlspecialchars($tplHelper->generateXsrfCookie('arrform'), ENT_QUOTES); ?>"
+			data-sw-text-testing="<?php echo _('Connecting…'); ?>"
+			data-sw-text-refreshing="<?php echo _('Fetching the library…'); ?>"
+			data-sw-text-failed="<?php echo _('Could not reach Spotweb. Try again.'); ?>"
+			data-sw-arr-lang="<?php echo htmlspecialchars(substr((string) ($currentSession['user']['prefs']['user_language'] ?? 'en_US'), 0, 2), ENT_QUOTES); ?>">
+			<input type="hidden" name="edituserprefsform[arr][present]" value="1">
+			<h3 class="sw-admin-section"><?php echo _('Radarr &amp; Sonarr'); ?></h3>
+			<p class="sw-hint"><?php echo _('Connect your own Radarr and Sonarr. Movie and series spots then show whether the title is already in your library, and when you download one that is missing, Spotweb adds it first. The download itself still goes to SABnzbd, in the category Radarr or Sonarr watches, so they import it as soon as it is done.'); ?></p>
+			<p class="sw-hint"><?php echo _('Spotweb connects to these addresses itself, so they must be reachable from the Spotweb server (not just from your browser).'); ?></p>
+
+<?php foreach ([Services_Arr_Client::RADARR => 'Radarr', Services_Arr_Client::SONARR => 'Sonarr'] as $arrService => $arrName) {
+        $c = $arrConfig[$arrService];
+        $field = 'edituserprefsform[arr]['.$arrService.']';
+        $idp = 'sw-arr-'.$arrService;
+        $sync = $arrSync[$arrService] ?? null;
+        $masked = Services_Arr_Config::maskedKey($settings, $c['apikey']); ?>
+			<div class="sw-panel sw-arr-service" data-sw-arr-service="<?php echo $arrService; ?>">
+				<div class="sw-panel-head">
+					<h3><?php echo $arrName; ?></h3>
+					<label class="sw-switch"><input type="checkbox" class="enabler" id="use_<?php echo $arrService; ?>" name="<?php echo $field; ?>[enabled]" <?php echo $c['enabled'] ? 'checked="checked"' : ''; ?>> <span><?php echo _('On'); ?></span></label>
+				</div>
+				<fieldset id="content_use_<?php echo $arrService; ?>">
+					<dl>
+						<dt><label for="<?php echo $idp; ?>-url"><?php echo _('Address'); ?></label></dt>
+						<dd><input type="url" id="<?php echo $idp; ?>-url" name="<?php echo $field; ?>[url]" data-sw-arr-field="url" placeholder="<?php echo ($arrService === Services_Arr_Client::RADARR) ? 'http://192.168.1.20:7878' : 'http://192.168.1.20:8989'; ?>" autocomplete="off" value="<?php echo htmlspecialchars($c['url'], ENT_QUOTES); ?>"></dd>
+
+						<dt><label for="<?php echo $idp; ?>-key"><?php echo _('API key'); ?></label></dt>
+						<dd><input type="password" id="<?php echo $idp; ?>-key" name="<?php echo $field; ?>[apikey]" data-sw-arr-field="apikey" autocomplete="new-password" value=""
+							placeholder="<?php echo ($masked !== '') ? htmlspecialchars(sprintf(_('Saved (%s). Leave empty to keep it'), $masked), ENT_QUOTES) : htmlspecialchars(sprintf(_('In %s under Settings > General'), $arrName), ENT_QUOTES); ?>">
+<?php if ($masked !== '') { ?>
+							<label class="sw-inline-check"><input type="checkbox" name="<?php echo $field; ?>[clearkey]"> <?php echo _('Remove the saved key'); ?></label>
+<?php } ?>
+						</dd>
+
+						<dt></dt>
+						<dd class="sw-arr-test">
+							<button type="button" class="sw-btn-secondary" data-sw-arr-test><?php echo _('Test connection'); ?></button>
+							<span class="sw-arr-result" role="status"></span>
+						</dd>
+
+						<dt><label for="<?php echo $idp; ?>-root"><?php echo _('Root folder for new titles'); ?></label></dt>
+						<dd><select id="<?php echo $idp; ?>-root" name="<?php echo $field; ?>[rootfolder]" data-sw-arr-list="rootfolders">
+							<option value=""><?php echo _('First one in the list'); ?></option>
+<?php if ($c['rootfolder'] !== '') { ?>
+							<option value="<?php echo htmlspecialchars($c['rootfolder'], ENT_QUOTES); ?>" selected><?php echo htmlspecialchars($c['rootfolder'], ENT_QUOTES); ?></option>
+<?php } ?>
+						</select></dd>
+
+						<dt><label for="<?php echo $idp; ?>-profile"><?php echo _('Quality profile'); ?></label></dt>
+						<dd><select id="<?php echo $idp; ?>-profile" name="<?php echo $field; ?>[profile]" data-sw-arr-list="profiles">
+							<option value="0"><?php echo _('First one in the list'); ?></option>
+<?php if ((int) $c['profile'] > 0) { ?>
+							<option value="<?php echo (int) $c['profile']; ?>" selected><?php echo sprintf(_('Profile %d'), (int) $c['profile']); ?></option>
+<?php } ?>
+						</select>
+						<span class="sw-hint"><?php echo _('Press "Test connection" to load the folders and profiles.'); ?></span></dd>
+<?php if ($arrService === Services_Arr_Client::SONARR) { ?>
+						<dt class="sw-arr-v3" hidden><label for="<?php echo $idp; ?>-lang"><?php echo _('Language profile'); ?></label></dt>
+						<dd class="sw-arr-v3" hidden><select id="<?php echo $idp; ?>-lang" name="<?php echo $field; ?>[languageprofile]" data-sw-arr-list="languageprofiles">
+							<option value="0"><?php echo _('First one in the list'); ?></option>
+<?php if ((int) $c['languageprofile'] > 0) { ?>
+							<option value="<?php echo (int) $c['languageprofile']; ?>" selected><?php echo sprintf(_('Profile %d'), (int) $c['languageprofile']); ?></option>
+<?php } ?>
+						</select></dd>
+<?php } ?>
+
+						<dt><label for="<?php echo $idp; ?>-cat"><?php echo _('SABnzbd category'); ?></label></dt>
+						<dd><input type="text" id="<?php echo $idp; ?>-cat" name="<?php echo $field; ?>[category]" maxlength="64" value="<?php echo htmlspecialchars($c['category'], ENT_QUOTES); ?>">
+						<span class="sw-hint"><?php echo sprintf(_('The category %s uses for SABnzbd (Settings > Download Clients). Downloads of %s go to SABnzbd in this category.'), $arrName, ($arrService === Services_Arr_Client::RADARR) ? _('movies') : _('series')); ?></span></dd>
+<?php if ($arrService === Services_Arr_Client::SONARR) { ?>
+						<dt><?php echo _('New series'); ?></dt>
+						<dd><span class="sw-hint"><?php echo _('Spotweb adds a new series with only the current season monitored (plus the season of the spot when that is an older one).'); ?></span></dd>
+<?php } ?>
+					</dl>
+<?php if ($c['enabled'] && $c['apikey'] !== '') { ?>
+					<div class="sw-arr-sync">
+						<span class="sw-hint" data-sw-arr-syncline><?php
+                if ($sync === null || ((int) $sync['lastok'] === 0 && $sync['error'] === '')) {
+                    echo _('The library has not been fetched yet.');
+                } elseif ((int) $sync['lastok'] === 0) {
+                    echo htmlspecialchars($sync['error'], ENT_QUOTES);
+                } else {
+                    echo sprintf(($arrService === Services_Arr_Client::RADARR) ? ngettext('%d movie', '%d movies', (int) $sync['items']) : ngettext('%d series', '%d series', (int) $sync['items']), (int) $sync['items'])
+                        .' · '.sprintf(_('fetched %s'), $tplHelper->formatDate((int) $sync['lastok'], 'spotlist'));
+                    if ($sync['error'] !== '') {
+                        echo ' · '.htmlspecialchars($sync['error'], ENT_QUOTES);
+                    } // if
+                } ?></span>
+						<button type="button" class="sw-chip sw-chip-plain" data-sw-arr-refresh><?php echo _('Fetch now'); ?></button>
+					</div>
+<?php } ?>
+				</fieldset>
+			</div>
+<?php } ?>
+
+			<fieldset>
+				<dl>
+					<dt><label for="sw-arr-interval"><?php echo _('Fetch the libraries every'); ?></label></dt>
+					<dd><select id="sw-arr-interval" name="edituserprefsform[arr][interval]">
+<?php foreach (Services_Arr_Config::intervals() as $minutes) { ?>
+						<option value="<?php echo $minutes; ?>" <?php echo ($arrConfig['interval'] === $minutes) ? 'selected' : ''; ?>><?php echo ($minutes < 60) ? sprintf(_('%d minutes'), $minutes) : sprintf(ngettext('%d hour', '%d hours', $minutes / 60), $minutes / 60); ?></option>
+<?php } ?>
+					</select>
+					<span class="sw-hint"><?php echo _('Spot lists use this copy, so they stay fast. Titles Spotweb adds show up at once.'); ?></span></dd>
 				</dl>
 			</fieldset>
 		</div>

@@ -26,7 +26,7 @@ class Services_NzbHandler_Pushsabnzbd extends Services_NzbHandler_abs
         setlocale(LC_ALL, 'en_US.UTF-8');
 
         $nzb = $this->prepareNzb($fullspot, $nzblist);
-        $title = urlencode($this->cleanForFileSystem($fullspot['title']));
+        $title = urlencode($this->cleanForFileSystem($this->downloadTitle($fullspot)));
         $category = urlencode($this->convertCatToSabnzbdCat($fullspot));
 
         // Prepare sab url for addfile

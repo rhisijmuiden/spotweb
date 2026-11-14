@@ -12,6 +12,8 @@
         })();
         </script>
 <?php
+    // Radarr / Sonarr: look the title up before formatting, so the SABnzbd link gets the right category
+    $arrView = $tplHelper->arrViewForSpot($spot);
     $spot = $tplHelper->formatSpot($spot);
 
     // We definieeren hier een aantal settings zodat we niet steeds dezelfde check hoeven uit te voeren
@@ -147,6 +149,31 @@
 <?php } ?>
 <?php } ?>
 				</div>
+
+<?php if ($arrView !== null) {
+    $arrIsNotIn = ($arrView['state'] === Services_Arr_Library::STATE_NOTIN || $arrView['state'] === null); ?>
+				<!-- Radarr / Sonarr -->
+				<div class="sw-arr-card sw-arr-tone-<?php echo $arrView['tone']; ?>"<?php echo $tplHelper->arrPageAttributes(); ?> data-sw-arr-msg="<?php echo htmlspecialchars($spot['messageid'], ENT_QUOTES); ?>" data-sw-arr-state="<?php echo htmlspecialchars((string) $arrView['state'], ENT_QUOTES); ?>">
+					<div class="sw-arr-card-main">
+						<span class="sw-arr-logo" aria-hidden="true"><?php echo htmlspecialchars(mb_substr($arrView['name'], 0, 1)); ?></span>
+						<div class="sw-arr-card-text">
+							<strong><?php echo ($arrView['title'] !== '') ? htmlspecialchars($arrView['title'].($arrView['year'] > 0 ? ' ('.$arrView['year'].')' : ''), ENT_QUOTES) : htmlspecialchars($arrView['name'], ENT_QUOTES); ?></strong>
+							<span><?php echo htmlspecialchars($arrView['long'], ENT_QUOTES); ?></span>
+						</div>
+<?php if ($arrView['label'] !== '' && !$arrIsNotIn) { ?>
+						<span class="sw-arr-pill sw-arr-<?php echo $arrView['tone']; ?>"><i></i><?php echo htmlspecialchars($arrView['label'], ENT_QUOTES); ?></span>
+<?php } ?>
+					</div>
+					<div class="sw-arr-card-actions">
+<?php if ($arrIsNotIn) { ?>
+						<button type="button" class="sw-btn" data-sw-arr-add="<?php echo htmlspecialchars($spot['messageid'], ENT_QUOTES); ?>"><?php echo sprintf(_('Add to %s'), $arrView['name']); ?></button>
+<?php } ?>
+<?php if ($arrView['link'] !== '') { ?>
+						<a class="sw-btn sw-btn-quiet" href="<?php echo htmlspecialchars($arrView['link'], ENT_QUOTES); ?>" target="_blank" rel="noopener"><?php echo sprintf(_('Open in %s'), $arrView['name']); ?> &#8599;</a>
+<?php } ?>
+					</div>
+				</div>
+<?php } ?>
 
 				<!-- sender -->
 				<div class="sw-sender">

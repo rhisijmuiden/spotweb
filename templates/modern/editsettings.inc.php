@@ -674,6 +674,12 @@ if ($result->isSubmitted()) {
 				<p class="sw-hint"><?php echo _('Feed address (every user has their own API key, shown in their account):'); ?><br><code class="sw-code"><?php echo htmlspecialchars($tplHelper->makeBaseUrl('full'), ENT_QUOTES); ?>?page=rss&amp;apikey=<?php echo _('YOUR-API-KEY'); ?></code></p>
 				<p class="sw-hint"><?php echo _('Add search terms or filters the same way as in the address bar of the spot list, for example &amp;search[tree]=cat0_z0 for movies.'); ?></p>
 				<p class="sw-hint"><?php echo _('A user also needs the RSS and API permissions in their group (User &amp; group management).'); ?></p>
+
+				<h3 class="sw-admin-section"><?php echo _('Radarr &amp; Sonarr'); ?></h3>
+				<div class="sw-check-list sw-check-list--stack">
+					<label><input type="checkbox" name="editsettingsform[arr_enabled]" <?php if ($this->_settings->isEnabled('arr_enabled')) { echo 'checked="checked"'; } ?>> <?php echo _('Let users connect their own Radarr and Sonarr'); ?></label>
+				</div>
+				<p class="sw-hint"><?php echo _('Each user enters the address and API key of their own Radarr and Sonarr under My account. Spotweb then shows on movie and series spots whether the title is already in their library, and adds missing titles when they download. Spotweb itself connects to those addresses, so they must be reachable from this server.'); ?></p>
 			</fieldset>
 		</div>
 

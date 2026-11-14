@@ -35,7 +35,7 @@
         } // if
     } // if
 ?>
-			<div class="spots">
+			<div class="spots"<?php echo $tplHelper->arrPageAttributes(); ?>>
 				<table class="spots" summary="Spots">
 					<thead>
 						<tr class="head">
@@ -106,7 +106,14 @@ if ($show_nzbhandler_button) { ?>
         echo "\t\t\t\t\t\t\t<tr class='noresults'><td colspan='".$colSpan."'>"._('No results found')."</td></tr>\r\n";
     } // if
 
+    // Radarr / Sonarr labels for the whole page in one query
+    $arrViews = $tplHelper->arrViewsForSpots($spots);
+
     foreach ($spots as $spot) {
+        $arrPill = $tplHelper->arrPill($arrViews[$spot['messageid']] ?? null, $spot['messageid']);
+        $arrOpen = ($arrPill !== '') ? "<div class='sw-arr-row'>" : '';
+        $arrClose = ($arrPill !== '') ? $arrPill.'</div>' : '';
+
         // Format the spot header
         $spot = $tplHelper->formatSpotHeader($spot);
         $newSpotClass = ($tplHelper->isSpotNew($spot)) ? 'new' : '';
@@ -185,7 +192,7 @@ if ($show_nzbhandler_button) { ?>
 
         if ($settings->get('highlight') > 0 and $spot['commentcount'] >= $settings->get('highcount')) {
             echo "<td class='category'><a href='".$spot['caturl']."' title=\"".sprintf(_("Go to category '%s'"), $spot['catshortdesc']).'">'.$spot['catshortdesc'].'</a></td>'.
-        "<td class='title ".'hg1'.' '.$newSpotClass.' '.$tipTipClass."'><a data-cats='".$catData."' onclick='openSpot(this,\"".$spot['spoturl']."\")' href='".$spot['spoturl']."' title='".$spot['title']."' class='spotlink'>".$reportSpam.$rating.$markSpot.$spot['title'].'</a></td>';
+        "<td class='title ".'hg1'.' '.$newSpotClass.' '.$tipTipClass."'>".$arrOpen."<a data-cats='".$catData."' onclick='openSpot(this,\"".$spot['spoturl']."\")' href='".$spot['spoturl']."' title='".$spot['title']."' class='spotlink'>".$reportSpam.$rating.$markSpot.$spot['title'].'</a>'.$arrClose.'</td>';
 
             if ($show_editspot_button) {
                 echo "<td class='editspot ".'hg1'.' '.$newSpotClass.' '.$tipTipClass."'>";
@@ -279,7 +286,7 @@ if ($show_nzbhandler_button) { ?>
             } // else
         } else {
             echo "<td class='category'><a href='".$spot['caturl']."' title=\"".sprintf(_("Go to category '%s'"), $spot['catshortdesc']).'">'.$spot['catshortdesc'].'</a></td>'.
-        "<td class='title ".$newSpotClass.' '.$tipTipClass."'><a data-cats='".$catData."' onclick='openSpot(this,\"".$spot['spoturl']."\")' href='".$spot['spoturl']."' title='".$spot['title']."' class='spotlink'>".$reportSpam.$rating.$markSpot.$spot['title'].'</a></td>';
+        "<td class='title ".$newSpotClass.' '.$tipTipClass."'>".$arrOpen."<a data-cats='".$catData."' onclick='openSpot(this,\"".$spot['spoturl']."\")' href='".$spot['spoturl']."' title='".$spot['title']."' class='spotlink'>".$reportSpam.$rating.$markSpot.$spot['title'].'</a>'.$arrClose.'</td>';
 
             if ($show_editspot_button) {
                 echo "<td class='editspot'>";

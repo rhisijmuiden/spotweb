@@ -66,9 +66,13 @@ document.addEventListener("DOMContentLoaded", function() {
             echo '</div>';
         }
 
-        echo '<div class="cardsGrid">';
+        echo '<div class="cardsGrid"'.$tplHelper->arrPageAttributes().'>';
+
+        // Radarr / Sonarr labels for the whole page in one query
+        $arrViews = $tplHelper->arrViewsForSpots($spots);
 
         foreach ($spots as $spot) {
+            $arrPill = $tplHelper->arrPill($arrViews[$spot['messageid']] ?? null, $spot['messageid']);
             // Format spot header without touching core files
             $spot = $tplHelper->formatSpotHeader($spot);
             $spot['formatname'] = SpotCategories::Cat2ShortDesc($spot['category'], $spot['subcata']);
@@ -94,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
             $badge = isset($spot['formatname']) ? $spot['formatname'] : SpotCategories::Cat2ShortDesc($spot['category'], $spot['subcata']);
             echo '  <div class="topRow">'
                 .'    <span class="badge">'.htmlspecialchars((string) $badge).'</span>'
-                .'    <div class="title"><a onclick="openSpot(this,\''.$spotUrl.'\')" class="spotlink" href="'.$spotUrl.'">'.htmlspecialchars((string) $spot['title']).'</a></div>'
+                .'    <div class="title"><a onclick="openSpot(this,\''.$spotUrl.'\')" class="spotlink" href="'.$spotUrl.'">'.htmlspecialchars((string) $spot['title']).'</a>'.$arrPill.'</div>'
                 .'  </div>';
 
             echo '  <div class="meta">';

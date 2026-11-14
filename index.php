@@ -334,6 +334,17 @@ try {
             break;
             // adminupdate
 
+        case 'arr':
+            $page = new SpotPage_arr(
+                $daoFactory,
+                $settings,
+                $currentSession,
+                ['arrform' => $req->getForm('arrform')]
+            );
+            $page->render();
+            break;
+            // arr
+
         case 'adminmail':
             $page = new SpotPage_adminmail(
                 $daoFactory,

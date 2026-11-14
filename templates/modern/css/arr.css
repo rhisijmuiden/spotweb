@@ -1,0 +1,194 @@
+/*
+ * Radarr & Sonarr: library labels, spot page card, "Add to" dialog,
+ * notifications and the account settings. Colours come from the house
+ * style tokens in brand.css.
+ */
+
+/* ---------- label next to a title ---------- */
+.sw-arr-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+  padding: 0 8px;
+  margin-left: 6px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: 600 11px/1 var(--sw-font, inherit);
+  letter-spacing: 0;
+  white-space: nowrap;
+  vertical-align: 1px;
+  text-decoration: none !important;
+  cursor: default;
+}
+a.sw-arr-pill, button.sw-arr-pill { cursor: pointer; }
+.sw-arr-pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.sw-arr-ok { background: var(--sw-success-soft); color: var(--sw-success) !important; }
+.sw-arr-want { background: var(--sw-warning-soft); color: var(--sw-warning) !important; }
+.sw-arr-muted { background: var(--sw-surface-2); color: var(--sw-muted) !important; }
+button.sw-arr-none {
+  background: transparent;
+  color: var(--sw-muted);
+  border: 1px dashed var(--sw-border-strong);
+}
+button.sw-arr-none:hover, button.sw-arr-none:focus-visible { color: var(--sw-accent-text); border-color: var(--sw-accent); background: var(--sw-accent-soft); }
+.sw-arr-pill:focus-visible { outline: 2px solid var(--sw-accent); outline-offset: 2px; }
+a.sw-arr-pill:hover { filter: brightness(1.12); }
+
+/* the label sits inside the title cell: keep the title clickable and on one line where it fits */
+table.spots td.title .sw-arr-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
+table.spots td.title .sw-arr-row a.spotlink { flex: 0 1 auto; min-width: 0; }
+table.spots td.title .sw-arr-row .sw-arr-pill { flex: none; display: inline-flex !important; width: auto !important; height: 20px !important; line-height: 1 !important; margin: 0; }
+.spotCard .title .sw-arr-pill { margin-left: 0; margin-top: 4px; }
+.spotCard .title { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+
+/* ---------- card on the spot page ---------- */
+.sw-arr-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin: 14px 0 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--sw-border);
+  border-radius: var(--sw-radius, 12px);
+  background: var(--sw-surface);
+}
+.sw-arr-card.sw-arr-tone-ok { border-left: 3px solid var(--sw-success); }
+.sw-arr-card.sw-arr-tone-want { border-left: 3px solid var(--sw-warning); }
+.sw-arr-card-main { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 320px; }
+.sw-arr-logo {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  font: 700 15px/1 var(--sw-font-display, inherit);
+  color: var(--sw-accent-text);
+  background: var(--sw-accent-soft);
+}
+.sw-arr-card-text { display: grid; gap: 2px; min-width: 0; }
+.sw-arr-card-text strong { color: var(--sw-text); font-size: 14px; }
+.sw-arr-card-text span { color: var(--sw-text-2); font-size: 13px; }
+.sw-arr-card .sw-arr-pill { margin-left: auto; }
+.sw-arr-card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sw-arr-card-actions .sw-btn,
+.sw-arr-dialog .sw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: var(--sw-radius-sm, 8px);
+  border: 1px solid var(--sw-border-strong);
+  background: var(--sw-surface-2);
+  color: var(--sw-text) !important;
+  font: 600 13px/1 var(--sw-font, inherit);
+  text-decoration: none !important;
+  cursor: pointer;
+}
+.sw-arr-card-actions .sw-btn:hover, .sw-arr-dialog .sw-btn:hover { background: var(--sw-surface-3); }
+.sw-arr-card-actions .sw-btn-quiet, .sw-arr-dialog .sw-btn-quiet { background: transparent; }
+.sw-arr-dialog .sw-btn-primary { background: var(--sw-accent); border-color: var(--sw-accent); color: var(--sw-on-accent) !important; }
+.sw-arr-dialog .sw-btn-primary:hover { background: var(--sw-accent-hover, var(--sw-accent)); }
+.sw-arr-dialog .sw-btn:disabled { opacity: .55; cursor: default; }
+.sw-arr-card .sw-btn:focus-visible, .sw-arr-dialog .sw-btn:focus-visible, .sw-arr-dialog select:focus-visible { outline: 2px solid var(--sw-accent); outline-offset: 2px; }
+
+/* ---------- "Add to" dialog ---------- */
+.sw-arr-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(5, 8, 12, .55);
+}
+.sw-arr-dialog {
+  width: min(520px, 100%);
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--sw-border-strong);
+  border-radius: 14px;
+  background: var(--sw-surface);
+  color: var(--sw-text);
+  box-shadow: var(--sw-shadow-lg);
+  font-family: var(--sw-font, inherit);
+}
+.sw-arr-dialog h3 { margin: 0; font: 600 18px/1.3 var(--sw-font-display, inherit); color: var(--sw-text); }
+.sw-arr-dialog-body { display: grid; gap: 8px; }
+.sw-arr-dialog label { font-size: 12px; font-weight: 600; color: var(--sw-text-2); }
+.sw-arr-dialog select {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: var(--sw-radius-sm, 8px);
+  border: 1px solid var(--sw-border);
+  background: var(--sw-surface-2);
+  color: var(--sw-text);
+  font: 14px var(--sw-font, inherit);
+}
+.sw-arr-dialog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 4px; }
+.sw-arr-dialog-grid > div { display: grid; gap: 6px; min-width: 0; }
+.sw-arr-dialog-hint, .sw-arr-dialog-status { margin: 0; font-size: 13px; color: var(--sw-text-2); }
+.sw-arr-dialog-status:empty { display: none; }
+.sw-arr-dialog-status.is-bad { color: var(--sw-danger); }
+.sw-arr-dialog-foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 480px) { .sw-arr-dialog-grid { grid-template-columns: 1fr; } }
+
+/* ---------- notifications ---------- */
+.sw-arr-toasts {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  z-index: 10060;
+  display: grid;
+  gap: 8px;
+  width: min(380px, calc(100vw - 32px));
+}
+.sw-arr-toast {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 14px;
+  border: 1px solid var(--sw-border-strong);
+  border-radius: 10px;
+  background: var(--sw-surface);
+  color: var(--sw-text);
+  box-shadow: var(--sw-shadow-lg);
+  font: 13px/1.45 var(--sw-font, inherit);
+  transition: opacity .4s ease, transform .4s ease;
+}
+.sw-arr-toast b { flex: none; font-weight: 700; }
+.sw-arr-toast.is-ok b { color: var(--sw-success); }
+.sw-arr-toast.is-bad b { color: var(--sw-warning); }
+.sw-arr-toast.is-gone { opacity: 0; transform: translateY(6px); }
+@media (prefers-reduced-motion: reduce) { .sw-arr-toast { transition: none; } }
+
+/* ---------- My account > Radarr & Sonarr ---------- */
+body.modern-config .sw-arr-prefs .sw-arr-service { margin-top: 16px; }
+body.modern-config .sw-arr-prefs .sw-panel-head h3 { margin: 0; font: 600 16px/1.3 var(--sw-font-display, inherit); color: var(--sw-text); }
+body.modern-config .sw-arr-prefs .sw-switch { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--sw-text-2); }
+body.modern-config .sw-arr-prefs .sw-switch input { width: auto; }
+body.modern-config .sw-arr-prefs label.sw-inline-check { display: inline-flex; gap: 6px; align-items: center; margin-top: 6px; font-weight: 400; color: var(--sw-text-2); }
+body.modern-config .sw-arr-prefs label.sw-inline-check input { width: auto; }
+body.modern-config .sw-arr-prefs dd .sw-hint { display: block; margin-top: 6px; }
+body.modern-config .sw-arr-test { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+body.modern-config .sw-arr-result { font-size: 13px; color: var(--sw-text-2); }
+body.modern-config .sw-arr-result.is-ok { color: var(--sw-success); }
+body.modern-config .sw-arr-result.is-bad { color: var(--sw-danger); }
+body.modern-config .sw-arr-sync { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--sw-border); }
+body.modern-config .sw-arr-prefs input[type="url"],
+body.modern-config .sw-arr-prefs input[type="password"],
+body.modern-config .sw-arr-prefs input[type="text"],
+body.modern-config .sw-arr-prefs select { width: 100%; max-width: 440px; }
+
+/* phones: the list only has room for a coloured dot (the full text is in the tooltip and on the spot page) */
+@media (max-width: 700px) {
+  table.spots td.title .sw-arr-row .sw-arr-txt { display: none; }
+  table.spots td.title .sw-arr-row .sw-arr-pill { padding: 0 6px; gap: 0; }
+  table.spots td.title .sw-arr-row button.sw-arr-none { padding: 0 7px; }
+}
