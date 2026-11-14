@@ -27,6 +27,7 @@ class SpotTemplateHelper_Modern extends SpotTemplateHelper
             $this->getThemeAssetPath('css/detail-modern.css'),
             $this->getThemeAssetPath('css/mobile.css'),
             $this->getThemeAssetPath('css/updates.css'),
+            $this->getThemeAssetPath('css/arr.css'),
         ];
     }
 
@@ -46,6 +47,7 @@ class SpotTemplateHelper_Modern extends SpotTemplateHelper
             $this->getThemeAssetPath('js/mobile-nav.js'),
             $this->getThemeAssetPath('js/spot-detail.js'),
             $this->getThemeAssetPath('js/admin-update.js'),
+            $this->getThemeAssetPath('js/arr.js'),
         ];
     }
 

@@ -452,6 +452,31 @@ abstract class SpotStruct_abs
         $this->validateColumn('client', 'downloadhistory', 'VARCHAR(64)', "''", true, 'utf8');
         $this->alterStorageEngine('downloadhistory', 'InnoDB');
 
+        // ---- arrlibrary table: each user's Radarr / Sonarr library, refreshed every few minutes ---- #
+        $this->createTable('arrlibrary', 'utf8');
+        $this->validateColumn('userid', 'arrlibrary', 'INTEGER', '0', true, '');
+        $this->validateColumn('service', 'arrlibrary', 'VARCHAR(8)', "''", true, 'ascii');
+        $this->validateColumn('titlekey', 'arrlibrary', 'VARCHAR(128)', "''", true, 'ascii');
+        $this->validateColumn('arrid', 'arrlibrary', 'INTEGER', '0', true, '');
+        $this->validateColumn('year', 'arrlibrary', 'INTEGER', '0', true, '');
+        $this->validateColumn('imdbid', 'arrlibrary', 'VARCHAR(16)', "''", true, 'ascii');
+        $this->validateColumn('title', 'arrlibrary', 'VARCHAR(255)', "''", true, 'utf8');
+        $this->validateColumn('slug', 'arrlibrary', 'VARCHAR(255)', "''", true, 'utf8');
+        $this->validateColumn('status', 'arrlibrary', 'VARCHAR(16)', "''", true, 'ascii');
+        $this->validateColumn('missing', 'arrlibrary', 'INTEGER', '0', true, '');
+        $this->validateColumn('detail', 'arrlibrary', 'TEXT', null, false, 'utf8');
+        $this->alterStorageEngine('arrlibrary', 'InnoDB');
+
+        // ---- arrsync table: when each user's Radarr / Sonarr library was last fetched ---- #
+        $this->createTable('arrsync', 'utf8');
+        $this->validateColumn('userid', 'arrsync', 'INTEGER', '0', true, '');
+        $this->validateColumn('service', 'arrsync', 'VARCHAR(8)', "''", true, 'ascii');
+        $this->validateColumn('lastsync', 'arrsync', 'INTEGER', '0', true, '');
+        $this->validateColumn('lastok', 'arrsync', 'INTEGER', '0', true, '');
+        $this->validateColumn('items', 'arrsync', 'INTEGER', '0', true, '');
+        $this->validateColumn('error', 'arrsync', 'VARCHAR(255)', "''", true, 'utf8');
+        $this->alterStorageEngine('arrsync', 'InnoDB');
+
         // ---- ratelimit table: API requests per user per minute ---- #
         $this->createTable('ratelimit', 'utf8');
         $this->validateColumn('userid', 'ratelimit', 'INTEGER', '0', true, '');
@@ -792,6 +817,12 @@ abstract class SpotStruct_abs
         $this->validateIndex('idx_downloadhistory_2', '', 'downloadhistory', ['stamp']);
         $this->validateIndex('idx_ratelimit_1', 'UNIQUE', 'ratelimit', ['userid', 'timewindow']);
         $this->validateIndex('idx_ratelimit_2', '', 'ratelimit', ['timewindow']);
+
+        // ---- Indexes on arrlibrary / arrsync ----
+        $this->validateIndex('idx_arrlibrary_1', '', 'arrlibrary', ['userid', 'titlekey']);
+        $this->validateIndex('idx_arrlibrary_2', '', 'arrlibrary', ['userid', 'imdbid']);
+        $this->validateIndex('idx_arrlibrary_3', '', 'arrlibrary', ['userid', 'service', 'arrid']);
+        $this->validateIndex('idx_arrsync_1', 'UNIQUE', 'arrsync', ['userid', 'service']);
 
         // ---- Indexes on reportsxover ----
         $this->validateIndex('idx_reportsxover_1', 'UNIQUE', 'reportsxover', ['messageid']);

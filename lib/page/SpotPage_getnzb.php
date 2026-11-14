@@ -49,7 +49,7 @@ class SpotPage_getnzb extends SpotPage_Abs
             } // if
 
             $svcActnNzb = new Services_Actions_DownloadNzb($this->_settings, $this->_daoFactory);
-            $svcActnNzb->handleNzbAction(
+            $handled = $svcActnNzb->handleNzbAction(
                 Services_Actions_DownloadNzb::resolveMessageIds($this->_messageid, $this->_messageids),
                 $this->_currentSession,
                 $this->_action,
@@ -74,6 +74,9 @@ class SpotPage_getnzb extends SpotPage_Abs
                 $this->sendContentTypeHeader('json');
 
                 $result = new Dto_FormResult('success');
+                if (!empty($handled['arr'])) {
+                    $result->addData('arr', $handled['arr']);
+                } // if
                 $this->template('jsonresult', ['result' => $result]);
             } // if
         } catch (Exception $x) {

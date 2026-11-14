@@ -109,6 +109,16 @@ class Services_Actions_DownloadNzb
         } // foreach
 
         /*
+         * Radarr / Sonarr: for a single movie or series sent to a download
+         * client, add the title when it is missing and give the download
+         * the category and name Radarr / Sonarr recognise
+         */
+        $arrResult = null;
+        if ($action !== 'display' && count($messageIds) === 1 && !empty($fullSpot)) {
+            $arrResult = $this->prepareForLibrary($currentSession, $fullSpot, $nzbList);
+        } // if
+
+        /*
          * send nzblist to NzbHandler plugin
          */
         $nzbHandlerFactory = new Services_NzbHandler_Factory();
@@ -132,7 +142,37 @@ class Services_Actions_DownloadNzb
         // and send notifications
         $spotsNotifications = new SpotNotifications($this->_daoFactory, $this->_settings, $currentSession);
         $spotsNotifications->sendNzbHandled($action, $fullSpot);
+
+        return ['arr' => $arrResult];
     }
 
     // handleNzbAction
+
+    /*
+     * Never stops the download: when Radarr / Sonarr cannot be reached the
+     * download still goes to SABnzbd, and the message says what happened.
+     */
+    private function prepareForLibrary(array $currentSession, array &$fullSpot, array &$nzbList)
+    {
+        try {
+            $arr = new Services_Arr_Integration($this->_settings, $this->_daoFactory, $currentSession);
+            if (!$arr->isActive() || $arr->describe($fullSpot) === null) {
+                return null;
+            } // if
+
+            $ensured = $arr->ensure($fullSpot);
+            $download = $arr->prepare($fullSpot, $ensured['status']);
+            if ($download !== null) {
+                $fullSpot['arr_download'] = $download;
+                foreach ($nzbList as &$entry) {
+                    $entry['spot']['arr_download'] = $download;
+                } // foreach
+                unset($entry);
+            } // if
+
+            return ['ok' => $ensured['ok'], 'added' => $ensured['added'], 'message' => $ensured['message'], 'view' => $arr->view($ensured['status'])];
+        } catch (Exception $x) {
+            return ['ok' => false, 'added' => false, 'message' => $x->getMessage(), 'view' => null];
+        } // catch
+    }
 } // Services_Actions_DownloadNzb

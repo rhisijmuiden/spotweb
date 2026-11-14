@@ -88,6 +88,9 @@ class Services_Actions_EditUserPrefs
         if ($result->isSuccess()) {
             // and actually update the user in the database
             $this->_svcUserRecord->setUser($spotUser);
+
+            // a different Radarr / Sonarr (or one switched off) means our copy of its library is wrong
+            $this->forgetChangedLibraries($spotUser['userid'], $savePrefs['arr'] ?? [], $spotUser['prefs']['arr'] ?? []);
         } // if
 
         /*
@@ -111,4 +114,23 @@ class Services_Actions_EditUserPrefs
     }
 
     // editUserPref
+
+    private function forgetChangedLibraries($userId, $before, $after)
+    {
+        $before = Services_Arr_Config::forPrefs(['arr' => is_array($before) ? $before : []]);
+        $after = Services_Arr_Config::forPrefs(['arr' => is_array($after) ? $after : []]);
+
+        try {
+            $library = new Services_Arr_Library($this->_daoFactory->getConnection());
+            foreach ([Services_Arr_Client::RADARR, Services_Arr_Client::SONARR] as $service) {
+                if (empty($after[$service]['enabled'])
+                    || $before[$service]['url'] !== $after[$service]['url']
+                    || $before[$service]['apikey'] !== $after[$service]['apikey']) {
+                    $library->forget($userId, $service);
+                } // if
+            } // foreach
+        } catch (Exception $x) {
+            // before upgrade-db there is no library table yet
+        } // catch
+    }
 } // Services_Actions_EditUserPrefs

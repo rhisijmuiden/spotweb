@@ -85,6 +85,18 @@ abstract class Services_NzbHandler_abs
      * Generates a clean filename with characters which are allowed
      * on most operating systems' filesystems
      */
+    /*
+     * The SABnzbd job name: the Radarr / Sonarr friendly name when there is one
+     */
+    protected function downloadTitle($spot)
+    {
+        if (!empty($spot['arr_download']['name'])) {
+            return (string) $spot['arr_download']['name'];
+        } // if
+
+        return (string) $spot['title'];
+    }
+
     protected function cleanForFileSystem($title)
     {
         $allowedChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!,@#^()-=+ _{}';
@@ -179,6 +191,11 @@ abstract class Services_NzbHandler_abs
      */
     protected function convertCatToSabnzbdCat($spot)
     {
+        // Radarr / Sonarr watch their own SABnzbd category
+        if (!empty($spot['arr_download']['category'])) {
+            return (string) $spot['arr_download']['category'];
+        } // if
+
         // fix the category
         $spot['category'] = (int) $spot['category'];
 

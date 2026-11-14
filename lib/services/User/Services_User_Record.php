@@ -276,6 +276,7 @@ class Services_User_Record
         $anonSkel['show_multinzb'] = (isset($prefs['show_multinzb'])) ? true : false;
         $anonSkel['show_avatars'] = (isset($prefs['show_avatars'])) ? true : false;
         $anonSkel['tmdb_api_key'] = $anonSkel['tmdb_api_key'] ?? '';
+        $anonSkel['arr'] = (isset($anonSkel['arr']) && is_array($anonSkel['arr'])) ? $anonSkel['arr'] : Services_Arr_Config::defaults();
 
         $notifProviders = Notifications_Factory::getActiveServices();
         foreach ($notifProviders as $notifProvider) {
@@ -407,6 +408,17 @@ class Services_User_Record
                 $result->addError(_('API-Key entered for NZBVortex is not valid'));
             } // if
         } // if
+
+        // Radarr / Sonarr: only when the form had that tab, otherwise keep what is saved
+        if (!empty($prefs['arr']['present'])) {
+            $arrErrors = [];
+            $prefs['arr'] = Services_Arr_Config::fromForm($this->_settings, $prefs['arr'], $currentPrefs['arr'] ?? [], $arrErrors);
+            foreach ($arrErrors as $arrError) {
+                $result->addError($arrError);
+            } // foreach
+        } else {
+            $prefs['arr'] = Services_Arr_Config::forPrefs($currentPrefs);
+        } // else
 
         // Twitter tokens are never posted by the form, but they shouldn't be tossed out
         $prefs['notifications']['twitter']['screen_name'] = $currentPrefs['notifications']['twitter']['screen_name'];

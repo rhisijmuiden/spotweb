@@ -90,6 +90,9 @@ Installation can vary by platform. Consult the tutorials available on the [Spotw
 ## Upgrading an existing installation
 Upgrading keeps your database, users and settings. The easiest way is **Admin → About & updates**: check for updates, pick the production (`main`) or test (`develop`) channel and press *Update now*. By hand: back up your database, update the files (`git pull` or unpack the new ZIP over the old folder), then run `php bin/upgrade-db.php`. See **[docs/upgrading.md](docs/upgrading.md)** for the full step-by-step guide, and [docs/webserver.md](docs/webserver.md) for nginx, Caddy and Cloudflare.
 
+## Radarr & Sonarr
+Every user can connect their own Radarr and Sonarr under *My account*. Movie and series spots then show whether the title is already in the library, and downloading a missing title adds it first so Radarr/Sonarr import the finished download. See **[docs/arr.md](docs/arr.md)**.
+
 ## Troubleshooting
 When a blank page appears instead of your Spotweb installation, this usually indicates a syntax error in `ownsettings.php` or `dbsettings.inc.php`, or a configuration error in the web server.
 

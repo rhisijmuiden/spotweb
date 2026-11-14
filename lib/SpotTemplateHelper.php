@@ -18,6 +18,7 @@ class SpotTemplateHelper
     protected $_svcCacheNewSpotCount = null;
     protected $_treeFilterCache = null;
     protected $_nzbHandler;
+    protected $_arrIntegration = null;
 
     public function __construct(Services_Settings_Container $settings, $currentSession, Dao_Factory $daoFactory, $params)
     {
@@ -945,6 +946,12 @@ class SpotTemplateHelper
             return $spot;
         */
 
+        // Radarr / Sonarr: SABnzbd category and job name for movie and series spots
+        if (!isset($spot['arr_download'])) {
+            $arr = $this->getArrIntegration();
+            $spot['arr_download'] = $arr->isActive() ? $arr->prepare($spot) : null;
+        } // if
+
         // fix the sabnzbdurl, searchurl, sporturl, subcaturl, posterurl
         $spot['sabnzbdurl'] = $this->makeSabnzbdUrl($spot);
         $spot['nzbhandlertype'] = $this->_currentSession['user']['prefs']['nzbhandling']['action'];
@@ -1010,6 +1017,126 @@ class SpotTemplateHelper
     /*
      * Returns a list of nntprefs' with new commentcounts
      */
+    /*
+     * Radarr / Sonarr for the current user
+     */
+    public function getArrIntegration()
+    {
+        if ($this->_arrIntegration === null) {
+            $this->_arrIntegration = new Services_Arr_Integration($this->_settings, $this->_daoFactory, $this->_currentSession);
+        } // if
+
+        return $this->_arrIntegration;
+    }
+
+    /*
+     * Library labels for a page of spots (raw spots, before formatSpotHeader):
+     * messageid => view (label, tone, link), one query for the whole page
+     */
+    public function arrViewsForSpots(array $spots)
+    {
+        $arr = $this->getArrIntegration();
+        if (!$arr->isActive()) {
+            return [];
+        } // if
+
+        $views = [];
+        foreach ($arr->statusForSpots($spots) as $messageId => $status) {
+            $view = $arr->view($status);
+            if ($view !== null) {
+                $views[$messageId] = $view;
+            } // if
+        } // foreach
+
+        return $views;
+    }
+
+    /*
+     * Library card for one spot, or null
+     */
+    public function arrViewForSpot(array $spot)
+    {
+        $arr = $this->getArrIntegration();
+        if (!$arr->isActive()) {
+            return null;
+        } // if
+
+        $status = $arr->statusForSpot($spot);
+        if ($status === null) {
+            return null;
+        } // if
+        $view = $arr->view($status);
+
+        // even without a status (library not fetched yet) the card offers "Add to"
+        return $view ?? [
+            'service' => $status['service'],
+            'name'    => ($status['service'] === Services_Arr_Client::RADARR) ? 'Radarr' : 'Sonarr',
+            'state'   => null,
+            'tone'    => 'none',
+            'label'   => '',
+            'long'    => _('Spotweb has not fetched this library yet. That happens in the background; reload the page in a moment.'),
+            'title'   => '',
+            'year'    => 0,
+            'link'    => '',
+        ];
+    }
+
+    /*
+     * The pill shown next to a title in the spot list
+     */
+    public function arrPill($view, $messageId)
+    {
+        if (!is_array($view) || $view['label'] === '') {
+            return '';
+        } // if
+
+        $text = htmlspecialchars($view['label'], ENT_QUOTES);
+        $title = htmlspecialchars($view['long'], ENT_QUOTES);
+        $msg = htmlspecialchars($messageId, ENT_QUOTES);
+        $data = ' data-sw-arr-msg="'.$msg.'" data-sw-arr-state="'.htmlspecialchars((string) $view['state'], ENT_QUOTES).'"';
+        if ($view['state'] === Services_Arr_Library::STATE_NOTIN) {
+            return ' <button type="button" class="sw-arr-pill sw-arr-none" data-sw-arr-add="'.$msg.'"'.$data.' title="'.$title.'" aria-label="'.$title.'">+<span class="sw-arr-txt"> '.$text.'</span></button>';
+        } // if
+        if ($view['link'] !== '') {
+            return ' <a class="sw-arr-pill sw-arr-'.$view['tone'].'"'.$data.' href="'.htmlspecialchars($view['link'], ENT_QUOTES).'" target="_blank" rel="noopener" title="'.$title.'" aria-label="'.$text.'"><i></i><span class="sw-arr-txt">'.$text.'</span></a>';
+        } // if
+
+        return ' <span class="sw-arr-pill sw-arr-'.$view['tone'].'"'.$data.' title="'.$title.'" aria-label="'.$text.'"><i></i><span class="sw-arr-txt">'.$text.'</span></span>';
+    }
+
+    /*
+     * Attributes for the page that the Radarr / Sonarr script needs
+     */
+    public function arrPageAttributes()
+    {
+        if (!$this->getArrIntegration()->isActive()) {
+            return '';
+        } // if
+
+        return ' data-sw-arr-url="'.htmlspecialchars($this->makeBaseUrl('path').'?page=arr', ENT_QUOTES).'"'
+            .' data-sw-arr-xsrf="'.htmlspecialchars($this->generateXsrfCookie('arrform'), ENT_QUOTES).'"'
+            .' data-sw-arr-lang="'.htmlspecialchars(substr((string) ($this->_currentSession['user']['prefs']['user_language'] ?? 'en_US'), 0, 2), ENT_QUOTES).'"';
+    }
+
+    /*
+     * When each Radarr / Sonarr library of a user was last fetched
+     */
+    public function getArrSyncInfo($userId)
+    {
+        $info = [];
+
+        try {
+            $library = new Services_Arr_Library($this->_daoFactory->getConnection());
+            foreach ([Services_Arr_Client::RADARR, Services_Arr_Client::SONARR] as $service) {
+                $info[$service] = $library->getSyncRow($userId, $service);
+            } // foreach
+        } catch (Exception $x) {
+            // before upgrade-db
+        } // catch
+
+        return $info;
+    }
+
     public function getNewCommentCountFor($spotList)
     {
         // Prepare the spotlisting with an list of nntp items

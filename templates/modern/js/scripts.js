@@ -744,6 +744,7 @@ function downloadSabnzbd(id,url, dltype) {
         url: url,
         dataType: "json",
         success: function(data) {
+            if (window.swArrAfterDownload) { window.swArrAfterDownload(id, data); }
             if (data.result == "success") {
                 $(".sab_"+id).removeClass("loading").addClass("succes");
             } else {
@@ -766,6 +767,8 @@ function downloadSabnzbd(id,url, dltype) {
      * we just always set it to green
      */
 	if (dltype == 'client-sabnzbd') {
+		// the browser talks to SABnzbd itself, so ask Spotweb to add the title to Radarr / Sonarr
+		if (window.swArrEnsure) { window.swArrEnsure(id); }
     	setTimeout( function() { $(".sab_"+id).removeClass("loading").addClass("succes"); }, 1000);
     } // if
 }

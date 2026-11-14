@@ -203,6 +203,7 @@ class Services_Settings_Base
         $settings['highlight'] = (isset($settings['highlight'])) ? true : false;
         $settings['api_enabled'] = (isset($settings['api_enabled'])) ? true : false;
         $settings['rss_enabled'] = (isset($settings['rss_enabled'])) ? true : false;
+        $settings['arr_enabled'] = (isset($settings['arr_enabled'])) ? true : false;
 
         // Default server settings if they won't be used
         if (!isset($settings['nntp_hdr']['use'])) {

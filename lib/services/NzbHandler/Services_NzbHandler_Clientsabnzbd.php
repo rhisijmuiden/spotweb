@@ -25,7 +25,7 @@ class Services_NzbHandler_Clientsabnzbd extends Services_NzbHandler_abs
 
     public function generateNzbHandlerUrl($spot, $spotwebApiParam)
     {
-        $title = urlencode($this->cleanForFileSystem($spot['title']));
+        $title = urlencode($this->cleanForFileSystem($this->downloadTitle($spot)));
         $category = urlencode($this->convertCatToSabnzbdCat($spot));
 
         // yes, using a local variable instead of the member variable is intentional
