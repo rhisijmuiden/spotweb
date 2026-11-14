@@ -3186,3 +3186,9 @@ msgstr ""
 msgid "Back to Spotweb"
 msgstr "Terug naar Spotweb"
 
+
+msgid "Drag to resize the column, double-click to reset"
+msgstr "Sleep om de kolombreedte aan te passen, dubbelklik om te herstellen"
+
+msgid "Reset column widths"
+msgstr "Kolombreedtes herstellen"

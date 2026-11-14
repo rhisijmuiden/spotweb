@@ -36,7 +36,13 @@
     } // if
 ?>
 			<div class="spots">
-				<table class="spots" summary="Spots">
+<?php
+    $colResizeLabels = json_encode([
+        'handle' => _('Drag to resize the column, double-click to reset'),
+        'reset'  => _('Reset column widths'),
+    ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+?>
+				<table class="spots" summary="Spots" data-sw-user="<?php echo (int) $currentSession['user']['userid']; ?>" data-sw-colresize="<?php echo htmlspecialchars($colResizeLabels, ENT_QUOTES, 'UTF-8'); ?>">
 					<thead>
 						<tr class="head">
 							<th class='category'> <a href="<?php echo $tplHelper->makeSortUrl('index', 'category', ''); ?>" title="<?php echo _('Sort on category'); ?>"><?php echo _('Cat.'); ?></a> </th> 
