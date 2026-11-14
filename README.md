@@ -1,6 +1,27 @@
 # Spotweb
 Spotweb is a decentralized usenet community based on the [Spotnet](https://github.com/spotnet/spotnet/wiki) protocol.
 
+🇳🇱 [Nederlandse versie](README.nl.md)
+
+## What's new in this build
+
+This fork of [upstream Spotweb](https://github.com/spotweb/spotweb) is modernised and tuned for large databases and Prowlarr/Sonarr/Radarr. See the **[full tour with screenshots](docs/CHANGES.md)** and the **[changelog per pull request](CHANGELOG.md)**.
+
+![Spotweb in the new house style](docs/screenshots/spot-page-split-view.png)
+
+* **New look** – modern dark-first house style, five extra colour themes, cards or table view, resizable columns, split view spot page and a real phone layout.
+* **Admin centre** at `/admin` – every site setting in a left menu, registration toggle, retrieve and backfill with a progress bar, activity per channel (API / web / RSS), API limits.
+* **Fast API and RSS** – time-window queries, a new index and a response cache, so Prowlarr stays fast on 1M+ spots; `/api` works without `.htaccess`.
+* **Radarr & Sonarr** – see whether a title is already in your library and add missing titles on download.
+* **E-mail** – your own SMTP server (STARTTLS/SSL, DKIM), test mail, password reset and welcome mail.
+* **About & updates** – version info, update check and update from the browser, with a production (`main`) and test (`develop`) channel.
+* **Statistics** – interactive charts instead of static images; per-user download history.
+* **Under the hood** – PHP 8.5, database settings outside the webroot, works behind Cloudflare, English and Dutch.
+
+| Statistics | Admin activity | Phone |
+|---|---|---|
+| ![Statistics](docs/screenshots/statistics-dark.png) | ![Admin activity](docs/screenshots/admin-activity.png) | ![Phone](docs/screenshots/phone-list.png) |
+
 Spotweb requires an operational web server running PHP. It uses MySQL, PostgreSQL or SQLite to store its contents. 
 <table align="center"><tr><td align="center" width="9999">
  
@@ -66,23 +87,23 @@ Refer to the current Spotweb compatibility and CI results for information about 
 
 Before using Spotweb, open `install.php` in your browser and ensure all installation checks show `OK`.
 
-## Installation — Master branch
+## Installation — Production (`main`)
 Installation can vary by platform. Consult the tutorials available on the [Spotweb wiki](https://github.com/spotweb/spotweb/wiki). The basic steps are:
 
 1. Ensure you have a database server installed (MySQL, PostgreSQL or SQLite).
 2. Create an empty 'spotweb' database.
 3. Ensure you have a web server running and PHP is configured for this web server.
-4. [Download the Spotweb ZIP file](https://github.com/spotweb/spotweb/archive/master.zip), or run `git clone -b master https://github.com/spotweb/spotweb.git .` from your public web directory.
+4. [Download the Spotweb ZIP file](https://github.com/rhisijmuiden/spotweb/archive/main.zip), or run `git clone -b main https://github.com/rhisijmuiden/spotweb.git .` from your public web directory.
 5. Unpack the ZIP file into a directory of your choice, if applicable.
 6. Open `install.php` in your browser and resolve any checks that are not marked `OK`.
 7. Follow the wizard and perform the instructions as given by the wizard.
 
-## Installation — Development branch
+## Installation — Test (`develop`)
 
 1. Ensure you have a database server installed (MySQL, PostgreSQL or SQLite).
 2. Create an empty 'spotweb' database.
 3. Ensure you have a web server running and PHP is configured for this web server.
-4. [Download the Spotweb development ZIP file](https://github.com/spotweb/spotweb/archive/develop.zip), or run `git clone -b develop https://github.com/spotweb/spotweb.git .` from your public web directory.
+4. [Download the Spotweb development ZIP file](https://github.com/rhisijmuiden/spotweb/archive/develop.zip), or run `git clone -b develop https://github.com/rhisijmuiden/spotweb.git .` from your public web directory.
 5. Unpack the ZIP file into a directory of your choice, if applicable.
 6. Open `install.php` in your browser and resolve any checks that are not marked `OK`.
 7. Follow the wizard and perform the instructions as given by the wizard.
