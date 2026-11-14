@@ -90,7 +90,9 @@ De oude statische PNG-grafieken zijn vervangen door interactieve grafieken:
 nieuwe spots per dag, per categorie, per uur, per weekdag en per maand, met
 periodes van "laatste 24 uur" tot "alles". Werkt in elk thema.
 
-![Statistieken](screenshots/statistics-dark.png)
+| Midnight | Daylight |
+|---|---|
+| ![Statistieken donker](screenshots/statistics-dark.png) | ![Statistieken licht](screenshots/statistics-daylight.png) |
 
 ## 6. Beheercentrum
 

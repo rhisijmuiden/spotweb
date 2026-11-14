@@ -88,7 +88,9 @@ The old static PNG graphs are replaced by interactive charts: new spots per
 day, per category, per hour, per weekday and per month, with periods from
 "last 24 hours" to "everything". Works in every theme.
 
-![Statistics](screenshots/statistics-dark.png)
+| Midnight | Daylight |
+|---|---|
+| ![Statistics dark](screenshots/statistics-dark.png) | ![Statistics light](screenshots/statistics-daylight.png) |
 
 ## 6. Admin centre
 
