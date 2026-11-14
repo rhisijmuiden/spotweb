@@ -271,3 +271,80 @@ table.spots tr td span.reportedSpam { margin-top: 1px !important; }
 #filter a:hover span.spoticon,
 #filter li.selected span.spoticon,
 #filter a.selected span.spoticon { filter: none; opacity: 1; }
+
+/* ---------- resizable columns (js/column-resize.js) ---------- */
+
+table.spots.sw-resizable tr.head th { box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; }
+table.spots.sw-resizable td.category,
+table.spots.sw-resizable td.genre,
+table.spots.sw-resizable td.poster,
+table.spots.sw-resizable td.date,
+table.spots.sw-resizable td.filesize {
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+table.spots.sw-resizable tbody td.category a { max-width: 100%; }
+
+.sw-col-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 9px;
+  z-index: 2;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.sw-col-resizer.right { right: 0; }
+.sw-col-resizer.left { left: 0; }
+.sw-col-resizer.right::after { right: 0; }
+.sw-col-resizer.left::after { left: 0; }
+.sw-col-resizer::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--sw-border-strong, var(--sw-border));
+  transition: background .12s ease, top .12s ease, bottom .12s ease;
+}
+table.spots tr.head:hover .sw-col-resizer.right::after { right: 0; }
+.sw-col-resizer.left::after { left: 0; }
+.sw-col-resizer::after { background: var(--sw-muted); }
+.sw-col-resizer:hover::after,
+.sw-col-resizer:focus-visible::after,
+.sw-col-resizer.active::after {
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--sw-accent) !important;
+}
+body.sw-col-resizing,
+body.sw-col-resizing * { cursor: col-resize !important; user-select: none !important; }
+
+.sw-col-reset {
+  float: right;
+  width: 20px;
+  height: 20px;
+  margin: 7px 4px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  color: var(--sw-muted);
+  font: 600 13px/20px inherit;
+  cursor: pointer;
+  opacity: .6;
+}
+.sw-col-reset[hidden] { display: none; }
+.sw-col-reset:hover,
+.sw-col-reset:focus-visible { opacity: 1; color: var(--sw-accent-text, var(--sw-accent)); background: var(--sw-surface-3); }
+
+/* phones and the split view keep their own fixed layout */
+@media (max-width: 760px) {
+  .sw-col-resizer, .sw-col-reset { display: none !important; }
+}
+body.sw-split .sw-col-resizer,
+body.sw-split .sw-col-reset { display: none !important; }
