@@ -108,6 +108,11 @@ Installation can vary by platform. Consult the tutorials available on the [Spotw
 6. Open `install.php` in your browser and resolve any checks that are not marked `OK`.
 7. Follow the wizard and perform the instructions as given by the wizard.
 
+## Proxmox LXC template
+Prefer a ready-made server? Download the Proxmox container template straight into Proxmox (**CT Templates → Download from URL**):
+`https://github.com/rhisijmuiden/spotweb/releases/download/lxc-template/debian-13-spotweb_amd64.tar.zst`.
+It has Debian 13, PHP 8.5, nginx and MariaDB with Spotweb installed on the first start; the console shows the address, user name and password, and you only enter your usenet server. See **[docs/proxmox-lxc.md](docs/proxmox-lxc.md)**.
+
 ## Upgrading an existing installation
 Upgrading keeps your database, users and settings. The easiest way is **Admin → About & updates**: check for updates, pick the production (`main`) or test (`develop`) channel and press *Update now*. By hand: back up your database, update the files (`git pull` or unpack the new ZIP over the old folder), then run `php bin/upgrade-db.php`. See **[docs/upgrading.md](docs/upgrading.md)** for the full step-by-step guide, and [docs/webserver.md](docs/webserver.md) for nginx, Caddy and Cloudflare.
 

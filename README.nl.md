@@ -39,6 +39,15 @@ Bekijk de **[rondleiding met screenshots](docs/CHANGES.nl.md)** en de
 
 Voor nginx, Caddy en Cloudflare: zie [docs/webserver.md](docs/webserver.md).
 
+## Proxmox LXC-template
+
+Liever een kant-en-klare server? Download de Proxmox-containertemplate direct
+in Proxmox (**CT Templates → Download from URL**):
+`https://github.com/rhisijmuiden/spotweb/releases/download/lxc-template/debian-13-spotweb_amd64.tar.zst`.
+Daarin zitten Debian 13, PHP 8.5, nginx en MariaDB; Spotweb installeert zich
+bij de eerste start, de console toont adres, gebruikersnaam en wachtwoord, en
+jij vult alleen je nieuwsserver in. Zie **[docs/proxmox-lxc.nl.md](docs/proxmox-lxc.nl.md)**.
+
 ## Upgraden
 
 Bij upgraden blijven je database, gebruikers en instellingen bewaard. Het

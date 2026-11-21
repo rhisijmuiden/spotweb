@@ -1,0 +1,18 @@
+[Unit]
+Description=Spotweb: retrieve new spots and comments from the usenet server
+After=mariadb.service network-online.target
+Wants=network-online.target
+ConditionPathExists=/var/www/spotweb-config/dbsettings.inc.php
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/spotweb
+# Wait until a usenet server is configured (runs as root for the DB check).
+ExecCondition=+/usr/local/sbin/spotweb-nntp-configured
+ExecStart=/usr/bin/php -d memory_limit=1024M /var/www/spotweb/retrieve.php
+Nice=5
+IOSchedulingClass=best-effort
+IOSchedulingPriority=6
+TimeoutStartSec=6h

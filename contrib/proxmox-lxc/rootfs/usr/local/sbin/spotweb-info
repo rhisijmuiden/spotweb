@@ -1,0 +1,45 @@
+#!/bin/sh
+# Shows how to reach this Spotweb container.
+#
+#   spotweb-info                  print the address, user name and password
+#   spotweb-info --write-issue    put the same on the console login screen
+#   spotweb-info --hide-password  stop showing the first password (do this
+#                                 after changing it under My account)
+CREDENTIALS=/root/spotweb-credentials
+SPOTWEB_USER="" SPOTWEB_PASSWORD=""
+# shellcheck disable=SC1090
+[ -r "$CREDENTIALS" ] && . "$CREDENTIALS"
+
+case "${1:-}" in
+    --hide-password)
+        rm -f "$CREDENTIALS"
+        SPOTWEB_PASSWORD=""
+        set -- --write-issue
+        ;;
+esac
+
+if [ "${1:-}" = --write-issue ]; then
+    # agetty replaces \4 with the container's IPv4 address.
+    {
+        echo
+        printf '%s\n' '  Spotweb  ->  http://\4/'
+        if [ -n "$SPOTWEB_PASSWORD" ]; then
+            echo "  Username:    $SPOTWEB_USER"
+            echo "  Password:    $SPOTWEB_PASSWORD"
+        fi
+        echo
+    } > /etc/issue
+    exit 0
+fi
+
+ADDR=$(hostname -I 2>/dev/null | awk '{print $1}')
+echo
+echo "  Spotweb  ->  http://${ADDR:-<container address>}/"
+if [ -n "$SPOTWEB_PASSWORD" ]; then
+    echo "  Username:    $SPOTWEB_USER"
+    echo "  Password:    $SPOTWEB_PASSWORD"
+    echo "  (after changing it under My account: spotweb-info --hide-password)"
+elif [ ! -f /var/www/spotweb-config/dbsettings.inc.php ]; then
+    echo "  First start is still running: journalctl -u spotweb-firstboot"
+fi
+echo

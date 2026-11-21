@@ -1,0 +1,76 @@
+name: Proxmox LXC template
+
+# Builds the Spotweb Proxmox LXC template (contrib/proxmox-lxc) and publishes
+# it on the "lxc-template" release, at a fixed address for Proxmox
+# (CT Templates > Download from URL):
+#
+#   https://github.com/<owner>/<repo>/releases/download/lxc-template/debian-13-spotweb_amd64.tar.zst
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Spotweb branch to bake into the template
+        default: develop
+        required: true
+  push:
+    branches: [develop]
+    paths:
+      - 'contrib/proxmox-lxc/**'
+      - 'bin/install-appliance.php'
+      - '.github/workflows/lxc-template.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lxc-template
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      BRANCH: ${{ inputs.branch || 'develop' }}
+      TAG: lxc-template
+      ASSET: debian-13-spotweb_amd64.tar.zst
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Make the branch available locally
+        run: git fetch origin "$BRANCH:refs/remotes/origin/$BRANCH" && git branch -f "$BRANCH" "origin/$BRANCH" || true
+
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y zstd
+
+      - name: Build the template
+        run: |
+          mkdir -p out
+          sudo contrib/proxmox-lxc/build-template.sh --branch "$BRANCH" --source "$PWD" --out "$PWD/out"
+          sudo chown -R "$(id -u):$(id -g)" out
+          versioned=$(ls out/debian-13-spotweb_*_amd64.tar.zst)
+          cp "$versioned" "out/$ASSET"
+          (cd out && sha256sum "$ASSET" > "$ASSET.sha256")
+          echo "VERSIONED=$(basename "$versioned")" >> "$GITHUB_ENV"
+          ls -lh out
+
+      - name: Publish on the lxc-template release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="Proxmox LXC template with Spotweb built in.
+
+          In Proxmox: Datacenter > (storage) > CT Templates > Download from URL:
+          https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${ASSET}
+
+          Built from \`${BRANCH}\` ($(git rev-parse --short "$BRANCH")) on $(date -u '+%F %H:%M') UTC as ${VERSIONED}.
+          See docs/proxmox-lxc.md."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "Proxmox LXC template" --notes "$notes"
+          else
+            gh release create "$TAG" --title "Proxmox LXC template" --notes "$notes" --target develop --latest=false
+          fi
+          gh release upload "$TAG" "out/$ASSET" "out/$ASSET.sha256" --clobber

@@ -1,0 +1,118 @@
+#!/bin/sh
+# First start of a container made from the Spotweb template.
+#
+# Gives this container its own secrets and installs Spotweb:
+#   - SSH host keys and an InnoDB buffer pool sized to the container memory
+#   - the database and its user, with a fresh random password
+#   - dbsettings.inc.php in /var/www/spotweb-config (outside the webroot)
+#   - the Spotweb tables and an administrator account with a random password
+#   - the address, user name and password on the console login screen
+#
+# Runs once; /var/lib/spotweb/firstboot.done marks it as done.
+set -eu
+umask 022
+
+WEBROOT=/var/www/spotweb
+CONFDIR=/var/www/spotweb-config
+DBSETTINGS=$CONFDIR/dbsettings.inc.php
+STATE=/var/lib/spotweb
+CREDENTIALS=/root/spotweb-credentials
+DBNAME=spotweb
+DBUSER=spotweb
+ADMINUSER=${SPOTWEB_ADMIN_USER:-spotadmin}
+
+log() { echo "spotweb-firstboot: $*"; }
+have_systemd() { [ -d /run/systemd/system ]; }
+# Random string without look-alike characters (no 0/O, 1/l/I).
+random() { LC_ALL=C tr -dc 'A-HJ-NP-Za-km-z2-9' < /dev/urandom | head -c "$1"; }
+
+mkdir -p "$STATE"
+
+# 1. Host identity: every container needs its own SSH keys.
+if command -v ssh-keygen >/dev/null 2>&1 && ! ls /etc/ssh/ssh_host_*_key >/dev/null 2>&1; then
+    log "generating SSH host keys"
+    ssh-keygen -A >/dev/null
+    if have_systemd; then systemctl try-restart ssh.service 2>/dev/null || true; fi
+fi
+
+# 2. InnoDB buffer pool: about a third of the container memory
+#    (256 MB minimum, 8 GB maximum).
+mem_bytes=""
+[ -r /sys/fs/cgroup/memory.max ] && mem_bytes=$(cat /sys/fs/cgroup/memory.max)
+case "$mem_bytes" in
+    ''|max) mem_bytes=$(awk '/^MemTotal:/ {print $2 * 1024}' /proc/meminfo) ;;
+esac
+pool_mb=$((mem_bytes / 1024 / 1024 / 3))
+[ "$pool_mb" -lt 256 ] && pool_mb=256
+[ "$pool_mb" -gt 8192 ] && pool_mb=8192
+printf '# Written by spotweb-firstboot: about a third of the container memory.\n[mariadbd]\ninnodb_buffer_pool_size = %sM\n' "$pool_mb" \
+    > /etc/mysql/mariadb.conf.d/61-spotweb-memory.cnf
+log "InnoDB buffer pool set to ${pool_mb} MB"
+if have_systemd; then systemctl restart mariadb.service; fi
+
+i=0
+until mariadb -e 'SELECT 1' >/dev/null 2>&1; do
+    i=$((i + 1))
+    [ "$i" -le 60 ] || { log "MariaDB does not answer; trying again on the next start"; exit 1; }
+    sleep 1
+done
+
+# 3. Database, user and dbsettings.inc.php. Skipped when Spotweb is already
+#    set up (for example after restoring a backup into this container).
+if [ -f "$DBSETTINGS" ]; then
+    log "$DBSETTINGS exists, Spotweb is already set up; leaving it alone"
+else
+    DBPASS=$(random 32)
+    mariadb <<SQL
+CREATE DATABASE IF NOT EXISTS \`$DBNAME\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS '$DBUSER'@'localhost' IDENTIFIED BY '$DBPASS';
+ALTER USER '$DBUSER'@'localhost' IDENTIFIED BY '$DBPASS';
+GRANT ALL PRIVILEGES ON \`$DBNAME\`.* TO '$DBUSER'@'localhost';
+FLUSH PRIVILEGES;
+SQL
+    mkdir -p "$CONFDIR"
+    (
+        umask 027
+        cat > "$DBSETTINGS.tmp" <<PHP
+<?php
+// Written by spotweb-firstboot on $(date -u '+%F %T') UTC.
+\$dbsettings['engine'] = 'pdo_mysql';
+// Unix socket: faster than TCP and the user only exists for localhost.
+\$dbsettings['host'] = '/run/mysqld/mysqld.sock';
+\$dbsettings['dbname'] = '$DBNAME';
+\$dbsettings['user'] = '$DBUSER';
+\$dbsettings['pass'] = '$DBPASS';
+\$dbsettings['port'] = '3306';
+\$dbsettings['schema'] = '';
+PHP
+    )
+    chown root:www-data "$CONFDIR" "$DBSETTINGS.tmp"
+    chmod 0750 "$CONFDIR"
+    chmod 0640 "$DBSETTINGS.tmp"
+
+    # 4. Spotweb tables and the administrator account.
+    ADMINPASS=$(random 16)
+    mkdir -p "$WEBROOT/cache"
+    chown www-data:www-data "$WEBROOT/cache"
+    if ! runuser -u www-data -- env SPOTWEB_DBSETTINGS="$DBSETTINGS.tmp" SPOTWEB_ADMIN_PASSWORD="$ADMINPASS" \
+        php "$WEBROOT/bin/install-appliance.php" --username="$ADMINUSER" --systemtype=shared; then
+        log "installing Spotweb failed; trying again on the next start"
+        rm -f "$DBSETTINGS.tmp"
+        mariadb -e "DROP DATABASE IF EXISTS \`$DBNAME\`"
+        exit 1
+    fi
+    mv "$DBSETTINGS.tmp" "$DBSETTINGS"
+
+    (
+        umask 077
+        printf 'SPOTWEB_USER=%s\nSPOTWEB_PASSWORD=%s\n' "$ADMINUSER" "$ADMINPASS" > "$CREDENTIALS"
+    )
+    log "Spotweb installed, administrator '$ADMINUSER'"
+fi
+
+# 5. Login screen and retrieve timer.
+/usr/local/sbin/spotweb-info --write-issue
+if have_systemd; then systemctl enable --now spotweb-retrieve.timer; fi
+
+touch "$STATE/firstboot.done"
+log "done"
