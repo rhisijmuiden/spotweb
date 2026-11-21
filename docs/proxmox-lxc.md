@@ -65,7 +65,7 @@ Log: `journalctl -u spotweb-firstboot`.
 | --- | --- |
 | Spotweb (git checkout of `develop`) | `/var/www/spotweb` |
 | Database settings | `/var/www/spotweb-config/dbsettings.inc.php` |
-| nginx site | `/etc/nginx/sites-available/spotweb` |
+| nginx site | `/etc/nginx/sites-available/spotweb.conf` |
 | Cloudflare real visitor address | `/etc/nginx/conf.d/cloudflare-realip.conf`, refreshed weekly |
 | PHP-FPM pool | `/etc/php/8.5/fpm/pool.d/spotweb.conf` |
 | MariaDB tuning | `/etc/mysql/mariadb.conf.d/60-spotweb.cnf` |

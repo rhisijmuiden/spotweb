@@ -24,7 +24,7 @@ ADMINUSER=${SPOTWEB_ADMIN_USER:-spotadmin}
 log() { echo "spotweb-firstboot: $*"; }
 have_systemd() { [ -d /run/systemd/system ]; }
 # Random string without look-alike characters (no 0/O, 1/l/I).
-random() { LC_ALL=C tr -dc 'A-HJ-NP-Za-km-z2-9' < /dev/urandom | head -c "$1"; }
+random() { LC_ALL=C tr -dc 'A-HJ-NP-Za-km-z2-9' < /dev/urandom 2>/dev/null | head -c "$1"; }
 
 mkdir -p "$STATE"
 
@@ -32,7 +32,11 @@ mkdir -p "$STATE"
 if command -v ssh-keygen >/dev/null 2>&1 && ! ls /etc/ssh/ssh_host_*_key >/dev/null 2>&1; then
     log "generating SSH host keys"
     ssh-keygen -A >/dev/null
-    if have_systemd; then systemctl try-restart ssh.service 2>/dev/null || true; fi
+fi
+
+# Without IPv6 in the container nginx cannot listen on [::]:80.
+if [ ! -e /proc/net/if_inet6 ]; then
+    sed -i '/listen \[::\]:80/d' /etc/nginx/sites-available/spotweb.conf
 fi
 
 # 2. InnoDB buffer pool: about a third of the container memory

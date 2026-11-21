@@ -2,7 +2,7 @@
 Description=Spotweb first start: unique database password and secrets
 After=mariadb.service network-online.target
 Wants=mariadb.service
-Before=nginx.service
+Before=nginx.service ssh.service
 ConditionPathExists=!/var/lib/spotweb/firstboot.done
 
 [Service]
