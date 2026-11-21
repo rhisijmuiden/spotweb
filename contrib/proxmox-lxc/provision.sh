@@ -77,7 +77,7 @@ apt-get -y install --no-install-recommends $PHP_PKGS
 update-alternatives --set php "/usr/bin/php$PHP_VERSION" 2>/dev/null || true
 
 log "Appliance files"
-cp -a "$HERE/rootfs/." /
+cp -R --no-preserve=ownership "$HERE/rootfs/." /
 chmod 0755 /usr/local/sbin/spotweb-*
 
 # PHP-FPM pool and PHP settings for Spotweb.
@@ -128,7 +128,7 @@ done
 
 # nginx: only the Spotweb site.
 rm -f /etc/nginx/sites-enabled/default
-ln -sf /etc/nginx/sites-available/spotweb /etc/nginx/sites-enabled/spotweb
+ln -sf /etc/nginx/sites-available/spotweb.conf /etc/nginx/sites-enabled/spotweb.conf
 # Fresh Cloudflare ranges when we can reach them (the template ships a list).
 /usr/local/sbin/spotweb-cloudflare-ips || true
 

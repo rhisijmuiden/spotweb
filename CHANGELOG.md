@@ -9,6 +9,7 @@ from *Admin → About & updates*, which does it for you) after updating.
 
 ## 2026-11-21
 
+- [#25](https://github.com/rhisijmuiden/spotweb/pull/25) Proxmox LXC template: nginx site was missing from the template (file name was git-ignored), files keep root ownership, SSH starts after its host keys exist.
 - [#24](https://github.com/rhisijmuiden/spotweb/pull/24) Proxmox LXC template: Debian 13 + PHP 8.5 + nginx + MariaDB, Spotweb installs itself on the first start (unique passwords), download straight into Proxmox from the `lxc-template` release. See [docs/proxmox-lxc.md](docs/proxmox-lxc.md).
 
 ## 2026-11-14
