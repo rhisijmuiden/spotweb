@@ -1,0 +1,11 @@
+[Unit]
+Description=Spotweb: retrieve every 15 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=15min
+RandomizedDelaySec=30s
+Persistent=false
+
+[Install]
+WantedBy=timers.target

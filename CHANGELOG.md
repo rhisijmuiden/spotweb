@@ -7,6 +7,10 @@ see **[docs/CHANGES.md](docs/CHANGES.md)** (🇳🇱 [Nederlands](docs/CHANGES.n
 "Schema" means the database changes: run `php bin/upgrade-db.php` (or update
 from *Admin → About & updates*, which does it for you) after updating.
 
+## 2026-11-21
+
+- [#24](https://github.com/rhisijmuiden/spotweb/pull/24) Proxmox LXC template: Debian 13 + PHP 8.5 + nginx + MariaDB, Spotweb installs itself on the first start (unique passwords), download straight into Proxmox from the `lxc-template` release. See [docs/proxmox-lxc.md](docs/proxmox-lxc.md).
+
 ## 2026-11-14
 
 - [#22](https://github.com/rhisijmuiden/spotweb/pull/22) Keyboard shortcuts ignore typing in every text field.

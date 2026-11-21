@@ -1,0 +1,15 @@
+[Unit]
+Description=Spotweb first start: unique database password and secrets
+After=mariadb.service network-online.target
+Wants=mariadb.service
+Before=nginx.service
+ConditionPathExists=!/var/lib/spotweb/firstboot.done
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/spotweb-firstboot
+RemainAfterExit=yes
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+# Spotweb appliance tuning. spotweb-firstboot sets the buffer pool to about
+# a third of the container's memory in 61-spotweb-memory.cnf.
+[mariadbd]
+character-set-server  = utf8mb4
+collation-server      = utf8mb4_unicode_ci
+innodb_buffer_pool_size = 256M
+innodb_log_file_size    = 256M
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method     = O_DIRECT
+max_connections         = 100
+max_allowed_packet      = 64M
+tmp_table_size          = 64M
+max_heap_table_size     = 64M
+skip-name-resolve
+bind-address            = 127.0.0.1

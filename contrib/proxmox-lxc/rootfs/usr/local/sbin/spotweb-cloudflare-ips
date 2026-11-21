@@ -1,0 +1,31 @@
+#!/bin/sh
+# Refreshes /etc/nginx/conf.d/cloudflare-realip.conf from Cloudflare's
+# published address list, so nginx logs and rate limits see the real visitor
+# address. Keeps the current file when the download fails or looks wrong.
+set -eu
+
+CONF=/etc/nginx/conf.d/cloudflare-realip.conf
+TMP=$(mktemp)
+trap 'rm -f "$TMP" "$TMP.v4" "$TMP.v6"' EXIT
+
+curl -fsS --max-time 20 https://www.cloudflare.com/ips-v4 -o "$TMP.v4" || exit 0
+curl -fsS --max-time 20 https://www.cloudflare.com/ips-v6 -o "$TMP.v6" || exit 0
+
+{
+    echo "# Cloudflare address ranges, refreshed $(date -u +%F) by spotweb-cloudflare-ips."
+    echo "# Requests from these addresses get their visitor address from CF-Connecting-IP."
+    cat "$TMP.v4" "$TMP.v6" | tr -d '\r' | grep -E '^[0-9a-fA-F.:]+/[0-9]+$' | sed 's/^/set_real_ip_from /; s/$/;/'
+    echo "real_ip_header CF-Connecting-IP;"
+} > "$TMP"
+
+# Sanity check: at least ten ranges, otherwise keep what we have.
+[ "$(grep -c '^set_real_ip_from' "$TMP")" -ge 10 ] || exit 0
+cmp -s "$TMP" "$CONF" 2>/dev/null && exit 0
+
+cp "$CONF" "$CONF.bak" 2>/dev/null || true
+install -m 0644 "$TMP" "$CONF"
+if nginx -t >/dev/null 2>&1; then
+    systemctl reload nginx 2>/dev/null || true
+else
+    mv "$CONF.bak" "$CONF"
+fi

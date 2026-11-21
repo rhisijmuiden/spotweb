@@ -1,0 +1,8 @@
+#!/bin/sh
+# Exit 0 when a usenet server is set in Spotweb (Admin > Settings), so the
+# retrieve timer stays quiet until then.
+host=$(mariadb -N -B spotweb -e "SELECT value FROM settings WHERE name = 'nntp_hdr'" 2>/dev/null) || exit 1
+case "$host" in
+    ''|*'s:4:"host";s:0:"";'*) exit 1 ;;
+esac
+exit 0
